@@ -1,0 +1,71 @@
+<h1>
+  {{title}}
+</h1>
+<div class="row">
+  <div class="col-md-3">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        Artists
+      </div>
+      <div class="panel-body">
+        <ul>
+          <span *ngFor="let song of songs; let i = index">
+            <li> <a href="#" (click)="selectArtist(i)">{{song.artist}}</a></li>
+          </span>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        Albums
+      </div>
+      <div class="panel-body">
+        <ul>
+          <span *ngFor="let song of songs; let i = index">
+            <li> <a href="#" (click)="selectAlbum(i)">{{song.album}}</a></li>
+          </span>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        Titles
+      </div>
+      <div class="panel-body">
+        <ul>
+          <span *ngFor="let song of songs; let i = index">
+            <li> <a href="#" (click)="selectTitle(i)">{{song.title}}</a></li>
+          </span>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<h2>ADD:</h2>
+<table>
+  <tr>
+    <td>Title:</td>
+    <td><input [(ngModel)]="newSong.title" type="text"></td>
+  </tr>
+  <tr>
+    <td>Album:</td>
+    <td><input [(ngModel)]="newSong.album" type="text"></td>
+  </tr>
+  <tr>
+    <td>Artist:</td>
+    <td><input [(ngModel)]="newSong.artist" type="text"></td>
+  </tr>
+  <tr>
+    <td>Year:</td>
+    <td><input [(ngModel)]="newSong.year" type="text"></td>
+  </tr>
+</table>
+
+<br />
+<button (click)="addSong()">Submit</button>
