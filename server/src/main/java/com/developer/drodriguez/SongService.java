@@ -18,10 +18,12 @@ public class SongService {
         Song song2 = new Song("Empire", "Set Sail the Prairie", "Kaddisfly", 2007);
         Song song3 = new Song("Dream On", "Aerosmith", "Aerosmith", 1973);
         Song song4 = new Song("Holiday", "American Idiot", "Green Day", 2004);
+        Song song5 = new Song("Basketcase", "Dookie", "Green Day", 1994);
         songs.add(song1);
         songs.add(song2);
         songs.add(song3);
         songs.add(song4);
+        songs.add(song5);
     }
 
     public List<Song> getAllSongs() {

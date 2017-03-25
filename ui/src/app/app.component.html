@@ -1,71 +1,54 @@
-<h1>
-  {{title}}
-</h1>
-<div class="row">
-  <div class="col-md-4">
-    <div class="panel panel-default">
-      <div class="panel-heading">
-        Artists
-      </div>
-      <div class="panel-body">
-        <ul>
-          <span *ngFor="let artist of artists">
-            <li> <a href="#" (click)="getAlbums(artist)">{{artist}}</a></li>
-          </span>
-        </ul>
-      </div>
+<div class="well">
+  <br />
+  <div class="row text-list">
+    <div class="col-md-3 col-md-offset-1">
+      <div class="text-list-title">Artists</div>
+      <ul class="hide-bullets">
+        <span *ngFor="let artist of artists">
+          <li> <a href="#" (click)="getAlbums(artist)">{{artist}}</a></li>
+        </span>
+      </ul>
     </div>
-  </div>
-  <div class="col-md-4">
-    <div class="panel panel-default">
-      <div class="panel-heading">
-        Albums
-      </div>
-      <div class="panel-body">
-        <ul>
-          <span *ngFor="let album of albums">
-            <li> <a href="#" (click)="getSongs(album)">{{album}}</a></li>
-          </span>
-        </ul>
-      </div>
+    <div class="col-md-3" *ngIf="selectedArtist != null">
+      <div class="text-list-title">Albums</div>
+      <ul class="hide-bullets">
+        <span *ngFor="let album of albums">
+          <li> <a href="#" (click)="getSongs(album)">{{album}}</a></li>
+        </span>
+      </ul>
     </div>
-  </div>
-  <div class="col-md-4">
-    <div class="panel panel-default">
-      <div class="panel-heading">
-        Songs
-      </div>
-      <div class="panel-body">
-        <ul>
-          <span *ngFor="let song of songs">
-            <li> <a href="#">{{song}}</a></li>
-          </span>
-        </ul>
-      </div>
+    <div class="col-md-3" *ngIf="selectedAlbum != null" >
+      <div class="text-list-title">Songs</div>
+      <ul class="hide-bullets">
+        <span *ngFor="let song of songs">
+          <li> <a href="#">{{song}}</a></li>
+        </span>
+      </ul>
     </div>
   </div>
 </div>
 
-
+<!--
 <h2>ADD:</h2>
 <table>
-  <tr>
-    <td>Title:</td>
-    <td><input [(ngModel)]="newSong.title" type="text"></td>
-  </tr>
-  <tr>
-    <td>Album:</td>
-    <td><input [(ngModel)]="newSong.album" type="text"></td>
-  </tr>
-  <tr>
-    <td>Artist:</td>
-    <td><input [(ngModel)]="newSong.artist" type="text"></td>
-  </tr>
-  <tr>
-    <td>Year:</td>
-    <td><input [(ngModel)]="newSong.year" type="text"></td>
-  </tr>
+<tr>
+<td>Title:</td>
+<td><input [(ngModel)]="newSong.title" type="text"></td>
+</tr>
+<tr>
+<td>Album:</td>
+<td><input [(ngModel)]="newSong.album" type="text"></td>
+</tr>
+<tr>
+<td>Artist:</td>
+<td><input [(ngModel)]="newSong.artist" type="text"></td>
+</tr>
+<tr>
+<td>Year:</td>
+<td><input [(ngModel)]="newSong.year" type="text"></td>
+</tr>
 </table>
 
 <br />
 <button (click)="addSong()">Submit</button>
+-->

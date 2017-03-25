@@ -12,23 +12,17 @@ export class AppComponent implements OnInit {
 
 constructor(private songService: SongService) {}
 
-  title: String = 'Music Library';
-  artists: Array<String>;
-  selectedArtist: String;
-  albums: Array<String>;
-  selectedAlbum: String;
-  songs: Array<String>;
-  selectedSong: String;
   allSongs: Array<Song>;
+  artists: Array<String>;
+  albums: Array<String>;
+  songs: Array<String>;
+  selectedAlbum: String;
+  selectedArtist: String;
+  selectedSong: String;
   newSong: Song = {title: "Test Title", album: "Test Album", artist: "Test Artist", year: 2222};
 
   ngOnInit() {
-    this.getAllSongs();
     this.getArtists();
-  }
-
-  getAllSongs() {
-    this.songService.getAllSongs().subscribe(songs => this.allSongs = songs);
   }
 
   getArtists() {
@@ -37,6 +31,7 @@ constructor(private songService: SongService) {}
 
   getAlbums(artist: String) {
     this.selectedArtist = artist;
+    this.selectedAlbum = null;  //Hides song listing in the view.
     this.songService.getAlbums(artist).subscribe(albums => this.albums = albums);
   }
 
@@ -45,6 +40,7 @@ constructor(private songService: SongService) {}
     this.songService.getSongs(this.selectedArtist, album).subscribe(songs => this.songs = songs);
   }
 
+  /*
   addSong(songs: Song[]) {
     this.songService.addSong(this.newSong).subscribe(song => this.allSongs = song);
     console.log(this.allSongs);
@@ -55,7 +51,7 @@ constructor(private songService: SongService) {}
     console.log(this.allSongs);
   }
 
-  /*
+
   updateSong() {
     this.songService.updateSong(this.newSong).subscribe(song => this.songs = song);
   }
