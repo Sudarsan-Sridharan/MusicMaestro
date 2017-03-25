@@ -9,8 +9,23 @@ export class SongService {
 
   constructor(private http: Http) { }
 
-  getSongs() {
+  getAllSongs() {
+    return this.http.get("http://localhost:8080/library-all")
+      .map((response: Response) => response.json());
+  }
+
+  getArtists() {
     return this.http.get("http://localhost:8080/library")
+      .map((response: Response) => response.json());
+  }
+
+  getAlbums(artist: String) {
+    return this.http.get("http://localhost:8080/library/" + artist)
+      .map((response: Response) => response.json());
+  }
+
+  getSongs(artist: String, album: String) {
+    return this.http.get("http://localhost:8080/library/" + artist + "/" + album)
       .map((response: Response) => response.json());
   }
 

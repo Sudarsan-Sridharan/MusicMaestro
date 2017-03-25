@@ -13,23 +13,46 @@ export class AppComponent implements OnInit {
 constructor(private songService: SongService) {}
 
   title: String = 'Music Library';
-  songs: Song[];
+  artists: Array<String>;
+  selectedArtist: String;
+  albums: Array<String>;
+  selectedAlbum: String;
+  songs: Array<String>;
+  selectedSong: String;
+  allSongs: Array<Song>;
   newSong: Song = {title: "Test Title", album: "Test Album", artist: "Test Artist", year: 2222};
 
   ngOnInit() {
-    this.getSongs();
+    this.getAllSongs();
+    this.getArtists();
   }
 
-  getSongs() {
-    this.songService.getSongs().subscribe(songs => this.songs = songs);
+  getAllSongs() {
+    this.songService.getAllSongs().subscribe(songs => this.allSongs = songs);
+  }
+
+  getArtists() {
+    this.songService.getArtists().subscribe(artists => this.artists = artists);
+  }
+
+  getAlbums(artist: String) {
+    this.selectedArtist = artist;
+    this.songService.getAlbums(artist).subscribe(albums => this.albums = albums);
+  }
+
+  getSongs(album: String) {
+    this.selectedAlbum = album;
+    this.songService.getSongs(this.selectedArtist, album).subscribe(songs => this.songs = songs);
   }
 
   addSong(songs: Song[]) {
-    this.songService.addSong(this.newSong).subscribe(song => this.songs = song);
+    this.songService.addSong(this.newSong).subscribe(song => this.allSongs = song);
+    console.log(this.allSongs);
   }
 
   removeSong(i: number) {
-    this.songService.removeSong(this.songs[i].title).subscribe(song => this.songs = song);
+    this.songService.removeSong(this.allSongs[i].title).subscribe(song => this.allSongs = song);
+    console.log(this.allSongs);
   }
 
   /*

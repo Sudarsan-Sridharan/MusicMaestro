@@ -2,8 +2,7 @@ package com.developer.drodriguez;
 
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by Daniel on 3/21/17.
@@ -89,6 +88,32 @@ public class SongService {
             if (songs.get(i).getTitle().equals(id))
                 songs.remove(i);
         return getAllSongs();
+    }
+
+    //Return unique list of artists
+    public Set<String> getArtists() {
+        Set<String> set = new TreeSet<>();
+        for (Song song : songs)
+            set.add(song.getArtist());
+        return set;
+    }
+
+    //Return unique list of albums by a given artist
+    public Set<String> getAlbums(String artist) {
+        Set<String> set = new TreeSet<>();
+        for (Song song : songs)
+            if (song.getArtist().equals(artist))
+                set.add(song.getAlbum());
+        return set;
+    }
+
+    //Return unique list of songs for a given album by an artist
+    public Set<String> getSongs(String artist, String album) {
+        Set<String> set = new TreeSet<>();
+        for (Song song : songs)
+            if (song.getArtist().equals(artist) && song.getAlbum().equals(album))
+                set.add(song.getTitle());
+        return set;
     }
 
 }
