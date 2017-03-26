@@ -14,18 +14,23 @@ export class SongService {
       .map((response: Response) => response.json());
   }
 
-  getArtists() {
+  getArtistList() {
     return this.http.get("http://localhost:8080/library")
       .map((response: Response) => response.json());
   }
 
-  getAlbums(artist: String) {
+  getAlbumList(artist: String) {
     return this.http.get("http://localhost:8080/library/" + artist)
       .map((response: Response) => response.json());
   }
 
-  getSongs(artist: String, album: String) {
+  getSongList(artist: String, album: String) {
     return this.http.get("http://localhost:8080/library/" + artist + "/" + album)
+      .map((response: Response) => response.json());
+  }
+
+  getSong(artist: String, album: String, song: String) {
+    return this.http.get("http://localhost:8080/library/" + artist + "/" + album + "/" + song)
       .map((response: Response) => response.json());
   }
 
@@ -34,8 +39,8 @@ export class SongService {
       .map((response: Response) => response.json());
   }
 
-  removeSong(title: String) {
-    return this.http.delete("http://localhost:8080/library/" + title)
+  removeSong(song: String) {
+    return this.http.delete("http://localhost:8080/library/" + song)
       .map((response: Response) => response.json());
   }
 

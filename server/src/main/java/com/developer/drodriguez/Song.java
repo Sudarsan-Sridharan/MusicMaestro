@@ -9,6 +9,7 @@ public class Song {
     private String album;
     private String artist;
     private int year;
+    private String filePath;
 
     public Song() {}
 
@@ -51,6 +52,14 @@ public class Song {
         this.year = year;
     }
 
+    public String getFilePath() {
+        return filePath;
+    }
+
+    public void setFilePath(String filePath) {
+        this.filePath = filePath;
+    }
+
     @Override
     public String toString() {
         return "Song{" +
@@ -58,6 +67,7 @@ public class Song {
                 ", album='" + album + '\'' +
                 ", artist='" + artist + '\'' +
                 ", year=" + year +
+                ", filePath='" + filePath + '\'' +
                 '}';
     }
 

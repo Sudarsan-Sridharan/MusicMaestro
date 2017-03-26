@@ -3,28 +3,27 @@
 }
 
 .text-list {
-  font-size: 18pt;
+  font-size: 16pt;
   font-weight: lighter;
 }
 
 .text-list-title {
-  font-size: 20pt;
+  font-size: 18pt;
   font-weight: normal;
 }
 
-a:link    {
+a {
+  color: Gray;
+}
+
+.text-selected {
+  pointer-events: none;
+  color: Crimson;
+}
+
+a:link, a:visited, a:hover, a:active {
   text-decoration:  none;
-  }
-a:visited {
-  text-decoration:  none;
-  }
-a:hover   {
-  text-decoration:  none;
-  color: DarkRed;
-  }
-a:active  {
-  text-decoration:  none;
-  }
+}
 
 .hide-bullets {
   list-style: none;

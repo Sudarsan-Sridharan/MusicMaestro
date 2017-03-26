@@ -2,8 +2,14 @@ package com.developer.drodriguez;
 
 import jdk.nashorn.internal.objects.NativeJSON;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 import java.util.Set;
 
@@ -38,9 +44,15 @@ public class SongController {
     }
 
     @RequestMapping(method=RequestMethod.GET, value="/library/{artist}/{album}/{title}")
-    public List<Song> getSong(@PathVariable("artist") String artist, @PathVariable("album") String album,
+    public Song getSong(@PathVariable("artist") String artist, @PathVariable("album") String album,
                               @PathVariable("title") String title) {
         return songService.getSong(artist, album, title);
+    }
+
+    @RequestMapping(value = "/playback/{artist}/{album}/{songTitle}", method = RequestMethod.GET, produces = "audio/mpeg")
+    public ResponseEntity<InputStreamResource> getSongFile(@PathVariable("artist") String artist, @PathVariable("album") String album,
+                                                           @PathVariable("songTitle") String songTitle) throws IOException {
+        return songService.getSongFile(artist, album, songTitle);
     }
 
     @RequestMapping(method=RequestMethod.POST, value="/library")

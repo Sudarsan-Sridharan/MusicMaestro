@@ -10,7 +10,7 @@ import { Song } from './Song';
 })
 export class AppComponent implements OnInit {
 
-constructor(private songService: SongService) {}
+  constructor(private songService: SongService) {}
 
   allSongs: Array<Song>;
   artists: Array<String>;
@@ -19,42 +19,62 @@ constructor(private songService: SongService) {}
   selectedAlbum: String;
   selectedArtist: String;
   selectedSong: String;
+  currentSong: Song;
+  songPlayback;
   newSong: Song = {title: "Test Title", album: "Test Album", artist: "Test Artist", year: 2222};
 
   ngOnInit() {
-    this.getArtists();
+    this.getArtistList();
   }
 
-  getArtists() {
-    this.songService.getArtists().subscribe(artists => this.artists = artists);
+  getArtistList() {
+    this.songService.getArtistList().subscribe(artists => this.artists = artists);
   }
 
-  getAlbums(artist: String) {
+  getAlbumList(artist: String) {
     this.selectedArtist = artist;
     this.selectedAlbum = null;  //Hides song listing in the view.
-    this.songService.getAlbums(artist).subscribe(albums => this.albums = albums);
+    this.songService.getAlbumList(artist).subscribe(albums => this.albums = albums);
   }
 
-  getSongs(album: String) {
+  getSongList(album: String) {
     this.selectedAlbum = album;
-    this.songService.getSongs(this.selectedArtist, album).subscribe(songs => this.songs = songs);
+    this.songService.getSongList(this.selectedArtist, album).subscribe(songs => this.songs = songs);
+  }
+
+  getSong(song: String) {
+    this.selectedSong = song;
+    this.songService.getSong(this.selectedArtist, this.selectedAlbum, song)
+    .subscribe(song => {
+      this.currentSong = song;
+      this.getSongPlayback();
+    });
+  }
+
+  getSongPlayback() {
+    if (this.songPlayback == null) {
+      this.songPlayback = new Audio();
+    }
+    this.songPlayback.src = "http://localhost:8080/playback/" + this.selectedArtist + "/" + this.selectedAlbum + "/" + this.selectedSong;
+    this.songPlayback.load();
+    this.songPlayback.play();
   }
 
   /*
   addSong(songs: Song[]) {
-    this.songService.addSong(this.newSong).subscribe(song => this.allSongs = song);
-    console.log(this.allSongs);
-  }
+  this.songService.addSong(this.newSong).subscribe(song => this.allSongs = song);
+  console.log(this.allSongs);
+}
 
-  removeSong(i: number) {
-    this.songService.removeSong(this.allSongs[i].title).subscribe(song => this.allSongs = song);
-    console.log(this.allSongs);
-  }
+removeSong(i: number) {
+this.songService.removeSong(this.allSongs[i].title).subscribe(song => this.allSongs = song);
+console.log(this.allSongs);
+}
 
 
-  updateSong() {
-    this.songService.updateSong(this.newSong).subscribe(song => this.songs = song);
-  }
-  */
+updateSong() {
+this.songService.updateSong(this.newSong).subscribe(song => this.songs = song);
+}
+*/
 
 }

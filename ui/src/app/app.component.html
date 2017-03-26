@@ -1,17 +1,17 @@
 <div class="well">
   <div class="row">
     <div class="col-md-offset-1">
-      <button type="button" class="btn" data-toggle="collapse" data-target="#songSelect">Select a Song</button>
+      <button type="button" class="btn btn-default" data-toggle="collapse" data-target="#songSelect">Select a Song</button>
     </div>
   </div>
-  <div id="songSelect">
+  <div id="songSelect" class="collapse">
     <br />
     <div class="row text-list">
       <div class="col-md-2 col-md-offset-1">
         <div class="text-list-title">Artists</div>
         <ul class="hide-bullets">
           <span *ngFor="let artist of artists">
-            <li> <a href="#" (click)="getAlbums(artist)">{{artist}}</a></li>
+            <li> <a href="#" [ngClass]="artist == selectedArtist ? 'text-selected' : ''" (click)="getAlbumList(artist)">{{artist}}</a></li>
           </span>
         </ul>
       </div>
@@ -19,7 +19,7 @@
         <div class="text-list-title">Albums</div>
         <ul class="hide-bullets">
           <span *ngFor="let album of albums">
-            <li> <a href="#" (click)="getSongs(album)">{{album}}</a></li>
+            <li> <a href="#" [ngClass]="album == selectedAlbum ? 'text-selected' : ''" (click)="getSongList(album)">{{album}}</a></li>
           </span>
         </ul>
       </div>
@@ -27,36 +27,31 @@
         <div class="text-list-title">Songs</div>
         <ul class="hide-bullets">
           <span *ngFor="let song of songs">
-            <li> <a href="#">{{song}}</a></li>
+            <li> <a href="#" [ngClass]="song == selectedSong ? 'text-selected' : ''" (click)="getSong(song)">{{song}}</a></li>
           </span>
         </ul>
       </div>
     </div>
   </div>
 </div>
-
-
-<!--
-<h2>ADD:</h2>
-<table>
-<tr>
-<td>Title:</td>
-<td><input [(ngModel)]="newSong.title" type="text"></td>
-</tr>
-<tr>
-<td>Album:</td>
-<td><input [(ngModel)]="newSong.album" type="text"></td>
-</tr>
-<tr>
-<td>Artist:</td>
-<td><input [(ngModel)]="newSong.artist" type="text"></td>
-</tr>
-<tr>
-<td>Year:</td>
-<td><input [(ngModel)]="newSong.year" type="text"></td>
-</tr>
-</table>
-
-<br />
-<button (click)="addSong()">Submit</button>
--->
+<div class="container" *ngIf="currentSong == null">
+  <h2 class="text-center">
+    Please select a song above.
+  </h2>
+</div>
+<div class="container" *ngIf="currentSong != null">
+  <table>
+    <tr>
+      <td><h2>{{currentSong.title}}</h2></td>
+    </tr>
+    <tr>
+      <td><h4>{{currentSong.artist}}</h4></td>
+    </tr>
+    <tr>
+      <td><h4>{{currentSong.album}}</h4></td>
+    </tr>
+    <tr>
+      <td><h4>{{currentSong.year}}</h4></td>
+    </tr>
+  </table>
+</div>
