@@ -12,34 +12,33 @@ export class AppComponent implements OnInit {
 
   constructor(private songService: SongService) {}
 
-  allSongs: Array<Song>;
-  artists: Array<String>;
-  albums: Array<String>;
-  songs: Array<String>;
-  selectedAlbum: String;
+  artistList: Array<String>;
+  albumList: Array<String>;
+  songTitleList: Array<String>;
   selectedArtist: String;
+  selectedAlbum: String;
   selectedSong: String;
   currentSong: Song;
   songPlayback;
-  newSong: Song = {title: "Test Title", album: "Test Album", artist: "Test Artist", year: 2222};
+  songArtwork: String;
 
   ngOnInit() {
     this.getArtistList();
   }
 
   getArtistList() {
-    this.songService.getArtistList().subscribe(artists => this.artists = artists);
+    this.songService.getArtistList().subscribe(artistList => this.artistList = artistList);
   }
 
   getAlbumList(artist: String) {
     this.selectedArtist = artist;
     this.selectedAlbum = null;  //Hides song listing in the view.
-    this.songService.getAlbumList(artist).subscribe(albums => this.albums = albums);
+    this.songService.getAlbumList(artist).subscribe(albumList => this.albumList = albumList);
   }
 
   getSongList(album: String) {
     this.selectedAlbum = album;
-    this.songService.getSongList(this.selectedArtist, album).subscribe(songs => this.songs = songs);
+    this.songService.getSongList(this.selectedArtist, album).subscribe(songTitleList => this.songTitleList = songTitleList);
   }
 
   getSong(song: String) {
@@ -48,20 +47,23 @@ export class AppComponent implements OnInit {
     .subscribe(song => {
       this.currentSong = song;
       this.getSongPlayback();
+      this.getSongArtwork();
     });
   }
 
   getSongPlayback() {
-    if (this.songPlayback == null) {
-      this.songPlayback = new Audio();
-    }
+    if (this.songPlayback == null) { this.songPlayback = new Audio(); }
     this.songPlayback.src = "http://localhost:8080/playback/" + this.selectedArtist + "/" + this.selectedAlbum + "/" + this.selectedSong;
     this.songPlayback.load();
     this.songPlayback.play();
   }
 
+  getSongArtwork() {
+    this.songArtwork = "http://localhost:8080/artwork/" + this.selectedArtist + "/" + this.selectedAlbum + "/" + this.selectedSong;
+  }
+
   /*
-  addSong(songs: Song[]) {
+  addSong(songTitleList: Song[]) {
   this.songService.addSong(this.newSong).subscribe(song => this.allSongs = song);
   console.log(this.allSongs);
 }
@@ -73,7 +75,7 @@ console.log(this.allSongs);
 
 
 updateSong() {
-this.songService.updateSong(this.newSong).subscribe(song => this.songs = song);
+this.songService.updateSong(this.newSong).subscribe(song => this.songTitleList = song);
 }
 */
 

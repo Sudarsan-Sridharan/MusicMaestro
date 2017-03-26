@@ -1,12 +1,19 @@
 package com.developer.drodriguez;
 
+import com.mpatric.mp3agic.*;
+import org.junit.Test;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.PathResource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import javax.swing.*;
+import java.io.File;
 import java.io.IOException;
+import java.io.RandomAccessFile;
 import java.util.*;
 
 /**
@@ -20,15 +27,15 @@ public class SongService {
 
     SongService() throws IOException {
         Song song1 = new Song("Jesus of Suburbia", "American Idiot", "Green Day", 2004);
-        song1.setFilePath("/library/" + song1.getArtist() + "/" + song1.getAlbum() + "/" + song1.getTitle() + ".mp3");
+        song1.setFilePath("/Users/Daniel/Music/library/Green Day/American Idiot/Jesus of Suburbia.mp3");
         Song song2 = new Song("Empire", "Set Sail the Prairie", "Kaddisfly", 2007);
-        song2.setFilePath("/library/" + song2.getArtist() + "/" + song2.getAlbum() + "/" + song2.getTitle() + ".mp3");
+        song2.setFilePath("/Users/Daniel/Music/library/Kaddisfly/Set Sail the Prairie/Empire.mp3");
         Song song3 = new Song("Dream On", "Aerosmith", "Aerosmith", 1973);
-        song3.setFilePath("/library/" + song3.getArtist() + "/" + song3.getAlbum() + "/" + song3.getTitle() + ".mp3");
+        song3.setFilePath("/Users/Daniel/Music/library/Aerosmith/Aerosmith/Dream On.mp3");
         Song song4 = new Song("Holiday", "American Idiot", "Green Day", 2004);
-        song4.setFilePath("/library/" + song4.getArtist() + "/" + song4.getAlbum() + "/" + song4.getTitle() + ".mp3");
-        Song song5 = new Song("Basketcase", "Dookie", "Green Day", 1994);
-        song5.setFilePath("/library/" + song5.getArtist() + "/" + song5.getAlbum() + "/" + song5.getTitle() + ".mp3");
+        song4.setFilePath("/Users/Daniel/Music/library/Green Day/American Idiot/Holiday.mp3");
+        Song song5 = new Song("Basket Case", "Dookie", "Green Day", 1994);
+        song5.setFilePath("/Users/Daniel/Music/library/Green Day/Dookie/Basket Case.mp3");
         songs.add(song1);
         songs.add(song2);
         songs.add(song3);
@@ -36,9 +43,11 @@ public class SongService {
         songs.add(song5);
     }
 
+    /*
     public List<Song> getAllSongs() {
         return songs;
     }
+    */
 
     public List<Song> getSong(String artist) {
         List<Song> list = new ArrayList<>();
@@ -60,52 +69,6 @@ public class SongService {
             return list;
         else
             return null;
-    }
-
-    public Song getSong(String artist, String album, String title) {
-        for (int i = 0; i < songs.size(); i++)
-            if (songs.get(i).getArtist().equals(artist) && songs.get(i).getAlbum().equals(album) && songs.get(i).getTitle().equals(title))
-                return songs.get(i);
-        return null;
-    }
-
-    public ResponseEntity<InputStreamResource> getSongFile(String artist, String album, String songTitle) throws IOException {
-        String filePath = getSong(artist, album, songTitle).getFilePath();
-        ClassPathResource track = new ClassPathResource(filePath);
-        return ResponseEntity
-                .ok()
-                .contentLength(track.contentLength())
-                .contentType(MediaType.parseMediaType("audio/mpeg"))
-                .body(new InputStreamResource(track.getInputStream()));
-    }
-
-    public List<Song> addSong(Song song) {
-        boolean hasSong = false;
-        for (int i = 0; i < songs.size(); i++)
-            if (songs.get(i).toString().equals(song.toString()))
-                hasSong = true;
-        if (!hasSong)
-            songs.add(song);
-        return getAllSongs();
-    }
-
-    /*
-    public void updateSong(Song song, String artist, String album, String title) {
-        for (int i = 0; i < songs.size(); i++) {
-            Song s = songs.get(i);
-            if (s.getArtist().equals(artist) && s.getAlbum().equals(album) && s.getTitle().equals(title)) {
-                songs.set(i, song);
-                return;
-            }
-        }
-    }
-    */
-
-    public List<Song> deleteSong(String id) {
-        for (int i = 0; i < songs.size(); i++)
-            if (songs.get(i).getTitle().equals(id))
-                songs.remove(i);
-        return getAllSongs();
     }
 
     //Return unique list of artists
@@ -133,5 +96,97 @@ public class SongService {
                 set.add(song.getTitle());
         return set;
     }
+
+    public Song getSong(String artist, String album, String title) {
+        for (int i = 0; i < songs.size(); i++)
+            if (songs.get(i).getArtist().equals(artist) && songs.get(i).getAlbum().equals(album) && songs.get(i).getTitle().equals(title))
+                return songs.get(i);
+        return null;
+    }
+
+    public ResponseEntity<InputStreamResource> getSongFile(String artist, String album, String songTitle) throws IOException {
+        String filePath = getSong(artist, album, songTitle).getFilePath();
+        PathResource file = new PathResource(filePath);
+        return ResponseEntity
+                .ok()
+                .contentLength(file.contentLength())
+                .contentType(MediaType.parseMediaType("audio/mpeg"))
+                .body(new InputStreamResource(file.getInputStream()));
+    }
+
+    public ResponseEntity<InputStreamResource> getSongArtwork(String artist, String album, String songTitle) throws IOException, UnsupportedTagException, InvalidDataException {
+        Song song = getSong(artist, album, songTitle);
+        String filePath = song.getFilePath();
+        String mimeType = null;
+        byte[] imageData = null;
+
+        Mp3File songData = new Mp3File(filePath);
+        songData.getLengthInSeconds();
+
+        if (songData.hasId3v2Tag()) {
+            ID3v2 songTags = songData.getId3v2Tag();
+            System.out.println(songTags.getArtist());
+            System.out.println(songTags.getTitle());
+            System.out.println(songTags.getAlbum());
+            System.out.println(songTags.getYear());
+
+            imageData = songTags.getAlbumImage();
+            if (imageData != null) {
+                mimeType = songTags.getAlbumImageMimeType();
+                // Write image to file - can determine appropriate file extension from the mime type
+                RandomAccessFile file = new RandomAccessFile("album-artwork", "rw");
+                file.write(imageData);
+                file.close();
+
+                ByteArrayResource bar = new ByteArrayResource(imageData);
+
+                return ResponseEntity
+                        .ok()
+                        .contentLength(bar.contentLength())
+                        .contentType(MediaType.parseMediaType(mimeType))
+                        .body(new InputStreamResource(bar.getInputStream()));
+
+            }
+        }
+
+            //If file does not contain an image, then provide placeholder.
+            ClassPathResource noImgFoundFile = new ClassPathResource("no-album-art.jpg");
+
+            return ResponseEntity
+                    .ok()
+                    .contentLength(noImgFoundFile.contentLength())
+                    .contentType(MediaType.parseMediaType("image/jpeg"))
+                    .body(new InputStreamResource(noImgFoundFile.getInputStream()));
+
+    }
+
+    /*
+    public List<Song> addSong(Song song) {
+        boolean hasSong = false;
+        for (int i = 0; i < songs.size(); i++)
+            if (songs.get(i).toString().equals(song.toString()))
+                hasSong = true;
+        if (!hasSong)
+            songs.add(song);
+        return getAllSongs();
+    }
+
+    public void updateSong(Song song, String artist, String album, String title) {
+        for (int i = 0; i < songs.size(); i++) {
+            Song s = songs.get(i);
+            if (s.getArtist().equals(artist) && s.getAlbum().equals(album) && s.getTitle().equals(title)) {
+                songs.set(i, song);
+                return;
+            }
+        }
+    }
+
+    public List<Song> deleteSong(String id) {
+        for (int i = 0; i < songs.size(); i++)
+            if (songs.get(i).getTitle().equals(id))
+                songs.remove(i);
+        return getAllSongs();
+    }
+    */
 
 }

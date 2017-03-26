@@ -10,7 +10,7 @@
       <div class="col-md-2 col-md-offset-1">
         <div class="text-list-title">Artists</div>
         <ul class="hide-bullets">
-          <span *ngFor="let artist of artists">
+          <span *ngFor="let artist of artistList">
             <li> <a href="#" [ngClass]="artist == selectedArtist ? 'text-selected' : ''" (click)="getAlbumList(artist)">{{artist}}</a></li>
           </span>
         </ul>
@@ -18,7 +18,7 @@
       <div class="col-md-2" *ngIf="selectedArtist != null">
         <div class="text-list-title">Albums</div>
         <ul class="hide-bullets">
-          <span *ngFor="let album of albums">
+          <span *ngFor="let album of albumList">
             <li> <a href="#" [ngClass]="album == selectedAlbum ? 'text-selected' : ''" (click)="getSongList(album)">{{album}}</a></li>
           </span>
         </ul>
@@ -26,8 +26,8 @@
       <div class="col-md-2" *ngIf="selectedAlbum != null" >
         <div class="text-list-title">Songs</div>
         <ul class="hide-bullets">
-          <span *ngFor="let song of songs">
-            <li> <a href="#" [ngClass]="song == selectedSong ? 'text-selected' : ''" (click)="getSong(song)">{{song}}</a></li>
+          <span *ngFor="let songTitle of songTitleList">
+            <li> <a href="#" [ngClass]="songTitle == selectedSong ? 'text-selected' : ''" (click)="getSong(songTitle)">{{songTitle}}</a></li>
           </span>
         </ul>
       </div>
@@ -40,18 +40,29 @@
   </h2>
 </div>
 <div class="container" *ngIf="currentSong != null">
-  <table>
-    <tr>
-      <td><h2>{{currentSong.title}}</h2></td>
-    </tr>
-    <tr>
-      <td><h4>{{currentSong.artist}}</h4></td>
-    </tr>
-    <tr>
-      <td><h4>{{currentSong.album}}</h4></td>
-    </tr>
-    <tr>
-      <td><h4>{{currentSong.year}}</h4></td>
-    </tr>
-  </table>
-</div>
+  <div class="row">
+    <div class="col-md-4">
+      <img class="img-responsive" [src]="songArtwork">
+      <br />
+      <button class="btn btn-default" (click)="songPlayback.play()">Play</button>
+      <button class="btn btn-default" (click)="songPlayback.pause()">Pause</button>
+      <br />
+      <input type="range" value="{{songPlayback.currentTime}}" min="0" max="{{songPlayback.duration}}" />
+    </div>
+    <div class="col-md-6">
+      <table>
+        <tr>
+          <td><h2>{{currentSong.title}}</h2></td>
+        </tr>
+        <tr>
+          <td><h4>{{currentSong.artist}}</h4></td>
+        </tr>
+        <tr>
+          <td><h4>{{currentSong.album}}</h4></td>
+        </tr>
+        <tr>
+          <td><h4>{{currentSong.year}}</h4></td>
+        </tr>
+      </table>
+    </div>
+  </div>

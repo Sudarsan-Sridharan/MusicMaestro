@@ -1,5 +1,7 @@
 package com.developer.drodriguez;
 
+import com.mpatric.mp3agic.InvalidDataException;
+import com.mpatric.mp3agic.UnsupportedTagException;
 import jdk.nashorn.internal.objects.NativeJSON;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
@@ -23,11 +25,6 @@ public class SongController {
     @Autowired
     private SongService songService;
 
-    @RequestMapping(method=RequestMethod.GET, value="/library-all")
-    public List<Song> getAllSongs() {
-        return songService.getAllSongs();
-    }
-
     @RequestMapping(method=RequestMethod.GET, value="/library")
     public Set<String> getArtists() {
         return songService.getArtists();
@@ -49,12 +46,19 @@ public class SongController {
         return songService.getSong(artist, album, title);
     }
 
-    @RequestMapping(value = "/playback/{artist}/{album}/{songTitle}", method = RequestMethod.GET, produces = "audio/mpeg")
+    @RequestMapping(value = "/playback/{artist}/{album}/{songTitle}", method = RequestMethod.GET)
     public ResponseEntity<InputStreamResource> getSongFile(@PathVariable("artist") String artist, @PathVariable("album") String album,
                                                            @PathVariable("songTitle") String songTitle) throws IOException {
         return songService.getSongFile(artist, album, songTitle);
     }
 
+    @RequestMapping(value = "/artwork/{artist}/{album}/{songTitle}", method = RequestMethod.GET)
+    public ResponseEntity<InputStreamResource> getSongArtwork(@PathVariable("artist") String artist, @PathVariable("album") String album,
+                                                           @PathVariable("songTitle") String songTitle) throws IOException, UnsupportedTagException, InvalidDataException {
+        return songService.getSongArtwork(artist, album, songTitle);
+    }
+
+    /*
     @RequestMapping(method=RequestMethod.POST, value="/library")
     public List<Song> addSong(@RequestBody Song song) {
         return songService.addSong(song);
@@ -65,7 +69,11 @@ public class SongController {
         return songService.deleteSong(id);
     }
 
-    /*
+    @RequestMapping(method=RequestMethod.GET, value="/library-all")
+    public List<Song> getAllSongs() {
+        return songService.getAllSongs();
+    }
+
     @RequestMapping(method=RequestMethod.PUT, value="/library/{artist}/{album}/{title}")
     public List<Song> updateSong(@RequestBody Song song, @PathVariable("artist") String artist, @PathVariable("album") String album,
                                  @PathVariable("title") String title) {

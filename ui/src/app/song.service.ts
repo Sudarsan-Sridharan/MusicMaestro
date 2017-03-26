@@ -9,11 +9,6 @@ export class SongService {
 
   constructor(private http: Http) { }
 
-  getAllSongs() {
-    return this.http.get("http://localhost:8080/library-all")
-      .map((response: Response) => response.json());
-  }
-
   getArtistList() {
     return this.http.get("http://localhost:8080/library")
       .map((response: Response) => response.json());
@@ -34,6 +29,12 @@ export class SongService {
       .map((response: Response) => response.json());
   }
 
+  /*
+  getAllSongs() {
+    return this.http.get("http://localhost:8080/library-all")
+      .map((response: Response) => response.json());
+  }
+
   addSong(song: Song) {
     return this.http.post("http://localhost:8080/library", song)
       .map((response: Response) => response.json());
@@ -44,7 +45,6 @@ export class SongService {
       .map((response: Response) => response.json());
   }
 
-  /*
   updateSong(song: Song) {
     return this.http.put("http://localhost:8080/library/" + song.artist + "/" + song.album + "/" + song.title, song)
       .map((response: Response) => response.json());
