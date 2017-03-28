@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { SongService } from './song.service';
 import { Observable } from 'rxjs/Observable';
 import { Song } from './Song';
+import { Howl, Howler } from 'howler';
 
 @Component({
   selector: 'app-root',
@@ -24,6 +25,13 @@ export class AppComponent implements OnInit {
 
   ngOnInit() {
     this.getArtistList();
+
+    //DEBUG
+    this.selectedArtist = "Green Day";
+    this.selectedAlbum = "American Idiot"
+    this.getSong("Holiday");
+
+
   }
 
   getArtistList() {
@@ -51,12 +59,32 @@ export class AppComponent implements OnInit {
     });
   }
 
+getSongPlayback() {
+  let sound = new Howl({
+    src: ["http://localhost:8080/playback/" + this.selectedArtist + "/" + this.selectedAlbum + "/" + this.selectedSong],
+    format: ["mp3"],
+    autoplay: false,
+    loop: false});
+
+    let a = sound.play();
+
+    console.log('sound = ' + sound);
+    console.log('id = ' + a);
+    console.log('duration = ' + sound.duration());
+    console.log('seek = ' + sound.seek());
+
+}
+
+/*
   getSongPlayback() {
     if (this.songPlayback == null) { this.songPlayback = new Audio(); }
     this.songPlayback.src = "http://localhost:8080/playback/" + this.selectedArtist + "/" + this.selectedAlbum + "/" + this.selectedSong;
     this.songPlayback.load();
+    this.songPlayback.currentTime = 30;
     this.songPlayback.play();
+    console.log(this.songPlayback);
   }
+*/
 
   getSongArtwork() {
     this.songArtwork = "http://localhost:8080/artwork/" + this.selectedArtist + "/" + this.selectedAlbum + "/" + this.selectedSong;

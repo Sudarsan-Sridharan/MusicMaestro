@@ -4,7 +4,7 @@
       <button type="button" class="btn btn-default" data-toggle="collapse" data-target="#songSelect">Select a Song</button>
     </div>
   </div>
-  <div id="songSelect" class="collapse">
+  <div id="songSelect" class="collapse in">
     <br />
     <div class="row text-list">
       <div class="col-md-2 col-md-offset-1">
@@ -44,10 +44,6 @@
     <div class="col-md-4">
       <img class="img-responsive" [src]="songArtwork">
       <br />
-      <button class="btn btn-default" (click)="songPlayback.play()">Play</button>
-      <button class="btn btn-default" (click)="songPlayback.pause()">Pause</button>
-      <br />
-      <input type="range" value="{{songPlayback.currentTime}}" min="0" max="{{songPlayback.duration}}" />
     </div>
     <div class="col-md-6">
       <table>
