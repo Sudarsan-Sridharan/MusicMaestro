@@ -1,0 +1,6 @@
+library:
+  path: "/Daniel/Music/library"
+spring:
+  http:
+    multipart:
+      maxFileSize: 10MB

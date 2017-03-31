@@ -12,6 +12,7 @@ export class AppComponent implements OnInit {
 
   constructor(private songService: SongService) {}
 
+  isCollapsed: Array<Boolean> = [false, false]; //Used to keep one menu button active.
   artistList: Array<String>;
   albumList: Array<String>;
   songTitleList: Array<String>;
@@ -20,7 +21,9 @@ export class AppComponent implements OnInit {
   selectedSong: String;
   currentSong: Song;
   songPlayback;
-  songArtwork: String;
+  songArtworkSrc: String;
+  newSong: Song = {title: null, album: null, artist: null, year: null, filePath: null};
+  newSongFile: FileList;
 
   ngOnInit() {
     this.getArtistList();
@@ -59,13 +62,26 @@ export class AppComponent implements OnInit {
   }
 
   getSongArtwork() {
-    this.songArtwork = "http://localhost:8080/artwork/" + this.selectedArtist + "/" + this.selectedAlbum + "/" + this.selectedSong;
+    this.songArtworkSrc = "http://localhost:8080/artwork/" + this.selectedArtist + "/" + this.selectedAlbum + "/" + this.selectedSong;
   }
 
-  /*
-  addSong(songTitleList: Song[]) {
-  this.songService.addSong(this.newSong).subscribe(song => this.allSongs = song);
-  console.log(this.allSongs);
+  addSong() {
+    this.songService.addSongFile(this.newSongFile).subscribe( () => {
+      this.songService.addSongMetadata(this.newSong).subscribe( () => {
+        //Clear any previous selections and refresh cached artist list.
+        this.selectedArtist = null;
+        this.selectedAlbum = null;
+        this.selectedSong = null;
+        this.getArtistList();
+      });
+    });
+  }
+
+}
+/*
+addSong(songTitleList: Song[]) {
+this.songService.addSong(this.newSong).subscribe(song => this.allSongs = song);
+console.log(this.allSongs);
 }
 
 removeSong(i: number) {
@@ -78,5 +94,3 @@ updateSong() {
 this.songService.updateSong(this.newSong).subscribe(song => this.songTitleList = song);
 }
 */
-
-}

@@ -1,10 +1,13 @@
 <div class="well">
   <div class="row">
     <div class="col-md-offset-1">
-      <button type="button" class="btn btn-default" data-toggle="collapse" data-target="#songSelect">Select a Song</button>
+      <button type="button" class="btn btn-default" data-toggle="collapse" data-target="#songSelect"
+      (click)="isCollapsed = [false, true]">Select a Song</button>
+      <button type="button" class="btn btn-default" data-toggle="collapse" data-target="#addSong"
+      (click)="isCollapsed = [true, false]">Add a Song</button>
     </div>
   </div>
-  <div id="songSelect" class="collapse">
+  <div id="songSelect" class="collapse" *ngIf="!isCollapsed[0]">
     <br />
     <div class="row text-list">
       <div class="col-md-2 col-md-offset-1">
@@ -33,6 +36,37 @@
       </div>
     </div>
   </div>
+  <div id="addSong" class="collapse" *ngIf="!isCollapsed[1]">
+    <br />
+    <div class="row">
+      <div class="col-md-4 col-md-offset-1">
+        <table class="extra-padding text-list">
+          <tr>
+            <td>Title:</td>
+            <td><input type="text" [(ngModel)]="newSong.title"></td>
+          </tr>
+          <tr>
+            <td>Artist:</td>
+            <td><input type="text" [(ngModel)]="newSong.album"></td>
+          </tr>
+          <tr>
+            <td>Album:</td>
+            <td><input type="text" [(ngModel)]="newSong.artist"></td>
+          </tr>
+          <tr>
+            <td>Year:</td>
+            <td><input type="text" [(ngModel)]="newSong.year"></td>
+          </tr>
+          <tr>
+            <td>File:</td>
+            <td><input type="file" (change)="newSongFile = $event.target.files" placeholder="Upload a Song" accept=".mp3"></td>
+          </tr>
+        </table>
+        <br />
+        <button class="btn btn-default btn-sm" (click)="addSong()">Upload</button>
+      </div>
+    </div>
+  </div>
 </div>
 <div class="container" *ngIf="currentSong == null">
   <h2 class="text-center">
@@ -42,12 +76,10 @@
 <div class="container" *ngIf="currentSong != null">
   <div class="row">
     <div class="col-md-4">
-      <img class="img-responsive" [src]="songArtwork">
+      <img class="img-responsive" [src]="songArtworkSrc">
       <br />
       <button class="btn btn-default" (click)="songPlayback.play()">Play</button>
       <button class="btn btn-default" (click)="songPlayback.pause()">Pause</button>
-      <br />
-      <input type="range" value="{{songPlayback.currentTime}}" min="0" max="{{songPlayback.duration}}" />
     </div>
     <div class="col-md-6">
       <table>

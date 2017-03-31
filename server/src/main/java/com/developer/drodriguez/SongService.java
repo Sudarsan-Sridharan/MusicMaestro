@@ -2,6 +2,7 @@ package com.developer.drodriguez;
 
 import com.mpatric.mp3agic.*;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.InputStreamResource;
@@ -9,6 +10,7 @@ import org.springframework.core.io.PathResource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.swing.*;
 import java.io.File;
@@ -25,16 +27,19 @@ public class SongService {
 
     private List<Song> songs = new ArrayList<>();
 
+    @Value("${library.path}")
+    private String libraryPath;
+
     SongService() throws IOException {
-        Song song1 = new Song("Jesus of Suburbia", "American Idiot", "Green Day", 2004);
+        Song song1 = new Song("Jesus of Suburbia", "American Idiot", "Green Day", "2004");
         song1.setFilePath("/Users/Daniel/Music/library/Green Day/American Idiot/Jesus of Suburbia.mp3");
-        Song song2 = new Song("Empire", "Set Sail the Prairie", "Kaddisfly", 2007);
+        Song song2 = new Song("Empire", "Set Sail the Prairie", "Kaddisfly", "2007");
         song2.setFilePath("/Users/Daniel/Music/library/Kaddisfly/Set Sail the Prairie/Empire.mp3");
-        Song song3 = new Song("Dream On", "Aerosmith", "Aerosmith", 1973);
+        Song song3 = new Song("Dream On", "Aerosmith", "Aerosmith", "1973");
         song3.setFilePath("/Users/Daniel/Music/library/Aerosmith/Aerosmith/Dream On.mp3");
-        Song song4 = new Song("Holiday", "American Idiot", "Green Day", 2004);
+        Song song4 = new Song("Holiday", "American Idiot", "Green Day", "2004");
         song4.setFilePath("/Users/Daniel/Music/library/Green Day/American Idiot/Holiday.mp3");
-        Song song5 = new Song("Basket Case", "Dookie", "Green Day", 1994);
+        Song song5 = new Song("Basket Case", "Dookie", "Green Day", "1994");
         song5.setFilePath("/Users/Daniel/Music/library/Green Day/Dookie/Basket Case.mp3");
         songs.add(song1);
         songs.add(song2);
@@ -47,7 +52,6 @@ public class SongService {
     public List<Song> getAllSongs() {
         return songs;
     }
-    */
 
     public List<Song> getSong(String artist) {
         List<Song> list = new ArrayList<>();
@@ -70,6 +74,7 @@ public class SongService {
         else
             return null;
     }
+    */
 
     //Return unique list of artists
     public Set<String> getArtists() {
@@ -160,17 +165,17 @@ public class SongService {
 
     }
 
-    /*
-    public List<Song> addSong(Song song) {
-        boolean hasSong = false;
-        for (int i = 0; i < songs.size(); i++)
-            if (songs.get(i).toString().equals(song.toString()))
-                hasSong = true;
-        if (!hasSong)
-            songs.add(song);
-        return getAllSongs();
+    public void addSongFile(MultipartFile file) {
+        System.out.println("In addSongFile() Service.");
+        System.out.println(file);
     }
 
+    public void addSongMetadata(Song newSong) {
+        System.out.println("In addSongMetadata() Service.");
+        System.out.println(newSong);
+    }
+
+    /*
     public void updateSong(Song song, String artist, String album, String title) {
         for (int i = 0; i < songs.size(); i++) {
             Song s = songs.get(i);

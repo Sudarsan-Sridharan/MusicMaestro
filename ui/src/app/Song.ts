@@ -5,6 +5,6 @@ export class Song {
   title: String;
   album: String;
   artist: String;
-  year: number;
+  year: String;
   filePath: String;
 }

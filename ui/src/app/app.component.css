@@ -1,3 +1,8 @@
+input[type="file"] {
+  font-size: 11pt !important;
+  line-height: 0ex;
+}
+
 .text-center {
   text-align: center;
 }
@@ -10,6 +15,12 @@
 .text-list-title {
   font-size: 18pt;
   font-weight: normal;
+}
+
+table.extra-padding td {
+  padding-right: 20px;
+  padding-top: 5px;
+  padding-bottom: 5px;
 }
 
 a {

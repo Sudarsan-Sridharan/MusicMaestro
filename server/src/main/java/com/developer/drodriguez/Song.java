@@ -8,12 +8,12 @@ public class Song {
     private String title;
     private String album;
     private String artist;
-    private int year;
+    private String year;
     private String filePath;
 
     public Song() {}
 
-    public Song(String title, String album, String artist, int year) {
+    public Song(String title, String album, String artist, String year) {
         this.title = title;
         this.album = album;
         this.artist = artist;
@@ -44,11 +44,11 @@ public class Song {
         this.artist = artist;
     }
 
-    public int getYear() {
+    public String getYear() {
         return year;
     }
 
-    public void setYear(int year) {
+    public void setYear(String year) {
         this.year = year;
     }
 
