@@ -13,9 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.swing.*;
-import java.io.File;
-import java.io.IOException;
-import java.io.RandomAccessFile;
+import java.io.*;
 import java.util.*;
 
 /**
@@ -154,26 +152,96 @@ public class SongService {
             }
         }
 
-            //If file does not contain an image, then provide placeholder.
-            ClassPathResource noImgFoundFile = new ClassPathResource("no-album-art.jpg");
+        //If file does not contain an image, then provide placeholder.
+        ClassPathResource noImgFoundFile = new ClassPathResource("no-album-art.jpg");
 
-            return ResponseEntity
-                    .ok()
-                    .contentLength(noImgFoundFile.contentLength())
-                    .contentType(MediaType.parseMediaType("image/jpeg"))
-                    .body(new InputStreamResource(noImgFoundFile.getInputStream()));
+        return ResponseEntity
+                .ok()
+                .contentLength(noImgFoundFile.contentLength())
+                .contentType(MediaType.parseMediaType("image/jpeg"))
+                .body(new InputStreamResource(noImgFoundFile.getInputStream()));
 
-    }
-
-    public void addSongFile(MultipartFile file) {
-        System.out.println("In addSongFile() Service.");
-        System.out.println(file);
     }
 
     public void addSongMetadata(Song newSong) {
-        System.out.println("In addSongMetadata() Service.");
-        System.out.println(newSong);
+        //Replace any existing songs.
+        for (int i = 0; i < songs.size(); i++) {
+            Song s = songs.get(i);
+            if (s.getArtist().equals(newSong.getArtist()) && s.getAlbum().equals(newSong.getAlbum()) && s.getTitle().equals(newSong.getTitle())) {
+                songs.set(i, newSong);
+                return;
+            }
+        }
+        songs.add(newSong);
     }
+
+    public void addSongFile(MultipartFile file, String artist, String album, String songTitle) throws IOException{
+        String originalFileName = file.getOriginalFilename();
+        String fileType = originalFileName.substring(originalFileName.lastIndexOf(".") + 1, originalFileName.length());
+        String filePath = libraryPath + "/" + artist + "/" + album;
+        String fileName = songTitle + "." + fileType;
+        String fullPath = filePath + "/" + fileName;
+
+        //Create any non-existing directories for file.
+        File newDirs = new File(filePath);
+        if (!newDirs.exists())
+            newDirs.mkdirs();
+
+        File newFile = new File(fullPath);
+
+        //Replace any existing files.
+        if (newFile.exists())
+            newFile.delete();
+        newFile.createNewFile();
+
+        //Write bytes to the new, empty file.
+        byte bytes [] = file.getBytes();
+        BufferedOutputStream bout=new BufferedOutputStream(new FileOutputStream(newFile));
+        bout.write(bytes);
+        bout.flush();
+        bout.close();
+
+        //Add file path to the given song in the songs list.
+        for (int i = 0; i < songs.size(); i++) {
+            Song s = songs.get(i);
+            if (s.getArtist().equals(artist) && s.getAlbum().equals(album) && s.getTitle().equals(songTitle)) {
+                songs.get(i).setFilePath(fullPath);
+                return;
+            }
+        }
+    }
+
+    public void deleteSong(String artist, String album, String songTitle) {
+        String filePath = null;
+        for (int i = 0; i < songs.size(); i++) {
+            Song s = songs.get(i);
+            if (s.getArtist().equals(artist) && s.getAlbum().equals(album) && s.getTitle().equals(songTitle)) {
+                filePath = songs.get(i).getFilePath();
+                songs.remove(i);
+                break;
+            }
+        }
+        removeFiles(filePath);
+    }
+
+
+    //Delete song (if exists), as well as the album folder and the artist folder (if empty).
+    public void removeFiles(String filePath) {
+        File songFile = new File(filePath);
+        File albumFolder = songFile.getParentFile();
+        File artistFolder = albumFolder.getParentFile();
+        if (songFile.isFile())
+            if (songFile.exists())
+                songFile.delete();
+        if (albumFolder.isDirectory())
+            if (albumFolder.list().length == 0)
+                albumFolder.delete();
+        if (artistFolder.isDirectory())
+            if (artistFolder.list().length == 0)
+                artistFolder.delete();
+    }
+
+}
 
     /*
     public void updateSong(Song song, String artist, String album, String title) {
@@ -186,12 +254,5 @@ public class SongService {
         }
     }
 
-    public List<Song> deleteSong(String id) {
-        for (int i = 0; i < songs.size(); i++)
-            if (songs.get(i).getTitle().equals(id))
-                songs.remove(i);
-        return getAllSongs();
-    }
-    */
 
-}
+    */

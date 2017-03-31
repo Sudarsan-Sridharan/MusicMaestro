@@ -66,7 +66,7 @@ public class Song {
                 "title='" + title + '\'' +
                 ", album='" + album + '\'' +
                 ", artist='" + artist + '\'' +
-                ", year=" + year +
+                ", year='" + year + '\'' +
                 ", filePath='" + filePath + '\'' +
                 '}';
     }

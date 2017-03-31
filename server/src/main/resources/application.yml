@@ -1,6 +1,7 @@
 library:
-  path: "/Daniel/Music/library"
+  path: "/Users/Daniel/Music/library"
 spring:
   http:
     multipart:
-      maxFileSize: 10MB
+      maxFileSize: 50MB
+      max-request-size: 50MB

@@ -12,7 +12,7 @@ export class AppComponent implements OnInit {
 
   constructor(private songService: SongService) {}
 
-  isCollapsed: Array<Boolean> = [false, false]; //Used to keep one menu button active.
+  isCollapsed: Array<Boolean> = [true, true]; //Used to keep one menu button active.
   artistList: Array<String>;
   albumList: Array<String>;
   songTitleList: Array<String>;
@@ -23,6 +23,7 @@ export class AppComponent implements OnInit {
   songPlayback;
   songArtworkSrc: String;
   newSong: Song = {title: null, album: null, artist: null, year: null, filePath: null};
+  //newSong: Song = {title: 'Reelin\' and Rockin\'', album: 'The Definitive Collection', artist: 'Chuck Berry', year: null, filePath: null};
   newSongFile: FileList;
 
   ngOnInit() {
@@ -66,14 +67,28 @@ export class AppComponent implements OnInit {
   }
 
   addSong() {
-    this.songService.addSongFile(this.newSongFile).subscribe( () => {
-      this.songService.addSongMetadata(this.newSong).subscribe( () => {
+    this.songService.addSongMetadata(this.newSong).subscribe( () => {
+      this.songService.addSongFile(this.newSongFile, this.newSong).subscribe( () => {
         //Clear any previous selections and refresh cached artist list.
         this.selectedArtist = null;
         this.selectedAlbum = null;
         this.selectedSong = null;
+        this.newSong = {title: null, album: null, artist: null, year: null, filePath: null};
         this.getArtistList();
       });
+    });
+  }
+
+  removeSong(i: number) {
+    this.songService.removeSong(this.currentSong).subscribe( () => {
+      this.songPlayback.pause();
+      this.songPlayback.remove();
+      this.selectedArtist = null;
+      this.selectedAlbum = null;
+      this.selectedSong = null;
+      this.songPlayback = null;
+      this.currentSong = null;
+      this.getArtistList();
     });
   }
 
@@ -83,12 +98,6 @@ addSong(songTitleList: Song[]) {
 this.songService.addSong(this.newSong).subscribe(song => this.allSongs = song);
 console.log(this.allSongs);
 }
-
-removeSong(i: number) {
-this.songService.removeSong(this.allSongs[i].title).subscribe(song => this.allSongs = song);
-console.log(this.allSongs);
-}
-
 
 updateSong() {
 this.songService.updateSong(this.newSong).subscribe(song => this.songTitleList = song);

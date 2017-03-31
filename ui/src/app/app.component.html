@@ -2,15 +2,15 @@
   <div class="row">
     <div class="col-md-offset-1">
       <button type="button" class="btn btn-default" data-toggle="collapse" data-target="#songSelect"
-      (click)="isCollapsed = [false, true]">Select a Song</button>
+      (click)="isCollapsed = [false, true]" [ngClass]="isCollapsed[0] == false ? 'active' : ''">Select a Song</button>
       <button type="button" class="btn btn-default" data-toggle="collapse" data-target="#addSong"
-      (click)="isCollapsed = [true, false]">Add a Song</button>
+      (click)="isCollapsed = [true, false]" [ngClass]="isCollapsed[1] == false ? 'active' : ''">Add a Song</button>
     </div>
   </div>
   <div id="songSelect" class="collapse" *ngIf="!isCollapsed[0]">
     <br />
     <div class="row text-list">
-      <div class="col-md-2 col-md-offset-1">
+      <div class="col-md-3 col-md-offset-1">
         <div class="text-list-title">Artists</div>
         <ul class="hide-bullets">
           <span *ngFor="let artist of artistList">
@@ -18,7 +18,7 @@
           </span>
         </ul>
       </div>
-      <div class="col-md-2" *ngIf="selectedArtist != null">
+      <div class="col-md-3" *ngIf="selectedArtist != null">
         <div class="text-list-title">Albums</div>
         <ul class="hide-bullets">
           <span *ngFor="let album of albumList">
@@ -26,7 +26,7 @@
           </span>
         </ul>
       </div>
-      <div class="col-md-2" *ngIf="selectedAlbum != null" >
+      <div class="col-md-4" *ngIf="selectedAlbum != null" >
         <div class="text-list-title">Songs</div>
         <ul class="hide-bullets">
           <span *ngFor="let songTitle of songTitleList">
@@ -39,31 +39,34 @@
   <div id="addSong" class="collapse" *ngIf="!isCollapsed[1]">
     <br />
     <div class="row">
-      <div class="col-md-4 col-md-offset-1">
+      <div class="col-md-8 col-md-offset-1">
         <table class="extra-padding text-list">
-          <tr>
-            <td>Title:</td>
-            <td><input type="text" [(ngModel)]="newSong.title"></td>
-          </tr>
-          <tr>
-            <td>Artist:</td>
-            <td><input type="text" [(ngModel)]="newSong.album"></td>
-          </tr>
-          <tr>
-            <td>Album:</td>
-            <td><input type="text" [(ngModel)]="newSong.artist"></td>
-          </tr>
-          <tr>
-            <td>Year:</td>
-            <td><input type="text" [(ngModel)]="newSong.year"></td>
-          </tr>
           <tr>
             <td>File:</td>
             <td><input type="file" (change)="newSongFile = $event.target.files" placeholder="Upload a Song" accept=".mp3"></td>
           </tr>
+          <tr>
+            <td>Title:</td>
+            <td><input type="text" class="form-control input-lg" [(ngModel)]="newSong.title"></td>
+          </tr>
+          <tr>
+            <td>Album:</td>
+            <td><input type="text" class="form-control input-lg" [(ngModel)]="newSong.album"></td>
+          </tr>
+          <tr>
+            <td>Artist:</td>
+            <td><input type="text" class="form-control input-lg" [(ngModel)]="newSong.artist"></td>
+          </tr>
+          <tr>
+            <td>Year:</td>
+            <td><input type="text" class="form-control input-lg" [(ngModel)]="newSong.year"></td>
+          </tr>
         </table>
         <br />
-        <button class="btn btn-default btn-sm" (click)="addSong()">Upload</button>
+        <button class="btn btn-default btn-sm" [disabled]="newSongFile == null || newSong.title == null
+        || newSong.title == '' || newSong.album == null || newSong.album == ''
+        || newSong.artist == null || newSong.artist == ''"
+        (click)="addSong()">Upload</button>
       </div>
     </div>
   </div>
@@ -77,12 +80,17 @@
   <div class="row">
     <div class="col-md-4">
       <img class="img-responsive" [src]="songArtworkSrc">
-      <br />
-      <button class="btn btn-default" (click)="songPlayback.play()">Play</button>
-      <button class="btn btn-default" (click)="songPlayback.pause()">Pause</button>
     </div>
     <div class="col-md-6">
       <table>
+        <tr>
+          <td>
+            <br />
+            <button class="btn btn-default btn-primary" (click)="songPlayback.play()">Play</button>
+            <button class="btn btn-default btn-primary" (click)="songPlayback.pause()">Pause</button>
+            <button class="btn btn-default btn-danger" (click)="removeSong()">Delete</button>
+          </td>
+        </tr>
         <tr>
           <td><h2>{{currentSong.title}}</h2></td>
         </tr>

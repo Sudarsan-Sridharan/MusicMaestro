@@ -29,19 +29,23 @@ export class SongService {
     .map((response: Response) => response.json());
   }
 
-  addSongFile(fileList: FileList) {
+  addSongMetadata(newSong: Song) {
+    return this.http.post("http://localhost:8080/upload/metadata", newSong);
+  }
+
+  addSongFile(fileList: FileList, newSong: Song) {
     if(fileList.length > 0) {
       console.log("In addSong() 1");
       let file: File = fileList[0];
       console.log(file);
       let formData:FormData = new FormData();
       formData.append('file', file, file.name);
-      return this.http.post("http://localhost:8080/upload/file", formData);
+      return this.http.post("http://localhost:8080/upload/file/" + newSong.artist + "/" + newSong.album + "/" + newSong.title, formData);
     }
   }
 
-  addSongMetadata(newSong: Song) {
-    return this.http.post("http://localhost:8080/upload/metadata", newSong);
+  removeSong(song: Song) {
+    return this.http.delete("http://localhost:8080/library/" + song.artist + "/" + song.album + "/" + song.title);
   }
 
 }
@@ -54,11 +58,6 @@ return this.http.get("http://localhost:8080/library-all")
 
 addSong(song: Song) {
 return this.http.post("http://localhost:8080/library", song)
-.map((response: Response) => response.json());
-}
-
-removeSong(song: String) {
-return this.http.delete("http://localhost:8080/library/" + song)
 .map((response: Response) => response.json());
 }
 

@@ -59,27 +59,24 @@ public class SongController {
         return songService.getSongArtwork(artist, album, songTitle);
     }
 
-    @RequestMapping(method=RequestMethod.POST, value="/upload/file")
-    public void addSongFile(@RequestParam("file") MultipartFile file) {
-        System.out.println("In addSongFile() Controller.");
-        System.out.println(file.getName());
-        System.out.println(file.getSize());
-        songService.addSongFile(file);
-    }
-
     @RequestMapping(method=RequestMethod.POST, value="/upload/metadata")
     public void addSongMetadata(@RequestBody Song newSong) {
-        System.out.println("In addSongMetadata Controller.");
-        System.out.println(newSong);
         songService.addSongMetadata(newSong);
     }
 
-    /*
-    @RequestMapping(method=RequestMethod.DELETE, value="/library/{id}")
-    public List<Song> deleteSong(@PathVariable String id) {
-        return songService.deleteSong(id);
+    @RequestMapping(method=RequestMethod.POST, value="/upload/file/{artist}/{album}/{songTitle}")
+    public void addSongFile(@RequestParam("file") MultipartFile file, @PathVariable("artist") String artist, @PathVariable("album") String album,
+                            @PathVariable("songTitle") String songTitle) throws IOException {
+        songService.addSongFile(file, artist, album, songTitle);
     }
 
+    @RequestMapping(method=RequestMethod.DELETE, value="/library/{artist}/{album}/{songTitle}")
+    public void deleteSong(@PathVariable("artist") String artist, @PathVariable("album") String album,
+                                 @PathVariable("songTitle") String songTitle) {
+        songService.deleteSong(artist, album, songTitle);
+    }
+
+    /*
     @RequestMapping(method=RequestMethod.GET, value="/library-all")
     public List<Song> getAllSongs() {
         return songService.getAllSongs();
