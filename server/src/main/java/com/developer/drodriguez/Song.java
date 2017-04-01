@@ -20,6 +20,14 @@ public class Song {
         this.year = year;
     }
 
+    public Song(String title, String album, String artist, String year, String filePath) {
+        this.title = title;
+        this.album = album;
+        this.artist = artist;
+        this.year = year;
+        this.filePath = filePath;
+    }
+
     public String getTitle() {
         return title;
     }

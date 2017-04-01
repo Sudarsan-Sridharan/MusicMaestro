@@ -1,8 +1,11 @@
 package com.developer.drodriguez;
 
 import com.mpatric.mp3agic.InvalidDataException;
+import com.mpatric.mp3agic.NoSuchTagException;
+import com.mpatric.mp3agic.NotSupportedException;
 import com.mpatric.mp3agic.UnsupportedTagException;
 import jdk.nashorn.internal.objects.NativeJSON;
+import org.omg.CORBA.DynAnyPackage.Invalid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.InputStreamResource;
@@ -54,20 +57,23 @@ public class SongController {
     }
 
     @RequestMapping(method=RequestMethod.GET, value="/artwork/{artist}/{album}/{songTitle}")
-    public ResponseEntity<InputStreamResource> getSongArtwork(@PathVariable("artist") String artist, @PathVariable("album") String album,
-                                                           @PathVariable("songTitle") String songTitle) throws IOException, UnsupportedTagException, InvalidDataException {
+    public ResponseEntity<InputStreamResource> getSongArtwork(@PathVariable("artist") String artist,
+                                                              @PathVariable("album") String album,
+                                                              @PathVariable("songTitle") String songTitle)
+            throws IOException, UnsupportedTagException, InvalidDataException {
         return songService.getSongArtwork(artist, album, songTitle);
     }
 
-    @RequestMapping(method=RequestMethod.POST, value="/upload/metadata")
-    public void addSongMetadata(@RequestBody Song newSong) {
-        songService.addSongMetadata(newSong);
+    @RequestMapping(method=RequestMethod.POST, value="/upload/file")
+    public Song addSongFile(@RequestParam("file") MultipartFile file)
+            throws IOException, UnsupportedTagException, InvalidDataException, NoSuchTagException {
+        return songService.addSongFile(file);
     }
 
-    @RequestMapping(method=RequestMethod.POST, value="/upload/file/{artist}/{album}/{songTitle}")
-    public void addSongFile(@RequestParam("file") MultipartFile file, @PathVariable("artist") String artist, @PathVariable("album") String album,
-                            @PathVariable("songTitle") String songTitle) throws IOException {
-        songService.addSongFile(file, artist, album, songTitle);
+    @RequestMapping(method=RequestMethod.PUT, value="/library")
+    public void updateSongInfo(@RequestBody Song song)
+            throws IOException, InvalidDataException, NotSupportedException, UnsupportedTagException {
+        songService.updateSongInfo(song);
     }
 
     @RequestMapping(method=RequestMethod.DELETE, value="/library/{artist}/{album}/{songTitle}")

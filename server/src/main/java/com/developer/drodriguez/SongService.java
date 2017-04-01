@@ -28,52 +28,6 @@ public class SongService {
     @Value("${library.path}")
     private String libraryPath;
 
-    SongService() throws IOException {
-        Song song1 = new Song("Jesus of Suburbia", "American Idiot", "Green Day", "2004");
-        song1.setFilePath("/Users/Daniel/Music/library/Green Day/American Idiot/Jesus of Suburbia.mp3");
-        Song song2 = new Song("Empire", "Set Sail the Prairie", "Kaddisfly", "2007");
-        song2.setFilePath("/Users/Daniel/Music/library/Kaddisfly/Set Sail the Prairie/Empire.mp3");
-        Song song3 = new Song("Dream On", "Aerosmith", "Aerosmith", "1973");
-        song3.setFilePath("/Users/Daniel/Music/library/Aerosmith/Aerosmith/Dream On.mp3");
-        Song song4 = new Song("Holiday", "American Idiot", "Green Day", "2004");
-        song4.setFilePath("/Users/Daniel/Music/library/Green Day/American Idiot/Holiday.mp3");
-        Song song5 = new Song("Basket Case", "Dookie", "Green Day", "1994");
-        song5.setFilePath("/Users/Daniel/Music/library/Green Day/Dookie/Basket Case.mp3");
-        songs.add(song1);
-        songs.add(song2);
-        songs.add(song3);
-        songs.add(song4);
-        songs.add(song5);
-    }
-
-    /*
-    public List<Song> getAllSongs() {
-        return songs;
-    }
-
-    public List<Song> getSong(String artist) {
-        List<Song> list = new ArrayList<>();
-        for (int i = 0; i < songs.size(); i++)
-            if (songs.get(i).getArtist().equals(artist))
-                list.add(songs.get(i));
-        if (!list.isEmpty())
-            return list;
-        else
-            return null;
-    }
-
-    public List<Song> getSong(String artist, String album) {
-        List<Song> list = new ArrayList<>();
-        for (int i = 0; i < songs.size(); i++)
-            if (songs.get(i).getArtist().equals(artist) && songs.get(i).getAlbum().equals(album))
-                list.add(songs.get(i));
-        if (!list.isEmpty())
-            return list;
-        else
-            return null;
-    }
-    */
-
     //Return unique list of artists
     public Set<String> getArtists() {
         Set<String> set = new TreeSet<>();
@@ -128,10 +82,6 @@ public class SongService {
 
         if (songData.hasId3v2Tag()) {
             ID3v2 songTags = songData.getId3v2Tag();
-            System.out.println(songTags.getArtist());
-            System.out.println(songTags.getTitle());
-            System.out.println(songTags.getAlbum());
-            System.out.println(songTags.getYear());
 
             imageData = songTags.getAlbumImage();
             if (imageData != null) {
@@ -163,52 +113,102 @@ public class SongService {
 
     }
 
-    public void addSongMetadata(Song newSong) {
-        //Replace any existing songs.
-        for (int i = 0; i < songs.size(); i++) {
-            Song s = songs.get(i);
-            if (s.getArtist().equals(newSong.getArtist()) && s.getAlbum().equals(newSong.getAlbum()) && s.getTitle().equals(newSong.getTitle())) {
-                songs.set(i, newSong);
-                return;
-            }
+    public Song addSongFile(MultipartFile file)
+            throws IOException, UnsupportedTagException, InvalidDataException, NoSuchTagException {
+
+        File tempFile = convertMultipartToFile(file);
+        Mp3File mp3 = new Mp3File(tempFile);
+
+        if (mp3.hasId3v2Tag()) {
+
+            ID3v2 tag = mp3.getId3v2Tag();
+
+            String artist = tag.getArtist();
+            String album = tag.getAlbum();
+            String songTitle = tag.getTitle();
+            String year = tag.getYear();
+            String originalFileName = file.getOriginalFilename();
+            String fileType = originalFileName.substring(originalFileName.lastIndexOf(".") + 1, originalFileName.length());
+            String filePath = libraryPath + "/" + artist + "/" + album;
+            String fileName = songTitle + "." + fileType;
+            String fullPath = filePath + "/" + fileName;
+
+            tempFile.delete();
+
+            Song newSong = new Song(songTitle, album, artist, year, fullPath);
+            songs.add(newSong);
+
+            //Create any non-existing directories for file.
+            File newDirs = new File(filePath);
+            if (!newDirs.exists())
+                newDirs.mkdirs();
+
+            File newFile = new File(fullPath);
+
+            //Replace any existing files.
+            if (newFile.exists())
+                newFile.delete();
+            newFile.createNewFile();
+
+            //Write bytes to the new, empty file.
+            byte[] bytes = file.getBytes();
+            BufferedOutputStream bout = new BufferedOutputStream(new FileOutputStream(newFile));
+            bout.write(bytes);
+            bout.flush();
+            bout.close();
+
+            return newSong;
+
         }
-        songs.add(newSong);
+
+        else {
+            throw new NoSuchTagException("Could not find a ID3v2 tag for the uploaded file.");
+        }
+
     }
 
-    public void addSongFile(MultipartFile file, String artist, String album, String songTitle) throws IOException{
-        String originalFileName = file.getOriginalFilename();
-        String fileType = originalFileName.substring(originalFileName.lastIndexOf(".") + 1, originalFileName.length());
-        String filePath = libraryPath + "/" + artist + "/" + album;
-        String fileName = songTitle + "." + fileType;
+    public void updateSongInfo(Song song) throws IOException, UnsupportedTagException, InvalidDataException, NotSupportedException {
+
+        String originalFilePath = song.getFilePath();
+        String fileType = originalFilePath.substring(originalFilePath.lastIndexOf(".") + 1, originalFilePath.length());
+        String filePath = libraryPath + "/" + song.getArtist() + "/" + song.getAlbum();
+        String fileName = song.getTitle() + "." + fileType;
         String fullPath = filePath + "/" + fileName;
 
-        //Create any non-existing directories for file.
-        File newDirs = new File(filePath);
-        if (!newDirs.exists())
-            newDirs.mkdirs();
+        File file = new File(song.getFilePath());
+        Mp3File mp3 = new Mp3File(file);
 
-        File newFile = new File(fullPath);
+        if (mp3.hasId3v2Tag()) {
+            byte[] albumImageBytes = mp3.getId3v2Tag().getAlbumImage();
+            String albumImageMime = mp3.getId3v2Tag().getAlbumImageMimeType();
+            mp3.removeId3v2Tag();
+            ID3v2 tag = new ID3v24Tag();
+            tag.setTitle(song.getTitle());
+            tag.setArtist(song.getArtist());
+            tag.setAlbum(song.getAlbum());
+            tag.setYear(song.getYear());
+            tag.setAlbumImage(albumImageBytes, albumImageMime);
+            mp3.setId3v2Tag(tag);
+            //Only delete if the song title, album, or artist was modified by the user.
+            if (!song.getFilePath().equals(fullPath)) {
+                mp3.save(fullPath);
+                file.delete();
+            }
+        } else {
+            throw new UnsupportedTagException("The associated file does not have a valid ID3v2 tag.");
+        }
 
-        //Replace any existing files.
-        if (newFile.exists())
-            newFile.delete();
-        newFile.createNewFile();
-
-        //Write bytes to the new, empty file.
-        byte bytes [] = file.getBytes();
-        BufferedOutputStream bout=new BufferedOutputStream(new FileOutputStream(newFile));
-        bout.write(bytes);
-        bout.flush();
-        bout.close();
-
-        //Add file path to the given song in the songs list.
         for (int i = 0; i < songs.size(); i++) {
             Song s = songs.get(i);
-            if (s.getArtist().equals(artist) && s.getAlbum().equals(album) && s.getTitle().equals(songTitle)) {
-                songs.get(i).setFilePath(fullPath);
+            if (s.getFilePath().equals(originalFilePath)) {
+                song.setFilePath(fullPath);
+                songs.set(i, song);
                 return;
             }
         }
+
+
+
     }
 
     public void deleteSong(String artist, String album, String songTitle) {
@@ -241,18 +241,20 @@ public class SongService {
                 artistFolder.delete();
     }
 
+    public File convertMultipartToFile(MultipartFile file) throws IOException
+    {
+        File convFile = new File(file.getOriginalFilename());
+        convFile.createNewFile();
+        FileOutputStream fos = new FileOutputStream(convFile);
+        fos.write(file.getBytes());
+        fos.close();
+        return convFile;
+    }
+
 }
 
     /*
-    public void updateSong(Song song, String artist, String album, String title) {
-        for (int i = 0; i < songs.size(); i++) {
-            Song s = songs.get(i);
-            if (s.getArtist().equals(artist) && s.getAlbum().equals(album) && s.getTitle().equals(title)) {
-                songs.set(i, song);
-                return;
-            }
-        }
-    }
+
 
 
     */

@@ -1,5 +1,5 @@
 input[type="file"] {
-  font-size: 11pt !important;
+  font-size: 11pt;
   line-height: 0ex;
 }
 
@@ -17,10 +17,27 @@ input[type="file"] {
   font-weight: normal;
 }
 
-table.extra-padding td {
-  padding-right: 20px;
-  padding-top: 5px;
-  padding-bottom: 5px;
+.text-list p {
+  font-size: 16pt;
+  font-weight: lighter;
+}
+
+.checkbox-text label {
+  font-size: 10pt;
+  font-weight: lighter;
+  font-style: italic;
+}
+
+.extra-padding .row {
+  margin-bottom: 10px;
+}
+
+@media(min-width: 992px) {
+  .vcenter .row div {
+    display: inline-block;
+    vertical-align: middle;
+    float: none;
+  }
 }
 
 a {
