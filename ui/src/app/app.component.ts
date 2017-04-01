@@ -53,42 +53,45 @@ export class AppComponent implements OnInit {
   getSong(song: String) {
     this.selectedSong = song;
     this.songService.getSong(this.selectedArtist, this.selectedAlbum, song)
-    .subscribe(song => {
-      this.getSongPlayback(song);
-    });
+    .subscribe(song => this.getSongPlayback(song));
   }
 
   getSongPlayback(song) {
     if (this.songPlayback == null) { this.songPlayback = new Audio(); }
-    this.getSongArtwork();
+    this.getSongArtwork(song);
     this.currentSong = song;
-    this.songPlayback.src = "http://localhost:8080/playback/" + this.selectedArtist + "/" + this.selectedAlbum + "/" + this.selectedSong;
+    this.songPlayback.src = "http://localhost:8080/playback/" + song.artist + "/" + song.album + "/" + song.title;
     this.songPlayback.load();
     this.songPlayback.play();
   }
 
-  getSongArtwork() {
-    this.songArtworkSrc = "http://localhost:8080/artwork/" + this.selectedArtist + "/" + this.selectedAlbum + "/" + this.selectedSong;
+  getSongArtwork(song) {
+    this.songArtworkSrc = "http://localhost:8080/artwork/" + song.artist + "/" + song.album + "/" + song.title;
   }
 
   addSong(files: FileList) {
     this.newSongFiles = files;
     this.songService.addSong(this.newSongFiles).subscribe( newSong => {
       this.newSong = newSong;
-      //Clear any previous selections and refresh cached artist list.
       this.getArtistList();
     });
   }
 
-  updateSongInfo() {
+  updateNewSongInfo() {
     this.songService.updateSongInfo(this.newSong).subscribe( () => {
       this.newSongFiles = null;
       if (this.hasNewSongPlayRequest) {
-        this.goToPlayback(this.newSong.artist, this.newSong.album, this.newSong.title);
+        this.getSongPlayback(this.newSong);
+        this.refreshLists(this.newSong.artist, this.newSong.album, this.newSong.title);
         this.hasNewSongPlayRequest = false;
       }
       this.resetSong(this.newSong);
     });
+  }
+
+  updateCurrentSongInfo() {
+    this.songService.updateSongInfo(this.currentSong).subscribe();
+    this.refreshLists(this.currentSong.artist, this.currentSong.album, this.currentSong.title);
   }
 
   removeSong(i: number) {
@@ -108,25 +111,14 @@ export class AppComponent implements OnInit {
     this.newSong = {title: null, album: null, artist: null, year: null, filePath: null};
   }
 
-  goToPlayback(artist: String, album: String, title: String) {
+  refreshLists(artist: String, album: String, title: String) {
     this.isCollapsed = [true, true, true];
     this.selectedArtist = artist;
     this.selectedAlbum = album;
     this.selectedSong = title;
-    this.getSongPlayback(this.newSong);
     this.getArtistList();
     this.getAlbumList(artist);
     this.getSongList(album);
   }
 
 }
-/*
-addSong(songTitleList: Song[]) {
-this.songService.addSong(this.newSong).subscribe(song => this.allSongs = song);
-console.log(this.allSongs);
-}
-
-updateSong() {
-this.songService.updateSong(this.newSong).subscribe(song => this.songTitleList = song);
-}
-*/

@@ -96,7 +96,7 @@
             <button class="btn btn-default btn-sm" [disabled]="newSongFiles == null || newSong.title == null
             || newSong.title == '' || newSong.album == null || newSong.album == ''
             || newSong.artist == null || newSong.artist == ''"
-            (click)="updateSongInfo()">Save</button>
+            (click)="updateNewSongInfo()">Save</button>
           </div>
           <div class="col-md-1">
             <div class="checkbox">
@@ -141,6 +141,14 @@
         <div class="col-md-4">
           <input type="text" class="form-control input-lg" [(ngModel)]="currentSong.year">
         </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-1 col-md-offset-1">
+        <button class="btn btn-default btn-sm" [disabled]="currentSong.title == null
+        || currentSong.title == '' || currentSong.album == null || currentSong.album == ''
+        || currentSong.artist == null || currentSong.artist == ''"
+        (click)="updateCurrentSongInfo()">Save</button>
       </div>
     </div>
   </div>
