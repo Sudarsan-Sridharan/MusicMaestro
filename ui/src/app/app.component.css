@@ -3,6 +3,11 @@ input[type="file"] {
   line-height: 0ex;
 }
 
+/* Enables tooltip on disabled buttons. */
+.btn[disabled] {
+ pointer-events: all !important;
+}
+
 .text-center {
   text-align: center;
 }

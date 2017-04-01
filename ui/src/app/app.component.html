@@ -2,9 +2,11 @@
   <div class="row">
     <div class="col-md-offset-1">
       <button type="button" class="btn btn-default" data-toggle="collapse" data-target="#songSelect"
-      (click)="isCollapsed = [false, true]" [ngClass]="isCollapsed[0] == false ? 'active' : ''">Song Library</button>
+      (click)="isCollapsed = [false, true, true]" [ngClass]="isCollapsed[0] == false ? 'active' : ''">Song Library</button>
       <button type="button" class="btn btn-default" data-toggle="collapse" data-target="#addSong"
-      (click)="isCollapsed = [true, false]" [ngClass]="isCollapsed[1] == false ? 'active' : ''">Add a Song</button>
+      (click)="isCollapsed = [true, false, true]" [ngClass]="isCollapsed[1] == false ? 'active' : ''">Add a Song</button>
+      <button type="button" class="btn btn-default" data-toggle="collapse" data-target="#editSong" [disabled]="currentSong == null"
+      (click)="isCollapsed = [true, true, false]" [ngClass]="isCollapsed[2] == false ? 'active' : ''">Edit Song</button>
     </div>
   </div>
   <div id="songSelect" class="collapse" *ngIf="!isCollapsed[0]">
@@ -98,9 +100,46 @@
           </div>
           <div class="col-md-1">
             <div class="checkbox">
-              <label><input type="checkbox" [(ngModel)]="hasPlayRequest" [checked]="hasPlayRequest">Play Song</label>
+              <label><input type="checkbox" [(ngModel)]="hasNewSongPlayRequest" [checked]="hasNewSongPlayRequest">Play Song</label>
             </div>
           </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="editSong" class="collapse" *ngIf="!isCollapsed[2]">
+    <br />
+    <div class="extra-padding text-list checkbox-text vcenter">
+      <div class="row">
+        <div class="col-md-1 col-md-offset-1">
+          Title:
+        </div>
+        <div class="col-md-4">
+          <input type="text" class="form-control input-lg" [(ngModel)]="currentSong.title">
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-1 col-md-offset-1">
+          Artist:
+        </div>
+        <div class="col-md-4">
+          <input type="text" class="form-control input-lg" [(ngModel)]="currentSong.artist">
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-1 col-md-offset-1">
+          Album:
+        </div>
+        <div class="col-md-4">
+          <input type="text" class="form-control input-lg" [(ngModel)]="currentSong.album">
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-1 col-md-offset-1">
+          Year:
+        </div>
+        <div class="col-md-4">
+          <input type="text" class="form-control input-lg" [(ngModel)]="currentSong.year">
         </div>
       </div>
     </div>

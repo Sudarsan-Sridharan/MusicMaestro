@@ -12,9 +12,9 @@ export class AppComponent implements OnInit {
 
   constructor(private songService: SongService) {}
 
-  isCollapsed: Array<Boolean> = [true, true]; //Used to keep one menu button active.
+  isCollapsed: Array<Boolean> = [true, true, true]; //Used to keep one menu button active.
   hasNoArtistList: Boolean = true;
-  hasPlayRequest: Boolean = true;
+  hasNewSongPlayRequest: Boolean = true;
   artistList: Array<String>;
   albumList: Array<String>;
   songTitleList: Array<String>;
@@ -83,9 +83,9 @@ export class AppComponent implements OnInit {
   updateSongInfo() {
     this.songService.updateSongInfo(this.newSong).subscribe( () => {
       this.newSongFiles = null;
-      if (this.hasPlayRequest) {
+      if (this.hasNewSongPlayRequest) {
         this.goToPlayback(this.newSong.artist, this.newSong.album, this.newSong.title);
-        this.hasPlayRequest = false;
+        this.hasNewSongPlayRequest = false;
       }
       this.resetSong(this.newSong);
     });
@@ -109,7 +109,7 @@ export class AppComponent implements OnInit {
   }
 
   goToPlayback(artist: String, album: String, title: String) {
-    this.isCollapsed = [true, true];
+    this.isCollapsed = [true, true, true];
     this.selectedArtist = artist;
     this.selectedAlbum = album;
     this.selectedSong = title;
