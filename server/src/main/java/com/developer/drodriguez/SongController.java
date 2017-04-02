@@ -16,6 +16,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
@@ -68,6 +70,13 @@ public class SongController {
     public Song addSongFile(@RequestParam("file") MultipartFile file)
             throws IOException, UnsupportedTagException, InvalidDataException, NoSuchTagException {
         return songService.addSongFile(file);
+    }
+
+    @RequestMapping(method=RequestMethod.POST, value="/upload/multiple-files")
+    public void addMultipleSongFiles(@RequestParam("fileList") List<MultipartFile> fileList)
+            throws IOException, UnsupportedTagException, InvalidDataException, NoSuchTagException {
+        for (MultipartFile file : fileList)
+            songService.addSongFile(file);
     }
 
     @RequestMapping(method=RequestMethod.PUT, value="/library")

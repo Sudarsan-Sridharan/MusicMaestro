@@ -1,12 +1,28 @@
 <div class="well">
   <div class="row">
     <div class="col-md-offset-1">
-      <button type="button" class="btn btn-default" data-toggle="collapse" data-target="#songSelect"
-      (click)="isCollapsed = [false, true, true]" [ngClass]="isCollapsed[0] == false ? 'active' : ''">Song Library</button>
-      <button type="button" class="btn btn-default" data-toggle="collapse" data-target="#addSong"
-      (click)="isCollapsed = [true, false, true]" [ngClass]="isCollapsed[1] == false ? 'active' : ''">Add a Song</button>
-      <button type="button" class="btn btn-default" data-toggle="collapse" data-target="#editSong" [disabled]="currentSong == null"
-      (click)="isCollapsed = [true, true, false]" [ngClass]="isCollapsed[2] == false ? 'active' : ''">Edit Song</button>
+      <div class="btn-group">
+        <button type="button" class="btn btn-default" data-toggle="collapse" data-target="#songSelect"
+        (click)="isCollapsed = [false, true, true, true]" [ngClass]="isCollapsed[0] == false ? 'active' : ''">Song Library</button>
+        <button type="button" class="btn btn-default" data-toggle="collapse" data-target="#editSong" [disabled]="currentSong == null"
+        (click)="isCollapsed = [true, false, true, true]" [ngClass]="isCollapsed[1] == false ? 'active' : ''">Edit Song</button>
+        <div class="btn-group">
+          <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" [ngClass]="isCollapsed[2] == false || isCollapsed[3] == false ? 'active' : ''">
+            Add a Song
+            <span class="caret"></span>
+          </button>
+          <ul class="dropdown-menu" role="menu">
+            <li>
+              <a href="#" data-toggle="collapse" data-target="#singleUpload"
+              (click)="isCollapsed = [true, true, false, true]">Single</a>
+            </li>
+            <li>
+              <a href="#" data-toggle="collapse" data-target="#multipleUpload"
+              (click)="isCollapsed = [true, true, true, false]">Multiple</a>
+            </li>
+          </ul>
+        </div>
+      </div>
     </div>
   </div>
   <div id="songSelect" class="collapse" *ngIf="!isCollapsed[0]">
@@ -14,7 +30,7 @@
     <div *ngIf="hasNoArtistList">
       <div class="row text-list">
         <div class="col-md-3 col-md-offset-1">
-          <p>[Your Library is Currently Empty]</p>
+          <p>Your library is currently empty.</p>
         </div>
       </div>
     </div>
@@ -36,7 +52,7 @@
             </span>
           </ul>
         </div>
-        <div class="col-md-4" *ngIf="selectedAlbum != null" >
+        <div class="col-md-5" *ngIf="selectedAlbum != null" >
           <div class="text-list-title">Songs</div>
           <ul class="hide-bullets">
             <span *ngFor="let songTitle of songTitleList">
@@ -47,8 +63,8 @@
       </div>
     </div>
   </div>
-  <div id="addSong" class="collapse" *ngIf="!isCollapsed[1]">
-    <br />
+  <br />
+  <div id="singleUpload" class="collapse" *ngIf="!isCollapsed[2]">
     <div class="extra-padding text-list checkbox-text vcenter">
       <div class="row">
         <div class="col-md-1 col-md-offset-1">
@@ -107,7 +123,19 @@
       </div>
     </div>
   </div>
-  <div id="editSong" class="collapse" *ngIf="!isCollapsed[2]">
+  <div id="multipleUpload" class="collapse" *ngIf="!isCollapsed[3]">
+    <div class="extra-padding text-list checkbox-text vcenter">
+      <div class="row">
+        <div class="col-md-1 col-md-offset-1">
+          Files:
+        </div>
+        <div class="col-md-4">
+          <input type="file" (change)="addMultipleSongs($event.target.files)" placeholder="Upload Songs" accept=".mp3" multiple>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="editSong" class="collapse" *ngIf="!isCollapsed[1]">
     <br />
     <div class="extra-padding text-list checkbox-text vcenter">
       <div class="row">
@@ -144,11 +172,14 @@
       </div>
     </div>
     <div class="row">
-      <div class="col-md-1 col-md-offset-1">
-        <button class="btn btn-default btn-sm" [disabled]="currentSong.title == null
-        || currentSong.title == '' || currentSong.album == null || currentSong.album == ''
-        || currentSong.artist == null || currentSong.artist == ''"
-        (click)="updateCurrentSongInfo()">Save</button>
+      <div class="col-md-2 col-md-offset-1">
+        <div class="btn-group">
+          <button class="btn btn-default btn-sm" [disabled]="currentSong.title == null
+          || currentSong.title == '' || currentSong.album == null || currentSong.album == ''
+          || currentSong.artist == null || currentSong.artist == ''"
+          (click)="updateCurrentSongInfo()">Save</button>
+          <button class="btn btn-default btn-danger btn-sm" (click)="removeSong()">Delete</button>
+        </div>
       </div>
     </div>
   </div>
@@ -168,9 +199,10 @@
         <tr>
           <td>
             <br />
-            <button class="btn btn-default btn-primary btn-sm" (click)="songPlayback.play()">Play</button>
-            <button class="btn btn-default btn-primary btn-sm" (click)="songPlayback.pause()">Pause</button>
-            <button class="btn btn-default btn-danger btn-sm" (click)="removeSong()">Delete</button>
+            <div class="btn-group">
+              <button class="btn btn-default btn-primary btn-sm" (click)="songPlayback.play()">Play</button>
+              <button class="btn btn-default btn-primary btn-sm" (click)="songPlayback.pause()">Pause</button>
+            </div>
           </td>
         </tr>
         <tr>
@@ -188,4 +220,5 @@
       </table>
     </div>
   </div>
-  <br />
+</div>
+<br />

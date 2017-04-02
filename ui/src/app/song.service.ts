@@ -31,13 +31,22 @@ export class SongService {
 
   addSong(fileList: FileList) {
     if(fileList.length > 0) {
-      console.log("In addSong() 1");
       let file: File = fileList[0];
-      console.log(file);
       let formData:FormData = new FormData();
       formData.append('file', file, file.name);
       return this.http.post("http://localhost:8080/upload/file", formData)
         .map((response: Response) => response.json());
+    }
+  }
+
+  addMultipleSongs(fileList: FileList) {
+    if(fileList.length > 0) {
+      let formData:FormData = new FormData();
+      for (let i = 0; i < fileList.length; i++) {
+        formData.append('fileList', fileList[i], fileList[i].name);
+      }
+      console.log("in addMultipleSongs()");
+      return this.http.post("http://localhost:8080/upload/multiple-files", formData);
     }
   }
 

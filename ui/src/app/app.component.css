@@ -8,17 +8,17 @@ input[type="file"] {
 }
 
 .text-list {
-  font-size: 16pt;
+  font-size: 14pt;
   font-weight: lighter;
 }
 
 .text-list-title {
-  font-size: 18pt;
+  font-size: 16pt;
   font-weight: normal;
 }
 
 .text-list p {
-  font-size: 16pt;
+  font-size: 14pt;
   font-weight: lighter;
 }
 

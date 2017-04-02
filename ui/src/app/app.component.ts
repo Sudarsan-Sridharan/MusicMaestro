@@ -12,7 +12,7 @@ export class AppComponent implements OnInit {
 
   constructor(private songService: SongService) {}
 
-  isCollapsed: Array<Boolean> = [true, true, true]; //Used to keep one menu button active.
+  isCollapsed: Array<Boolean> = [true, true, true, true, true]; //Used to keep one menu button active.
   hasNoArtistList: Boolean = true;
   hasNewSongPlayRequest: Boolean = true;
   artistList: Array<String>;
@@ -77,6 +77,12 @@ export class AppComponent implements OnInit {
     });
   }
 
+  addMultipleSongs(files: FileList) {
+    this.songService.addMultipleSongs(files).subscribe( () => {
+      this.refreshLists(this.newSong.artist, this.newSong.album, this.newSong.title);
+    });
+  }
+
   updateNewSongInfo() {
     this.songService.updateSongInfo(this.newSong).subscribe( () => {
       this.newSongFiles = null;
@@ -98,12 +104,9 @@ export class AppComponent implements OnInit {
     this.songService.removeSong(this.currentSong).subscribe( () => {
       this.songPlayback.pause();
       this.songPlayback.remove();
-      this.selectedArtist = null;
-      this.selectedAlbum = null;
-      this.selectedSong = null;
       this.songPlayback = null;
       this.currentSong = null;
-      this.getArtistList();
+      this.refreshLists(null, null, null);
     });
   }
 
@@ -112,7 +115,7 @@ export class AppComponent implements OnInit {
   }
 
   refreshLists(artist: String, album: String, title: String) {
-    this.isCollapsed = [true, true, true];
+    this.isCollapsed = [true, true, true, true, true];
     this.selectedArtist = artist;
     this.selectedAlbum = album;
     this.selectedSong = title;
