@@ -12,7 +12,10 @@ export class AppComponent implements OnInit {
 
   constructor(private songService: SongService) {}
 
-  isCollapsed: Array<Boolean> = [true, true, true, true, true]; //Used to keep one menu button active.
+  //Keeps one menu section active at a time:
+  //["Music Library", "Edit Song", "Add a Song"->"Single", "Add a Song"->"Multiple"]
+  isActiveSection: Array<Boolean> = [false, false, false, false];
+
   hasNoArtistList: Boolean = true;
   hasNewSongPlayRequest: Boolean = true;
   artistList: Array<String>;
@@ -115,7 +118,7 @@ export class AppComponent implements OnInit {
   }
 
   refreshLists(artist: String, album: String, title: String) {
-    this.isCollapsed = [true, true, true, true, true];
+    this.isActiveSection = [false, false, false, false];
     this.selectedArtist = artist;
     this.selectedAlbum = album;
     this.selectedSong = title;
