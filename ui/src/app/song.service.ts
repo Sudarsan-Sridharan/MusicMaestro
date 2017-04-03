@@ -1,7 +1,9 @@
 import { Injectable } from '@angular/core';
 import { Http, Response, Headers, RequestOptions } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
-import { Song } from './Song';
+import { Artist } from './model/Artist';
+import { Album } from './model/Album';
+import { Song } from './model/Song';
 import 'rxjs/add/operator/map';
 
 @Injectable()
@@ -9,45 +11,31 @@ export class SongService {
 
   constructor(private http: Http) { }
 
-  getArtistList() {
+  getArtists() {
     return this.http.get("http://localhost:8080/library")
-      .map((response: Response) => response.json());
+    .map((response: Response) => response.json());
   }
 
-  getAlbumList(artist: String) {
-    return this.http.get("http://localhost:8080/library/" + artist)
-      .map((response: Response) => response.json());
+  getAlbums(artistId: number) {
+    return this.http.get("http://localhost:8080/library/" + artistId)
+    .map((response: Response) => response.json());
   }
 
-  getSongList(artist: String, album: String) {
-    return this.http.get("http://localhost:8080/library/" + artist + "/" + album)
-      .map((response: Response) => response.json());
+  getSongs(artistId: number, albumId: number) {
+    return this.http.get("http://localhost:8080/library/" + artistId + "/" + albumId)
+    .map((response: Response) => response.json());
   }
 
-  getSong(artist: String, album: String, song: String) {
-    return this.http.get("http://localhost:8080/library/" + artist + "/" + album + "/" + song)
-      .map((response: Response) => response.json());
+  getSong(artistId: number, albumId: number, songId: number) {
+    return this.http.get("http://localhost:8080/library/" + artistId + "/" + albumId + "/" + songId)
+    .map((response: Response) => response.json());
   }
 
-  addSong(fileList: FileList) {
-    if(fileList.length > 0) {
-      let file: File = fileList[0];
-      let formData:FormData = new FormData();
-      formData.append('file', file, file.name);
-      return this.http.post("http://localhost:8080/upload/file", formData)
-        .map((response: Response) => response.json());
-    }
-  }
-
-  addMultipleSongs(fileList: FileList) {
-    if(fileList.length > 0) {
-      let formData:FormData = new FormData();
-      for (let i = 0; i < fileList.length; i++) {
-        formData.append('fileList', fileList[i], fileList[i].name);
-      }
-      console.log("in addMultipleSongs()");
-      return this.http.post("http://localhost:8080/upload/multiple-files", formData);
-    }
+  addSong(file: File) {
+    let formData:FormData = new FormData();
+    formData.append('file', file, file.name);
+    return this.http.post("http://localhost:8080/upload/file", formData)
+    .map((response: Response) => response.json());
   }
 
   updateSongInfo(song: Song) {
@@ -59,20 +47,3 @@ export class SongService {
   }
 
 }
-
-/*
-getAllSongs() {
-return this.http.get("http://localhost:8080/library-all")
-.map((response: Response) => response.json());
-}
-
-addSong(song: Song) {
-return this.http.post("http://localhost:8080/library", song)
-.map((response: Response) => response.json());
-}
-
-updateSong(song: Song) {
-return this.http.put("http://localhost:8080/library/" + song.artist + "/" + song.album + "/" + song.title, song)
-.map((response: Response) => response.json());
-}
-*/

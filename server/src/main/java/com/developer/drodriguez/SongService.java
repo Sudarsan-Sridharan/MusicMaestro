@@ -1,8 +1,12 @@
 package com.developer.drodriguez;
 
-import com.mpatric.mp3agic.*;
-import com.sun.org.apache.xpath.internal.operations.Mult;
-import org.junit.Test;
+import com.developer.drodriguez.model.Album;
+import com.developer.drodriguez.model.Artist;
+import com.developer.drodriguez.model.Song;
+import com.mpatric.mp3agic.ID3v2;
+import com.mpatric.mp3agic.InvalidDataException;
+import com.mpatric.mp3agic.Mp3File;
+import com.mpatric.mp3agic.UnsupportedTagException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.ClassPathResource;
@@ -11,10 +15,9 @@ import org.springframework.core.io.PathResource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
-import javax.swing.*;
-import java.io.*;
+import java.io.IOException;
+import java.io.RandomAccessFile;
 import java.util.*;
 
 /**
@@ -24,46 +27,63 @@ import java.util.*;
 @Service
 public class SongService {
 
-    private List<Song> songs = new ArrayList<>();
+    private List<Artist> artists = new ArrayList<>();
 
     @Value("${library.path}")
     private String libraryPath;
 
-    //Return unique list of artists
-    public Set<String> getArtists() {
-        Set<String> set = new TreeSet<>();
-        for (Song song : songs)
-            set.add(song.getArtist());
-        return set;
+    SongService() {
+        //Dustin Kensrue: I Believe
+        Song song1 = new Song(1, "I Believe", 2007, "/Users/Daniel/Music/library/Dustin Kensrue/Please Come Home/I Believe.mp3");
+        Album album1 = new Album(1, "Please Come Home", song1);
+        Artist artist1 = new Artist(1, "Dustin Kensrue", album1);
+        artists.add(artist1);
+
+        //Dustin Kensrue: Consider the Ravens
+        Song song2 = new Song(2, "Consider the Ravens", 2007, "/Users/Daniel/Music/library/Dustin Kensrue/Please Come Home/Consider the Ravens.mp3");
+        album1.addSong(song2);
+
+        //Foo Fighters: Times Like These
+        Song song3 = new Song(3, "Times Like These", 2009);
+        Album album2 = new Album(2, "Greatest Hits", song3);
+        Artist artist2 = new Artist(2, "Foo Fighters", album2);
+        artists.add(artist2);
     }
 
-    //Return unique list of albums by a given artist
-    public Set<String> getAlbums(String artist) {
-        Set<String> set = new TreeSet<>();
-        for (Song song : songs)
-            if (song.getArtist().equals(artist))
-                set.add(song.getAlbum());
-        return set;
+    public List<Artist> getArtists() {
+        return artists;
     }
 
-    //Return unique list of songs for a given album by an artist
-    public Set<String> getSongs(String artist, String album) {
-        Set<String> set = new TreeSet<>();
-        for (Song song : songs)
-            if (song.getArtist().equals(artist) && song.getAlbum().equals(album))
-                set.add(song.getTitle());
-        return set;
-    }
-
-    public Song getSong(String artist, String album, String title) {
-        for (int i = 0; i < songs.size(); i++)
-            if (songs.get(i).getArtist().equals(artist) && songs.get(i).getAlbum().equals(album) && songs.get(i).getTitle().equals(title))
-                return songs.get(i);
+    public List<Album> getAlbums(int artistId) {
+        for (Artist artist : artists)
+            if (artist.getId() == artistId)
+                return artist.getAlbums();
         return null;
     }
 
-    public ResponseEntity<InputStreamResource> getSongFile(String artist, String album, String songTitle) throws IOException {
-        String filePath = getSong(artist, album, songTitle).getFilePath();
+    public List<Song> getSongs(int artistId, int albumId) {
+        for (Artist artist : artists)
+            if (artist.getId() == artistId)
+                for (Album album : artist.getAlbums())
+                    if (album.getId() == albumId)
+                        return album.getSongs();
+        return null;
+    }
+
+    public Song getSong(int artistId, int albumId, int songId) {
+        for (Artist artist : artists)
+            if (artist.getId() == artistId)
+                for (Album album : artist.getAlbums())
+                    if (album.getId() == albumId)
+                        for (Song song : album.getSongs())
+                            if (song.getId() == songId)
+                                return song;
+        return null;
+    }
+
+
+    public ResponseEntity<InputStreamResource> getSongFile(int artistId, int albumId, int songId) throws IOException {
+        String filePath = getSong(artistId, albumId, songId).getFilePath();
         PathResource file = new PathResource(filePath);
         return ResponseEntity
                 .ok()
@@ -72,8 +92,8 @@ public class SongService {
                 .body(new InputStreamResource(file.getInputStream()));
     }
 
-    public ResponseEntity<InputStreamResource> getSongArtwork(String artist, String album, String songTitle) throws IOException, UnsupportedTagException, InvalidDataException {
-        Song song = getSong(artist, album, songTitle);
+    public ResponseEntity<InputStreamResource> getSongArtwork(int artistId, int albumId, int songId) throws IOException, UnsupportedTagException, InvalidDataException {
+        Song song = getSong(artistId, albumId, songId);
         String filePath = song.getFilePath();
         String mimeType = null;
         byte[] imageData = null;
@@ -114,8 +134,12 @@ public class SongService {
 
     }
 
+    /*
+
     public Song addSongFile(MultipartFile file)
             throws IOException, UnsupportedTagException, InvalidDataException, NoSuchTagException {
+
+        System.out.println("POST SongFile.");
 
         File tempFile = convertMultipartToFile(file);
         Mp3File mp3 = new Mp3File(tempFile);
@@ -193,7 +217,7 @@ public class SongService {
             //Only delete if the song title, album, or artist was modified by the user.
             if (!song.getFilePath().equals(fullPath)) {
                 mp3.save(fullPath);
-                file.delete();
+                boolean isDeleted = file.delete();
             }
         } else {
             throw new UnsupportedTagException("The associated file does not have a valid ID3v2 tag.");
@@ -207,7 +231,6 @@ public class SongService {
                 return;
             }
         }
-
 
 
     }
@@ -252,10 +275,6 @@ public class SongService {
         return convFile;
     }
 
-}
-
-    /*
-
-
-
     */
+
+}

@@ -3,5 +3,5 @@ library:
 spring:
   http:
     multipart:
-      maxFileSize: 500MB
-      max-request-size: 500MB
+      maxFileSize: 50MB
+      max-request-size: 50MB

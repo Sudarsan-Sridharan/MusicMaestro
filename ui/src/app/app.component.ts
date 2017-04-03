@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { SongService } from './song.service';
 import { Observable } from 'rxjs/Observable';
-import { Song } from './Song';
+import { Artist } from './model/Artist';
+import { Album } from './model/Album';
+import { Song } from './model/Song';
 
 @Component({
   selector: 'app-root',
@@ -14,117 +16,175 @@ export class AppComponent implements OnInit {
 
   //Keeps one menu section active at a time:
   //["Music Library", "Edit Song", "Add a Song"->"Single", "Add a Song"->"Multiple"]
-  isActiveSection: Array<Boolean> = [false, false, false, false];
+  isActiveSection: Array<boolean> = [false, false, false, false];
 
-  hasNoArtistList: Boolean = true;
-  hasNewSongPlayRequest: Boolean = true;
-  artistList: Array<String>;
-  albumList: Array<String>;
-  songTitleList: Array<String>;
-  selectedArtist: String;
-  selectedAlbum: String;
-  selectedSong: String;
-  currentSong: Song;
+  artists: Array<Artist>;
+  albums: Array<Album>;
+  songs: Array<Song>;
+
+  hasNoArtistList: boolean = true;
+  hasNewSongPlayRequest: boolean = true;
+  selArtistId: number;
+  selAlbumId: number;
+  selSongId: number;
+  currSong: Song;
   songPlayback;
   songArtworkSrc: String;
   newSong: Song = {title: null, album: null, artist: null, year: null, filePath: null};
   newSongFiles: FileList;
+  uploadProgressCurrent: number = 0;
+  uploadProgressMax: number = 1;
 
   ngOnInit() {
     this.getArtistList();
   }
 
   getArtistList() {
+
+    this.songService.getArtists().subscribe(artists => {
+      this.artists = artists;
+      if (this.artists.length == 0) { this.hasNoArtistList = true; }
+      else { this.hasNoArtistList = false; }
+    });
+
+    /*
     this.songService.getArtistList().subscribe(artistList => {
       this.artistList = artistList;
       if (artistList.length == 0) { this.hasNoArtistList = true; }
       else { this.hasNoArtistList = false; }
     });
+    */
   }
 
-  getAlbumList(artist: String) {
-    this.selectedArtist = artist;
-    this.selectedAlbum = null;  //Hides song listing in the view.
-    this.songService.getAlbumList(artist).subscribe(albumList => this.albumList = albumList);
+  getAlbumList(artistId: number) {
+    this.selArtistId = artistId;
+    this.selAlbumId = null;  //Hides song listing in the view.
+    this.songService.getAlbums(artistId)
+    .subscribe(albums => this.albums = albums);
   }
 
-  getSongList(album: String) {
-    this.selectedAlbum = album;
-    this.songService.getSongList(this.selectedArtist, album).subscribe(songTitleList => this.songTitleList = songTitleList);
+  getSongList(artistId: number, albumId: number) {
+    this.selAlbumId = albumId;
+    this.songService.getSongs(artistId, albumId)
+    .subscribe(songs => this.songs = songs);
   }
 
-  getSong(song: String) {
-    this.selectedSong = song;
-    this.songService.getSong(this.selectedArtist, this.selectedAlbum, song)
-    .subscribe(song => this.getSongPlayback(song));
+  getSong(songId: number) {
+    this.selSongId = songId;
+    this.songService.getSong(this.selArtistId, this.selAlbumId, songId)
+    .subscribe(song => this.getSongPlayback(this.selArtistId, this.selAlbumId, song));
   }
 
-  getSongPlayback(song) {
+  getSongPlayback(artistId: number, albumId: number, song: Song) {
     if (this.songPlayback == null) { this.songPlayback = new Audio(); }
-    this.getSongArtwork(song);
-    this.currentSong = song;
-    this.songPlayback.src = "http://localhost:8080/playback/" + song.artist + "/" + song.album + "/" + song.title;
+    this.currSong = song;
+    this.getSongArtwork(artistId, albumId, this.selSongId);
+    this.songPlayback.src = "http://localhost:8080/playback/" + artistId + "/" + albumId + "/" + this.selSongId;
     this.songPlayback.load();
     this.songPlayback.play();
   }
 
-  getSongArtwork(song) {
-    this.songArtworkSrc = "http://localhost:8080/artwork/" + song.artist + "/" + song.album + "/" + song.title;
+  getSongArtwork(artistId: number, albumId: number, songId: number) {
+    this.songArtworkSrc = "http://localhost:8080/artwork/" + artistId + "/" + albumId + "/" + songId;
   }
 
+/*
   addSong(files: FileList) {
     this.newSongFiles = files;
-    this.songService.addSong(this.newSongFiles).subscribe( newSong => {
+    this.songService.addSong(this.newSongFiles[0]).subscribe( newSong => {
       this.newSong = newSong;
       this.getArtistList();
     });
   }
 
-  addMultipleSongs(files: FileList) {
-    this.songService.addMultipleSongs(files).subscribe( () => {
-      this.refreshLists(this.newSong.artist, this.newSong.album, this.newSong.title);
-    });
-  }
+  addMultipleSongs(fileList: FileList) {
+    this.newSongFiles = fileList;   //Used in view to show progress bar.
+    this.resetProgressBar(); //Resets the current and max values for the progress bar.
+    this.uploadProgressMax = fileList.length; //Sets the new max value for progress bar.
+    for (let i = 0; i < fileList.length; i++) { //Loop through list of files.
+      this.songService.addSong(fileList[i]).subscribe( () => {  //Send song to server.
+        this.uploadProgressCurrent++; //Increment the current value for progress bar.
+        if (i == fileList.length - 1) { //During last loop,
+          this.refreshLibrary(); //Refresh library
+          setTimeout( () => { //Delay 2 seconds.
+            this.exitMenu();  //Clears out of current menu.
+            this.newSongFiles = null; //Used in view to hide progress bar.
+          }, 2000);
+        }
+      });
+    }
 
+  }
+  */
+
+  /*
   updateNewSongInfo() {
     this.songService.updateSongInfo(this.newSong).subscribe( () => {
       this.newSongFiles = null;
       if (this.hasNewSongPlayRequest) {
-        this.getSongPlayback(this.newSong);
-        this.refreshLists(this.newSong.artist, this.newSong.album, this.newSong.title);
         this.hasNewSongPlayRequest = false;
+        this.getSongPlayback(this.newSong);
+        //this.markSongTitle(this.newSong.artist, this.newSong.album, this.newSong.title);
       }
-      this.resetSong(this.newSong);
+      this.exitMenu();
+      this.clearNewSong();
     });
   }
 
-  updateCurrentSongInfo() {
-    this.songService.updateSongInfo(this.currentSong).subscribe();
-    this.refreshLists(this.currentSong.artist, this.currentSong.album, this.currentSong.title);
+  updatecurrSongInfo() {
+    this.songService.updateSongInfo(this.currSong).subscribe( () => {
+      this.exitMenu();
+      this.songs = null;
+      this.refreshLibrary();
+      //this.markSongTitle(this.currSong.artist, this.currSong.album, this.currSong.title);
+      this.getSongPlayback(this.currSong);
+    });
   }
+  */
 
+  /*
   removeSong(i: number) {
-    this.songService.removeSong(this.currentSong).subscribe( () => {
+    this.songService.removeSong(this.currSong).subscribe( () => {
       this.songPlayback.pause();
       this.songPlayback.remove();
       this.songPlayback = null;
-      this.currentSong = null;
-      this.refreshLists(null, null, null);
+      this.currSong = null;
+      this.exitMenu();
+      this.refreshLibrary();
     });
   }
 
-  resetSong(newSong: Song) {
+  clearNewSong() {
     this.newSong = {title: null, album: null, artist: null, year: null, filePath: null};
   }
 
-  refreshLists(artist: String, album: String, title: String) {
+  exitMenu() {
     this.isActiveSection = [false, false, false, false];
-    this.selectedArtist = artist;
-    this.selectedAlbum = album;
-    this.selectedSong = title;
-    this.getArtistList();
-    this.getAlbumList(artist);
-    this.getSongList(album);
   }
+
+  resetProgressBar() {
+    this.uploadProgressCurrent = 0;
+    this.uploadProgressMax = 1;
+  }
+
+  refreshLibrary() {
+    this.selArtistId = null;
+    this.selAlbumId = null;
+    this.selSongId = null;
+    this.songs = null;
+    this.songs = null;
+    this.songs = null;
+    this.getArtistList();
+  }
+
+  markSongTitle(artistId: number, albumId: number, titleId: number) {
+    this.selArtistId = artistId;
+    this.selAlbumId = albumId;
+    this.selSongId = titleId;
+    this.getArtistList();
+    //this.getAlbumList(artistId);
+    //this.getSongList(albumId);
+  }
+  */
 
 }
