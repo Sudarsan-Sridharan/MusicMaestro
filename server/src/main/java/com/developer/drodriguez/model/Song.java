@@ -9,20 +9,20 @@ public class Song {
 
     private int id;
     private String name;
-    private int year;
+    private String year;
 
     @JsonIgnore
     private String filePath;
 
     public Song() {}
 
-    public Song(int id, String name, int year) {
+    public Song(int id, String name, String year) {
         this.id = id;
         this.name = name;
         this.year = year;
     }
 
-    public Song(int id, String name, int year, String filePath) {
+    public Song(int id, String name, String year, String filePath) {
         this.id = id;
         this.name = name;
         this.year = year;
@@ -45,11 +45,11 @@ public class Song {
         this.name = name;
     }
 
-    public int getYear() {
+    public String getYear() {
         return year;
     }
 
-    public void setYear(int year) {
+    public void setYear(String year) {
         this.year = year;
     }
 

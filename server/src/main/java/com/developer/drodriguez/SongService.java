@@ -3,10 +3,7 @@ package com.developer.drodriguez;
 import com.developer.drodriguez.model.Album;
 import com.developer.drodriguez.model.Artist;
 import com.developer.drodriguez.model.Song;
-import com.mpatric.mp3agic.ID3v2;
-import com.mpatric.mp3agic.InvalidDataException;
-import com.mpatric.mp3agic.Mp3File;
-import com.mpatric.mp3agic.UnsupportedTagException;
+import com.mpatric.mp3agic.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.ClassPathResource;
@@ -15,9 +12,9 @@ import org.springframework.core.io.PathResource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-import java.io.RandomAccessFile;
+import java.io.*;
 import java.util.*;
 
 /**
@@ -28,36 +25,55 @@ import java.util.*;
 public class SongService {
 
     private List<Artist> artists = new ArrayList<>();
+    private int artistIndex = 0;
+    private int albumIndex = 0;
+    private int songIndex = 0;
 
     @Value("${library.path}")
     private String libraryPath;
 
     SongService() {
         //Dustin Kensrue: I Believe
-        Song song1 = new Song(1, "I Believe", 2007, "/Users/Daniel/Music/library/Dustin Kensrue/Please Come Home/I Believe.mp3");
-        Album album1 = new Album(1, "Please Come Home", song1);
-        Artist artist1 = new Artist(1, "Dustin Kensrue", album1);
+        Song song1 = new Song(songIndex++, "I Believe", "2007", "/Users/Daniel/Music/library/Dustin Kensrue/Please Come Home/I Believe.mp3");
+        Album album1 = new Album(albumIndex++, "Please Come Home", song1);
+        Artist artist1 = new Artist(artistIndex++, "Dustin Kensrue", album1);
         artists.add(artist1);
 
         //Dustin Kensrue: Consider the Ravens
-        Song song2 = new Song(2, "Consider the Ravens", 2007, "/Users/Daniel/Music/library/Dustin Kensrue/Please Come Home/Consider the Ravens.mp3");
+        Song song2 = new Song(songIndex++, "Consider the Ravens", "2007", "/Users/Daniel/Music/library/Dustin Kensrue/Please Come Home/Consider the Ravens.mp3");
         album1.addSong(song2);
 
         //Foo Fighters: Times Like These
-        Song song3 = new Song(3, "Times Like These", 2009);
-        Album album2 = new Album(2, "Greatest Hits", song3);
-        Artist artist2 = new Artist(2, "Foo Fighters", album2);
+        Song song3 = new Song(songIndex++, "Times Like These", "2009", "/Users/Daniel/Music/library/Foo Fighters/Greatest Hits/Times Like These.mp3");
+        Album album2 = new Album(albumIndex++, "Greatest Hits", song3);
+        Artist artist2 = new Artist(artistIndex++, "Foo Fighters", album2);
         artists.add(artist2);
     }
 
-    public List<Artist> getArtists() {
+    public List<Artist> getArtists() {;
         return artists;
+    }
+
+    public Artist getArtist(int artistId) {
+        for (Artist artist : artists)
+            if (artist.getId() == artistId)
+                return artist;
+        return null;
     }
 
     public List<Album> getAlbums(int artistId) {
         for (Artist artist : artists)
             if (artist.getId() == artistId)
                 return artist.getAlbums();
+        return null;
+    }
+
+    public Album getAlbum(int artistId, int albumId) {
+        for (Artist artist : artists)
+            if (artist.getId() == artistId)
+                for (Album album : artist.getAlbums())
+                    if (album.getId() == albumId)
+                        return album;
         return null;
     }
 
@@ -160,7 +176,7 @@ public class SongService {
 
             tempFile.delete();
 
-            Song newSong = new Song(songTitle, album, artist, year, fullPath);
+            Song newSong = new Song(songTitle, year, fullPath);
             songs.add(newSong);
 
             //Create any non-existing directories for file.
@@ -265,6 +281,8 @@ public class SongService {
                 artistFolder.delete();
     }
 
+    */
+
     public File convertMultipartToFile(MultipartFile file) throws IOException
     {
         File convFile = new File(file.getOriginalFilename());
@@ -274,7 +292,5 @@ public class SongService {
         fos.close();
         return convFile;
     }
-
-    */
 
 }

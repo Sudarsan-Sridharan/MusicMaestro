@@ -27,20 +27,20 @@
   </div>
   <div id="songSelect" class="collapse" *ngIf="isActiveSection[0]">
     <br />
-    <div *ngIf="hasNoArtistList">
+    <div *ngIf="artists.length == 0">
       <div class="row text-list">
         <div class="col-md-3 col-md-offset-1">
           <p>Your library is currently empty.</p>
         </div>
       </div>
     </div>
-    <div *ngIf="!hasNoArtistList">
+    <div *ngIf="artists.length != 0">
       <div class="row text-list">
         <div class="col-md-3 col-md-offset-1">
           <div class="text-list-title">Artists</div>
           <ul class="hide-bullets">
             <span *ngFor="let artist of artists">
-              <li><a href="#" [ngClass]="artist == selArtistId ? 'text-selected' : ''" (click)="getAlbumList(artist.id)">{{artist.name}}</a></li>
+              <li><a href="#" [ngClass]="artist == selArtistId ? 'text-selected' : ''" (click)="getAlbums(artist.id)">{{artist.name}}</a></li>
             </span>
           </ul>
         </div>
@@ -48,7 +48,7 @@
           <div class="text-list-title">Albums</div>
           <ul class="hide-bullets">
             <span *ngFor="let album of albums">
-              <li><a href="#" [ngClass]="album == selAlbumId ? 'text-selected' : ''" (click)="getSongList(selArtistId, album.id)">{{album.name}}</a></li>
+              <li><a href="#" [ngClass]="album == selAlbumId ? 'text-selected' : ''" (click)="getSongs(selArtistId, album.id)">{{album.name}}</a></li>
             </span>
           </ul>
         </div>
