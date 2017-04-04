@@ -6,6 +6,8 @@ import com.developer.drodriguez.model.Song;
 import org.junit.Test;
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by Daniel on 3/31/17.
@@ -31,6 +33,13 @@ public class SongServiceTest {
             if (artistFolder.list().length == 0)
                 System.out.println("Delete Artist");
         //artistFolder.delete();
+    }
+
+    @Test
+    public void testMap() {
+        Map<Integer, String> map = new HashMap<>();
+        map.put(1, "Test Value");
+        System.out.println(map.get(2));
     }
 
 }

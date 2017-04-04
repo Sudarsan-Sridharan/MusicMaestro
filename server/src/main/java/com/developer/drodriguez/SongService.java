@@ -24,9 +24,9 @@ import java.util.*;
 @Service
 public class SongService {
 
-    private List<Artist> artists = new ArrayList<>();
-    private List<Album> albums = new ArrayList<>();
-    private List<Song> songs = new ArrayList<>();
+    private Map<Integer, Artist> artistMap = new TreeMap<>();
+    private Map<Integer, Album> albumMap = new TreeMap<>();
+    private Map<Integer, Song> songMap = new TreeMap<>();
     private int artistIndex = 0;
     private int albumIndex = 0;
     private int songIndex = 0;
@@ -36,75 +36,49 @@ public class SongService {
 
     SongService() {
         //Dustin Kensrue: I Believe
-        artists.add( new Artist(++artistIndex, "Dustin Kensrue") );
-        albums.add( new Album(++albumIndex, artistIndex, "Please Come Home") );
-        songs.add ( new Song(++songIndex, albumIndex,"I Believe", "2007", "/Users/Daniel/Music/library/Dustin Kensrue/Please Come Home/I Believe.mp3") );
+        artistMap.put(++artistIndex, new Artist(artistIndex, "Dustin Kensrue") );
+        albumMap.put(++albumIndex, new Album(albumIndex, artistIndex, "Please Come Home") );
+        songMap.put(++songIndex, new Song(songIndex, albumIndex,"I Believe", "2007", "/Users/Daniel/Music/library/Dustin Kensrue/Please Come Home/I Believe.mp3") );
 
         //Dustin Kensrue: Consider the Ravens
-        songs.add( new Song(++songIndex, albumIndex,"Consider the Ravens", "2007", "/Users/Daniel/Music/library/Dustin Kensrue/Please Come Home/Consider the Ravens.mp3") );
+        songMap.put( ++songIndex, new Song(songIndex, albumIndex,"Consider the Ravens", "2007", "/Users/Daniel/Music/library/Dustin Kensrue/Please Come Home/Consider the Ravens.mp3") );
 
         //Foo Fighters: Times Like These
-        artists.add( new Artist(++artistIndex, "Foo Fighters") );
-        albums.add( new Album(++albumIndex, artistIndex, "Greatest Hits") );
-        songs.add( new Song(++songIndex, albumIndex, "Times Like These", "2009", "/Users/Daniel/Music/library/Foo Fighters/Greatest Hits/Times Like These.mp3") );
-
-        System.out.println(artistIndex);
-        System.out.println(albumIndex);
-        System.out.println(songIndex);
-
+        artistMap.put( ++artistIndex, new Artist(artistIndex, "Foo Fighters") );
+        albumMap.put( ++albumIndex, new Album(albumIndex, artistIndex, "Greatest Hits") );
+        songMap.put( ++songIndex, new Song(songIndex, albumIndex, "Times Like These", "2009", "/Users/Daniel/Music/library/Foo Fighters/Greatest Hits/Times Like These.mp3") );
     }
 
     public List<Artist> getArtists() {
-        return artists;
+        return new ArrayList<>(artistMap.values());
     }
 
     public Artist getArtist(int artistId) {
-        for (Artist artist : artists)
-            if (artist.getId() == artistId)
-                return artist;
-        return null;
+        return artistMap.get(artistId);
     }
 
     public List<Album> getAlbums(int artistId) {
         List<Album> newList = new ArrayList<>();
-        for (Artist artist : artists)
-            if (artist.getId() == artistId)
-                for (Album album : albums)
-                    if (album.getArtistId() == artistId)
-                        newList.add(album);
+        for (Album album : albumMap.values())
+            if(album.getArtistId() == artistId)
+                newList.add(album);
         return newList;
     }
 
     public Album getAlbum(int artistId, int albumId) {
-        for (Artist artist : artists)
-            if (artist.getId() == artistId)
-                for (Album album : albums)
-                    if (album.getArtistId() == artistId && album.getId() == albumId)
-                        return album;
-        return null;
+        return albumMap.get(albumId);
     }
 
     public List<Song> getSongs(int artistId, int albumId) {
         List<Song> newList = new ArrayList<>();
-        for (Artist artist : artists)
-            if (artist.getId() == artistId)
-                for (Album album : albums)
-                    if (album.getArtistId() == artistId && album.getId() == albumId)
-                        for (Song song : songs)
-                            if (song.getAlbumId() == albumId)
-                                newList.add(song);
+        for (Song song : songMap.values())
+            if (song.getAlbumId() == albumId)
+                newList.add(song);
         return newList;
     }
 
     public Song getSong(int artistId, int albumId, int songId) {
-        for (Artist artist : artists)
-            if (artist.getId() == artistId)
-                for (Album album : albums)
-                    if (album.getArtistId() == artistId && album.getId() == albumId)
-                        for (Song song : songs)
-                            if (album.getId() == albumId && song.getId() == songId)
-                                return song;
-        return null;
+        return songMap.get(songId);
     }
 
 
@@ -183,52 +157,54 @@ public class SongService {
 
             tempFile.delete();
 
-            boolean hasNewArtist = false;
-            boolean hasNewAlbum = false;
-            boolean hasNewSong = false;
             int newArtistId = 0;
             int newAlbumId = 0;
             int newSongId = 0;
 
-            for (int i = 0; i < artists.size(); i++) {
-                if (artists.get(i).getName().equals(tArtistName)) {
-                    newArtistId = artists.get(i).getId();
-                    hasNewArtist = true;
+            /*
+             *  If there are artists, albums, or songs with existing names, then update,
+             *  otherwise create a new object with a new index.
+             */
+
+            for (Artist artist : artistMap.values()) {
+                if (artist.getName().equals(tArtistName)) {
+                    artist.setName(tArtistName);
+                    newArtistId = artist.getId();
                     break;
-                } else if (i == artists.size() - 1) {
-                    newArtistId = ++artistIndex;
                 }
             }
 
-            for (int j = 0; j < albums.size(); j++) {
-                if (albums.get(j).getName().equals(tAlbumName)) {
-                    newAlbumId = albums.get(j).getId();
-                    hasNewAlbum = true;
+            if (newArtistId == 0) {
+                artistMap.put(++artistIndex, new Artist(artistIndex, tArtistName));
+                newArtistId = artistIndex;
+            }
+
+            for (Album album : albumMap.values()) {
+                if (album.getName().equals(tAlbumName)) {
+                    album.setName(tAlbumName);
+                    album.setArtistId(newArtistId);
+                    newAlbumId = album.getId();
                     break;
-                } else if (j == albums.size() - 1) {
-                    newAlbumId = ++albumIndex;
                 }
             }
 
-            for (int k = 0; k < songs.size(); k++) {
-                if (songs.get(k).getName().equals(tSongName)) {
-                    newSongId = songs.get(k).getId();
-                    hasNewSong = true;
-                    break;
-                } else if (k == songs.size() - 1) {
-                    newSongId = ++songIndex;
+            if (newAlbumId == 0) {
+                albumMap.put(++albumIndex, new Album(albumIndex, newArtistId, tAlbumName));
+                newArtistId = artistIndex;
+            }
+
+            for (Song song : songMap.values()) {
+                if (song.getName().equals(tSongName)) {
+                    song.setName(tSongName);
+                    song.setAlbumId(newAlbumId);
+                    newSongId = song.getId();
                 }
             }
 
-            if (!hasNewArtist)
-                artists.add(new Artist(newArtistId, tArtistName));
-            if (!hasNewAlbum)
-                albums.add(new Album(newAlbumId, newArtistId, tAlbumName));
-            if (!hasNewSong)
-                songs.add(new Song(newSongId, newAlbumId, tSongName, tYear, fullPath));
+            if (newSongId == 0)
+                songMap.put(++songIndex, new Song(songIndex, newArtistId, tSongName, tYear, fullPath));
 
-            //Song newSong = new Song(songTitle, year, fullPath);
-            //songs.add(newSong);
+            System.out.println();
 
             //Create any non-existing directories for file.
             File newDirs = new File(filePath);

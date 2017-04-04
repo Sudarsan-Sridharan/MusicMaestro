@@ -66,11 +66,7 @@ export class AppComponent implements OnInit {
     this.songPlayback.play();
   }
 
-  addSong(fileList: FileList) {
-    this.songService.addSong(fileList[0]).subscribe(() => this.getArtists());
-  }
-
-  addMultipleSongs(fileList: FileList) {
+  addSongs(fileList: FileList) {
     this.isUploading = true;   //Used in view to show progress bar.
     this.maxProgress = fileList.length; //Sets the new max value for progress bar.
     for (let i = 0; i < fileList.length; i++) { //Loop through list of files.

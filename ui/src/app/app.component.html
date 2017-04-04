@@ -119,37 +119,36 @@
           File:
         </div>
         <div class="col-md-4">
-          <input type="file" (change)="addSong($event.target.files)" placeholder="Upload a Song" accept=".mp3">
+          <input type="file" (change)="addSongs($event.target.files)" placeholder="Upload a Song" accept=".mp3">
         </div>
       </div>
     </div>
   </div>
-</div>
-<div id="multipleUpload" class="collapse" *ngIf="isActiveSection[3]">
-  <div class="extra-padding text-list checkbox-text vcenter">
-    <div class="row">
-      <div class="col-md-1 col-md-offset-1">
-        Files:
-      </div>
-      <div class="col-md-4">
-        <input type="file" (change)="addMultipleSongs($event.target.files)" placeholder="Upload Songs" accept=".mp3" multiple>
-      </div>
-    </div>
-  </div>
-  <div class="row" *ngIf="isUploading">
-    <div class="col-md-4 col-md-offset-1">
-      <div class="progress">
-        <div class="progress-bar progress-bar-success" role="progressbar" [attr.aria-valuenow]="uploadProgressCurrent"
-        aria-valuemin="0" [attr.aria-valuemax]="uploadProgressMax" [ngStyle]="{width: uploadProgressCurrent / uploadProgressMax | percent: '1.0-1'}">
-        {{uploadProgressCurrent}} / {{uploadProgressMax}} Uploaded
+  <div id="multipleUpload" class="collapse" *ngIf="isActiveSection[3]">
+    <div class="extra-padding text-list checkbox-text vcenter">
+      <div class="row">
+        <div class="col-md-1 col-md-offset-1">
+          Files:
+        </div>
+        <div class="col-md-4">
+          <input type="file" (change)="addSongs($event.target.files)" placeholder="Upload Songs" accept=".mp3" multiple>
+        </div>
       </div>
     </div>
+</div>
+<div class="row" *ngIf="isUploading">
+  <div class="col-md-4 col-md-offset-1">
+    <div class="progress">
+      <div class="progress-bar progress-bar-success" role="progressbar" [attr.aria-valuenow]="curProgress"
+      aria-valuemin="0" [attr.aria-valuemax]="maxProgress" [ngStyle]="{width: curProgress / maxProgress | percent: '1.0-1'}">
+      {{curProgress}} / {{maxProgress}} Uploaded
+    </div>
   </div>
 </div>
-<div class="row" *ngIf="!isUploading">
-  <div class="col-md-4 col-md-offset-1 text-center">
-    Upload complete!
-  </div>
+</div>
+<div class="row" *ngIf="curProgress == maxProgress">
+<div class="col-md-4 col-md-offset-1 text-center">
+  Upload complete!
 </div>
 </div>
 </div>
