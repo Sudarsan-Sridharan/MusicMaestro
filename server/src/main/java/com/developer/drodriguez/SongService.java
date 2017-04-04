@@ -183,41 +183,52 @@ public class SongService {
 
             tempFile.delete();
 
+            boolean hasNewArtist = false;
+            boolean hasNewAlbum = false;
+            boolean hasNewSong = false;
             int newArtistId = 0;
             int newAlbumId = 0;
             int newSongId = 0;
 
 
             for (int i = 0; i < artists.size(); i++) {
-                if (artists.get(i).getName() == tArtistName) {
+                if (artists.get(i).getName().equals(tArtistName)) {
+                    System.out.println("Existing Artist ID = " + artists.get(i).getId());
                     newArtistId = artists.get(i).getId();
+                    hasNewArtist = true;
                     break;
                 } else if (i == artists.size() - 1) {
+                    System.out.println("newArtistId");
                     newArtistId = ++artistIndex;
                 }
             }
 
             for (int j = 0; j < albums.size(); j++) {
-                if (albums.get(j).getName() == tAlbumName) {
+                if (albums.get(j).getName().equals(tAlbumName)) {
                     newAlbumId = albums.get(j).getId();
+                    hasNewAlbum = true;
                     break;
-                } else if (j == albums.size() - 1) {
+                } else if (newAlbumId == 0 && j == albums.size() - 1) {
                     newAlbumId = ++albumIndex;
                 }
             }
 
             for (int k = 0; k < songs.size(); k++) {
-                if (songs.get(k).getName() == tSongName) {
+                if (songs.get(k).getName().equals(tSongName)) {
                     newSongId = songs.get(k).getId();
+                    hasNewSong = true;
                     break;
                 } else if (k == songs.size() - 1) {
                     newSongId = ++songIndex;
                 }
             }
 
-            artists.add(new Artist(newArtistId, tArtistName));
-            albums.add(new Album(newAlbumId, newArtistId, tAlbumName));
-            songs.add(new Song(newSongId, newAlbumId, tSongName, tYear, fullPath));
+            if (!hasNewArtist)
+                artists.add(new Artist(newArtistId, tArtistName));
+            if (!hasNewAlbum)
+                albums.add(new Album(newAlbumId, newArtistId, tAlbumName));
+            if (!hasNewSong)
+                songs.add(new Song(newSongId, newAlbumId, tSongName, tYear, fullPath));
 
             //Song newSong = new Song(songTitle, year, fullPath);
             //songs.add(newSong);
