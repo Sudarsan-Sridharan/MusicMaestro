@@ -4,7 +4,6 @@ import { Observable } from 'rxjs/Observable';
 import { Artist } from './model/Artist';
 import { Album } from './model/Album';
 import { Song } from './model/Song';
-import { NewSong } from './model/NewSong'
 
 @Component({
   selector: 'app-root',
@@ -18,9 +17,9 @@ export class AppComponent implements OnInit {
   //isActiveSection --> Keeps one menu section active at a time:
   //["Music Library", "Edit Song", "Add a Song"->"Single", "Add a Song"->"Multiple"]
   isActiveSection: Array<boolean> = [false, false, false, false];
-  hasNewSongPlayRequest: boolean = true;
-  uploadProgressCurrent: number = 0;
-  uploadProgressMax: number = 1;
+  isUploading: boolean = false;
+  curProgress: number = 0;
+  maxProgress: number = 1;
   selArtistId: number;
   selAlbumId: number;
   selSongId: number;
@@ -28,8 +27,6 @@ export class AppComponent implements OnInit {
   albums: Array<Album>;
   songs: Array<Song>;
   currSong: Song;
-  newSong: NewSong = {name: null, album: null, artist: null, year: null};
-  fileUploads: FileList;
   songArtworkSrc: String;
   songPlayback;
 
@@ -69,32 +66,27 @@ export class AppComponent implements OnInit {
     this.songPlayback.play();
   }
 
-  addSong(files: FileList) {
-    this.fileUploads = files;
-    this.songService.addSong(this.fileUploads[0]).subscribe(() => this.getArtists());
+  addSong(fileList: FileList) {
+    this.songService.addSong(fileList[0]).subscribe(() => this.getArtists());
   }
 
-  /*
-
   addMultipleSongs(fileList: FileList) {
-    this.fileUploads = fileList;   //Used in view to show progress bar.
-    this.resetProgressBar(); //Resets the current and max values for the progress bar.
-    this.uploadProgressMax = fileList.length; //Sets the new max value for progress bar.
+    this.isUploading = true;   //Used in view to show progress bar.
+    this.maxProgress = fileList.length; //Sets the new max value for progress bar.
     for (let i = 0; i < fileList.length; i++) { //Loop through list of files.
       this.songService.addSong(fileList[i]).subscribe( () => {  //Send song to server.
-        this.uploadProgressCurrent++; //Increment the current value for progress bar.
+        this.curProgress++; //Increment the current value for progress bar.
         if (i == fileList.length - 1) { //During last loop,
           this.refreshLibrary(); //Refresh library
-          setTimeout( () => { //Delay 2 seconds.
+          setTimeout( () => { //Delay 0.8 seconds.
             this.exitMenu();  //Clears out of current menu.
-            this.fileUploads = null; //Used in view to hide progress bar.
-          }, 2000);
+            this.resetProgressBar(); //Resets the current and max values for the progress bar.
+            this.isUploading = false; //Used in view to hide progress bar.
+          }, 800);
         }
       });
     }
-
   }
-  */
 
   /*
   updateNewSongInfo() {
@@ -136,14 +128,15 @@ export class AppComponent implements OnInit {
   clearNewSong() {
     this.newSong = {title: null, album: null, artist: null, year: null, filePath: null};
   }
+  */
 
   exitMenu() {
     this.isActiveSection = [false, false, false, false];
   }
 
   resetProgressBar() {
-    this.uploadProgressCurrent = 0;
-    this.uploadProgressMax = 1;
+    this.curProgress = 0;
+    this.maxProgress = 1;
   }
 
   refreshLibrary() {
@@ -155,7 +148,7 @@ export class AppComponent implements OnInit {
     this.songs = null;
     this.getArtists();
   }
-
+/*
   markSongTitle(artistId: number, albumId: number, titleId: number) {
     this.selArtistId = artistId;
     this.selAlbumId = albumId;

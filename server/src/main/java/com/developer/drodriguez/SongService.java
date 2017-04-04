@@ -161,7 +161,7 @@ public class SongService {
     }
 
 
-    public synchronized Song addSongFile(MultipartFile file)
+    public synchronized void addSongFile(MultipartFile file)
             throws IOException, UnsupportedTagException, InvalidDataException, NoSuchTagException {
 
         File tempFile = convertMultipartToFile(file);
@@ -190,15 +190,12 @@ public class SongService {
             int newAlbumId = 0;
             int newSongId = 0;
 
-
             for (int i = 0; i < artists.size(); i++) {
                 if (artists.get(i).getName().equals(tArtistName)) {
-                    System.out.println("Existing Artist ID = " + artists.get(i).getId());
                     newArtistId = artists.get(i).getId();
                     hasNewArtist = true;
                     break;
                 } else if (i == artists.size() - 1) {
-                    System.out.println("newArtistId");
                     newArtistId = ++artistIndex;
                 }
             }
@@ -208,7 +205,7 @@ public class SongService {
                     newAlbumId = albums.get(j).getId();
                     hasNewAlbum = true;
                     break;
-                } else if (newAlbumId == 0 && j == albums.size() - 1) {
+                } else if (j == albums.size() - 1) {
                     newAlbumId = ++albumIndex;
                 }
             }
@@ -251,9 +248,6 @@ public class SongService {
             bout.write(bytes);
             bout.flush();
             bout.close();
-
-            //return newSong;
-            return null;
 
         }
 

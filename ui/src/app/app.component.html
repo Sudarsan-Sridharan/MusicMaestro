@@ -122,54 +122,6 @@
           <input type="file" (change)="addSong($event.target.files)" placeholder="Upload a Song" accept=".mp3">
         </div>
       </div>
-      <div *ngIf="newSongFiles != null">
-        <div class="row">
-          <div class="col-md-1 col-md-offset-1">
-            Title:
-          </div>
-          <div class="col-md-4">
-            <input type="text" class="form-control input-lg" [(ngModel)]="newSong.title">
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-md-1 col-md-offset-1">
-            Artist:
-          </div>
-          <div class="col-md-4">
-            <input type="text" class="form-control input-lg" [(ngModel)]="newSong.artist">
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-md-1 col-md-offset-1">
-            Album:
-          </div>
-          <div class="col-md-4">
-            <input type="text" class="form-control input-lg" [(ngModel)]="newSong.album">
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-md-1 col-md-offset-1">
-            Year:
-          </div>
-          <div class="col-md-4">
-            <input type="text" class="form-control input-lg" [(ngModel)]="newSong.year">
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-md-1 col-md-offset-1">
-            <button class="btn btn-default btn-sm" [disabled]="newSongFiles == null || newSong.title == null
-            || newSong.title == '' || newSong.album == null || newSong.album == ''
-            || newSong.artist == null || newSong.artist == ''"
-            (click)="updateNewSongInfo()">
-            Save
-          </button>
-        </div>
-        <div class="col-md-1">
-          <div class="checkbox">
-            <label><input type="checkbox" [(ngModel)]="hasNewSongPlayRequest" [checked]="hasNewSongPlayRequest">Play Song</label>
-          </div>
-        </div>
-      </div>
     </div>
   </div>
 </div>
@@ -184,7 +136,7 @@
       </div>
     </div>
   </div>
-  <div class="row" *ngIf="newSongFiles != null">
+  <div class="row" *ngIf="isUploading">
     <div class="col-md-4 col-md-offset-1">
       <div class="progress">
         <div class="progress-bar progress-bar-success" role="progressbar" [attr.aria-valuenow]="uploadProgressCurrent"
@@ -194,7 +146,7 @@
     </div>
   </div>
 </div>
-<div class="row" *ngIf="uploadProgressCurrent == uploadProgressMax">
+<div class="row" *ngIf="!isUploading">
   <div class="col-md-4 col-md-offset-1 text-center">
     Upload complete!
   </div>
