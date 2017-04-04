@@ -13,19 +13,9 @@ public class Artist {
     private int id;
     private String name;
 
-    @JsonIgnore
-    private List<Album> albums = new ArrayList<>();
-
-    public Artist(int id, String name, List<Album> albums) {
+    public Artist(int id, String name) {
         this.id = id;
         this.name = name;
-        this.albums = albums;
-    }
-
-    public Artist(int id, String name, Album album) {
-        this.id = id;
-        this.name = name;
-        this.albums.add(album);
     }
 
     public int getId() {
@@ -44,24 +34,11 @@ public class Artist {
         this.name = name;
     }
 
-    public List<Album> getAlbums() {
-        return albums;
-    }
-
-    public void setAlbums(List<Album> albums) {
-        this.albums = albums;
-    }
-
-    public void addAlbum(Album album) {
-        this.albums.add(album);
-    }
-
     @Override
     public String toString() {
         return "Artist{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
-                ", album=" + albums +
                 '}';
     }
 

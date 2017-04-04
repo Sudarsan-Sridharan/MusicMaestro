@@ -11,21 +11,13 @@ import java.util.List;
 public class Album {
 
     private int id;
+    private int artistId;
     private String name;
 
-    @JsonIgnore
-    private List<Song> songs = new ArrayList<>();
-
-    public Album(int id, String name, List<Song> songs) {
+    public Album(int id, int artistId, String name) {
         this.id = id;
+        this.artistId = artistId;
         this.name = name;
-        this.songs = songs;
-    }
-
-    public Album(int id, String name, Song song) {
-        this.id = id;
-        this.name = name;
-        this.songs.add(song);
     }
 
     public int getId() {
@@ -36,6 +28,14 @@ public class Album {
         this.id = id;
     }
 
+    public int getArtistId() {
+        return artistId;
+    }
+
+    public void setArtistId(int artistId) {
+        this.artistId = artistId;
+    }
+
     public String getName() {
         return name;
     }
@@ -44,24 +44,12 @@ public class Album {
         this.name = name;
     }
 
-    public List<Song> getSongs() {
-        return songs;
-    }
-
-    public void setSongs(List<Song> songs) {
-        this.songs = songs;
-    }
-
-    public void addSong(Song song) {
-        this.songs.add(song);
-    }
-
     @Override
     public String toString() {
         return "Album{" +
                 "id=" + id +
+                ", artistId=" + artistId +
                 ", name='" + name + '\'' +
-                ", song=" + songs +
                 '}';
     }
 

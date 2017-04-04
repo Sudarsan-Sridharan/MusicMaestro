@@ -33,21 +33,4 @@ public class SongServiceTest {
         //artistFolder.delete();
     }
 
-    @Test
-    public void setBeansInit() {
-        //Dustin Kensrue: I Believe
-        Song song1 = new Song(1, "I Believe", "2007");
-        Album album1 = new Album(1, "Please Come Home", song1);
-        Artist artist1 = new Artist(1, "Dustin Kensrue", album1);
-
-        //Dustin Kensrue: Consider the Ravens
-        Song song2 = new Song(2, "Consider the Ravens", "2007");
-        album1.addSong(song2);
-
-        //Foo Fighters: Times Like These
-        Song song3 = new Song(3, "Times Like These", "2009");
-        Album album2 = new Album(2, "Greatest Hits", song3);
-        Artist artist2 = new Artist(2, "Foo Fighters", album2);
-    }
-
 }

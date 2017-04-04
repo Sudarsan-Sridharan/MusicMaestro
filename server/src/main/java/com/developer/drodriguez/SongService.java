@@ -25,6 +25,8 @@ import java.util.*;
 public class SongService {
 
     private List<Artist> artists = new ArrayList<>();
+    private List<Album> albums = new ArrayList<>();
+    private List<Song> songs = new ArrayList<>();
     private int artistIndex = 0;
     private int albumIndex = 0;
     private int songIndex = 0;
@@ -34,23 +36,25 @@ public class SongService {
 
     SongService() {
         //Dustin Kensrue: I Believe
-        Song song1 = new Song(songIndex++, "I Believe", "2007", "/Users/Daniel/Music/library/Dustin Kensrue/Please Come Home/I Believe.mp3");
-        Album album1 = new Album(albumIndex++, "Please Come Home", song1);
-        Artist artist1 = new Artist(artistIndex++, "Dustin Kensrue", album1);
-        artists.add(artist1);
+        artists.add( new Artist(++artistIndex, "Dustin Kensrue") );
+        albums.add( new Album(++albumIndex, artistIndex, "Please Come Home") );
+        songs.add ( new Song(++songIndex, albumIndex,"I Believe", "2007", "/Users/Daniel/Music/library/Dustin Kensrue/Please Come Home/I Believe.mp3") );
 
         //Dustin Kensrue: Consider the Ravens
-        Song song2 = new Song(songIndex++, "Consider the Ravens", "2007", "/Users/Daniel/Music/library/Dustin Kensrue/Please Come Home/Consider the Ravens.mp3");
-        album1.addSong(song2);
+        songs.add( new Song(++songIndex, albumIndex,"Consider the Ravens", "2007", "/Users/Daniel/Music/library/Dustin Kensrue/Please Come Home/Consider the Ravens.mp3") );
 
         //Foo Fighters: Times Like These
-        Song song3 = new Song(songIndex++, "Times Like These", "2009", "/Users/Daniel/Music/library/Foo Fighters/Greatest Hits/Times Like These.mp3");
-        Album album2 = new Album(albumIndex++, "Greatest Hits", song3);
-        Artist artist2 = new Artist(artistIndex++, "Foo Fighters", album2);
-        artists.add(artist2);
+        artists.add( new Artist(++artistIndex, "Foo Fighters") );
+        albums.add( new Album(++albumIndex, artistIndex, "Greatest Hits") );
+        songs.add( new Song(++songIndex, albumIndex, "Times Like These", "2009", "/Users/Daniel/Music/library/Foo Fighters/Greatest Hits/Times Like These.mp3") );
+
+        System.out.println(artistIndex);
+        System.out.println(albumIndex);
+        System.out.println(songIndex);
+
     }
 
-    public List<Artist> getArtists() {;
+    public List<Artist> getArtists() {
         return artists;
     }
 
@@ -62,37 +66,43 @@ public class SongService {
     }
 
     public List<Album> getAlbums(int artistId) {
+        List<Album> newList = new ArrayList<>();
         for (Artist artist : artists)
             if (artist.getId() == artistId)
-                return artist.getAlbums();
-        return null;
+                for (Album album : albums)
+                    if (album.getArtistId() == artistId)
+                        newList.add(album);
+        return newList;
     }
 
     public Album getAlbum(int artistId, int albumId) {
         for (Artist artist : artists)
             if (artist.getId() == artistId)
-                for (Album album : artist.getAlbums())
-                    if (album.getId() == albumId)
+                for (Album album : albums)
+                    if (album.getArtistId() == artistId && album.getId() == albumId)
                         return album;
         return null;
     }
 
     public List<Song> getSongs(int artistId, int albumId) {
+        List<Song> newList = new ArrayList<>();
         for (Artist artist : artists)
             if (artist.getId() == artistId)
-                for (Album album : artist.getAlbums())
-                    if (album.getId() == albumId)
-                        return album.getSongs();
-        return null;
+                for (Album album : albums)
+                    if (album.getArtistId() == artistId && album.getId() == albumId)
+                        for (Song song : songs)
+                            if (song.getAlbumId() == albumId)
+                                newList.add(song);
+        return newList;
     }
 
     public Song getSong(int artistId, int albumId, int songId) {
         for (Artist artist : artists)
             if (artist.getId() == artistId)
-                for (Album album : artist.getAlbums())
-                    if (album.getId() == albumId)
-                        for (Song song : album.getSongs())
-                            if (song.getId() == songId)
+                for (Album album : albums)
+                    if (album.getArtistId() == artistId && album.getId() == albumId)
+                        for (Song song : songs)
+                            if (album.getId() == albumId && song.getId() == songId)
                                 return song;
         return null;
     }
@@ -150,12 +160,9 @@ public class SongService {
 
     }
 
-    /*
 
-    public Song addSongFile(MultipartFile file)
+    public synchronized Song addSongFile(MultipartFile file)
             throws IOException, UnsupportedTagException, InvalidDataException, NoSuchTagException {
-
-        System.out.println("POST SongFile.");
 
         File tempFile = convertMultipartToFile(file);
         Mp3File mp3 = new Mp3File(tempFile);
@@ -164,20 +171,56 @@ public class SongService {
 
             ID3v2 tag = mp3.getId3v2Tag();
 
-            String artist = tag.getArtist();
-            String album = tag.getAlbum();
-            String songTitle = tag.getTitle();
-            String year = tag.getYear();
+            String tArtistName = tag.getArtist();
+            String tAlbumName = tag.getAlbum();
+            String tSongName = tag.getTitle();
+            String tYear = tag.getYear();
             String originalFileName = file.getOriginalFilename();
             String fileType = originalFileName.substring(originalFileName.lastIndexOf(".") + 1, originalFileName.length());
-            String filePath = libraryPath + "/" + artist + "/" + album;
-            String fileName = songTitle + "." + fileType;
+            String filePath = libraryPath + "/" + tArtistName + "/" + tAlbumName;
+            String fileName = tSongName + "." + fileType;
             String fullPath = filePath + "/" + fileName;
 
             tempFile.delete();
 
-            Song newSong = new Song(songTitle, year, fullPath);
-            songs.add(newSong);
+            int newArtistId = 0;
+            int newAlbumId = 0;
+            int newSongId = 0;
+
+
+            for (int i = 0; i < artists.size(); i++) {
+                if (artists.get(i).getName() == tArtistName) {
+                    newArtistId = artists.get(i).getId();
+                    break;
+                } else if (i == artists.size() - 1) {
+                    newArtistId = ++artistIndex;
+                }
+            }
+
+            for (int j = 0; j < albums.size(); j++) {
+                if (albums.get(j).getName() == tAlbumName) {
+                    newAlbumId = albums.get(j).getId();
+                    break;
+                } else if (j == albums.size() - 1) {
+                    newAlbumId = ++albumIndex;
+                }
+            }
+
+            for (int k = 0; k < songs.size(); k++) {
+                if (songs.get(k).getName() == tSongName) {
+                    newSongId = songs.get(k).getId();
+                    break;
+                } else if (k == songs.size() - 1) {
+                    newSongId = ++songIndex;
+                }
+            }
+
+            artists.add(new Artist(newArtistId, tArtistName));
+            albums.add(new Album(newAlbumId, newArtistId, tAlbumName));
+            songs.add(new Song(newSongId, newAlbumId, tSongName, tYear, fullPath));
+
+            //Song newSong = new Song(songTitle, year, fullPath);
+            //songs.add(newSong);
 
             //Create any non-existing directories for file.
             File newDirs = new File(filePath);
@@ -198,7 +241,8 @@ public class SongService {
             bout.flush();
             bout.close();
 
-            return newSong;
+            //return newSong;
+            return null;
 
         }
 
@@ -207,6 +251,8 @@ public class SongService {
         }
 
     }
+
+    /*
 
     public void updateSongInfo(Song song) throws IOException, UnsupportedTagException, InvalidDataException, NotSupportedException {
 

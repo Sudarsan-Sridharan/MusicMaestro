@@ -8,6 +8,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 public class Song {
 
     private int id;
+    private int albumId;
     private String name;
     private String year;
 
@@ -16,14 +17,16 @@ public class Song {
 
     public Song() {}
 
-    public Song(int id, String name, String year) {
+    public Song(int id, int albumId, String name, String year) {
         this.id = id;
+        this.albumId = albumId;
         this.name = name;
         this.year = year;
     }
 
-    public Song(int id, String name, String year, String filePath) {
+    public Song(int id, int albumId, String name, String year, String filePath) {
         this.id = id;
+        this.albumId = albumId;
         this.name = name;
         this.year = year;
         this.filePath = filePath;
@@ -35,6 +38,14 @@ public class Song {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public int getAlbumId() {
+        return albumId;
+    }
+
+    public void setAlbumId(int albumId) {
+        this.albumId = albumId;
     }
 
     public String getName() {
@@ -65,6 +76,7 @@ public class Song {
     public String toString() {
         return "Song{" +
                 "id=" + id +
+                ", albumId=" + albumId +
                 ", name='" + name + '\'' +
                 ", year='" + year + '\'' +
                 ", filePath='" + filePath + '\'' +

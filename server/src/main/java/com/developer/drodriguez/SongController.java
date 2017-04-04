@@ -66,12 +66,13 @@ public class SongController {
         return songService.getSongArtwork(artistId, albumId, songId);
     }
 
-    /*
-    @RequestMapping(method=RequestMethod.POST, value="/upload/song")
+    @RequestMapping(method=RequestMethod.POST, value="/upload/file")
     public Song addSongFile(@RequestParam("file") MultipartFile file)
             throws IOException, UnsupportedTagException, InvalidDataException, NoSuchTagException {
         return songService.addSongFile(file);
     }
+
+    /*
 
     @RequestMapping(method=RequestMethod.PUT, value="/library/song")
     public void updateSongInfo(@RequestBody Song song)
