@@ -5,7 +5,4 @@ import { Song } from './Song';
 export class Album {
   id: number;
   name: String;
-
-  //Server-side only:
-  //songs: Array<Song>;
 }

@@ -3,6 +3,7 @@ package com.developer.drodriguez;
 import com.developer.drodriguez.model.Album;
 import com.developer.drodriguez.model.Artist;
 import com.developer.drodriguez.model.Song;
+import com.developer.drodriguez.model.SongInfo;
 import com.mpatric.mp3agic.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ByteArrayResource;
@@ -79,6 +80,10 @@ public class SongService {
 
     public Song getSong(int artistId, int albumId, int songId) {
         return songMap.get(songId);
+    }
+
+    public SongInfo getSongInfo(int artistId, int albumId, int songId) {
+        return new SongInfo(artistMap.get(artistId), albumMap.get(albumId), songMap.get(songId));
     }
 
 
@@ -166,6 +171,7 @@ public class SongService {
              *  otherwise create a new object with a new index.
              */
 
+            //Get ID for file's artist name.
             for (Artist artist : artistMap.values()) {
                 if (artist.getName().equals(tArtistName)) {
                     artist.setName(tArtistName);
@@ -173,12 +179,12 @@ public class SongService {
                     break;
                 }
             }
-
             if (newArtistId == 0) {
                 artistMap.put(++artistIndex, new Artist(artistIndex, tArtistName));
                 newArtistId = artistIndex;
             }
 
+            //Get ID for file's album name.
             for (Album album : albumMap.values()) {
                 if (album.getName().equals(tAlbumName)) {
                     album.setName(tAlbumName);
@@ -187,12 +193,12 @@ public class SongService {
                     break;
                 }
             }
-
             if (newAlbumId == 0) {
                 albumMap.put(++albumIndex, new Album(albumIndex, newArtistId, tAlbumName));
                 newArtistId = artistIndex;
             }
 
+            //Get ID for file's song name.
             for (Song song : songMap.values()) {
                 if (song.getName().equals(tSongName)) {
                     song.setName(tSongName);
@@ -200,7 +206,6 @@ public class SongService {
                     newSongId = song.getId();
                 }
             }
-
             if (newSongId == 0)
                 songMap.put(++songIndex, new Song(songIndex, newArtistId, tSongName, tYear, fullPath));
 

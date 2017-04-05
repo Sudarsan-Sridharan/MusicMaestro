@@ -5,7 +5,4 @@ import { Album } from './Album';
 export class Artist {
   id: number;
   name: String;
-
-  //Server-side only:
-  //albums: Array<Album>;
 }

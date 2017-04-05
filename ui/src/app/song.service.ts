@@ -31,6 +31,11 @@ export class SongService {
     .map((response: Response) => response.json());
   }
 
+  getSongInfo(artistId: number, albumId: number, songId: number) {
+    return this.http.get("http://localhost:8080/library/artist/" + artistId + "/album/" + albumId + "/song/" + songId + "/info")
+    .map((response: Response) => response.json());
+  }
+
   addSong(file: File) {
     let formData:FormData = new FormData();
     formData.append('file', file, file.name);

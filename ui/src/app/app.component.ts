@@ -4,6 +4,7 @@ import { Observable } from 'rxjs/Observable';
 import { Artist } from './model/Artist';
 import { Album } from './model/Album';
 import { Song } from './model/Song';
+import { SongInfo } from './model/SongInfo';
 
 @Component({
   selector: 'app-root',
@@ -18,7 +19,8 @@ export class AppComponent implements OnInit {
   //["Music Library", "Edit Song", "Add a Song"->"Single", "Add a Song"->"Multiple"]
   isActiveSection: Array<boolean> = [false, false, false, false];
   isUploading: boolean = false;
-  curProgress: number = 0;
+  isPlayingSong: boolean = false;
+  currProgress: number = 0;
   maxProgress: number = 1;
   selArtistId: number;
   selAlbumId: number;
@@ -26,7 +28,7 @@ export class AppComponent implements OnInit {
   artists: Array<Artist>;
   albums: Array<Album>;
   songs: Array<Song>;
-  currSong: Song;
+  currSongInfo: SongInfo;
   songArtworkSrc: String;
   songPlayback;
 
@@ -54,14 +56,24 @@ export class AppComponent implements OnInit {
   getSong(songId: number) {
     this.selSongId = songId;
     this.songService.getSong(this.selArtistId, this.selAlbumId, songId)
-    .subscribe(song => this.playSong(this.selArtistId, this.selAlbumId, song));
+    .subscribe( () => {
+      this.getSongInfo(this.selArtistId, this.selAlbumId, this.selSongId);
+    });
   }
 
-  playSong(artistId: number, albumId: number, song: Song) {
+  getSongInfo(artistId: number, albumId: number, songId: number) {
+    this.songService.getSongInfo(artistId, albumId, songId)
+    .subscribe(songInfo => {
+      this.currSongInfo = songInfo;
+      this.playSong();
+    });
+  }
+
+  playSong() {
     if (this.songPlayback == null) { this.songPlayback = new Audio(); }
-    this.currSong = song;
-    this.songArtworkSrc = "http://localhost:8080/artwork/artist/" + artistId + "/album/" + albumId + "/song/" + this.selSongId;
-    this.songPlayback.src = "http://localhost:8080/playback/artist/" + artistId + "/album/" + albumId + "/song/" + this.selSongId;
+    this.isPlayingSong = true;
+    this.songArtworkSrc = "http://localhost:8080/artwork/artist/" + this.currSongInfo.artist.id + "/album/" + this.currSongInfo.album.id + "/song/" + this.currSongInfo.song.id;
+    this.songPlayback.src = "http://localhost:8080/playback/artist/" + this.currSongInfo.artist.id + "/album/" + this.currSongInfo.album.id + "/song/" + this.currSongInfo.song.id;
     this.songPlayback.load();
     this.songPlayback.play();
   }
@@ -71,7 +83,7 @@ export class AppComponent implements OnInit {
     this.maxProgress = fileList.length; //Sets the new max value for progress bar.
     for (let i = 0; i < fileList.length; i++) { //Loop through list of files.
       this.songService.addSong(fileList[i]).subscribe( () => {  //Send song to server.
-        this.curProgress++; //Increment the current value for progress bar.
+        this.currProgress++; //Increment the current value for progress bar.
         if (i == fileList.length - 1) { //During last loop,
           this.refreshLibrary(); //Refresh library
           setTimeout( () => { //Delay 0.8 seconds.
@@ -85,20 +97,8 @@ export class AppComponent implements OnInit {
   }
 
   /*
-  updateNewSongInfo() {
-    this.songService.updateSongInfo(this.newSong).subscribe( () => {
-      this.fileUploads = null;
-      if (this.hasNewSongPlayRequest) {
-        this.hasNewSongPlayRequest = false;
-        this.playSong(this.newSong);
-        //this.markSongTitle(this.newSong.artist, this.newSong.album, this.newSong.title);
-      }
-      this.exitMenu();
-      this.clearNewSong();
-    });
-  }
 
-  updatecurrSongInfo() {
+  updateSongInfo() {
     this.songService.updateSongInfo(this.currSong).subscribe( () => {
       this.exitMenu();
       this.songs = null;
@@ -131,7 +131,7 @@ export class AppComponent implements OnInit {
   }
 
   resetProgressBar() {
-    this.curProgress = 0;
+    this.currProgress = 0;
     this.maxProgress = 1;
   }
 

@@ -61,3 +61,7 @@ a:link, a:visited, a:hover, a:active {
 .jumbotron {
   padding-top: 5px;
 }
+
+.progress {
+  background: #B5B5B5; 
+}
