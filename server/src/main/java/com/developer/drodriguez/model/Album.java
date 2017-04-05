@@ -14,6 +14,9 @@ public class Album {
     private int artistId;
     private String name;
 
+    //Required from Spring for JSON deserialization.
+    public Album() {}
+
     public Album(int id, int artistId, String name) {
         this.id = id;
         this.artistId = artistId;

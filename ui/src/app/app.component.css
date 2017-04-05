@@ -22,10 +22,8 @@ input[type="file"] {
   font-weight: lighter;
 }
 
-.checkbox-text label {
-  font-size: 10pt;
-  font-weight: lighter;
-  font-style: italic;
+.img-border {
+  border: 1px solid #DDDDDD;
 }
 
 .extra-padding .row {
@@ -63,5 +61,5 @@ a:link, a:visited, a:hover, a:active {
 }
 
 .progress {
-  background: #B5B5B5; 
+  background: #B5B5B5;
 }

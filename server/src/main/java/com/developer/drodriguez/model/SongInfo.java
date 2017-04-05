@@ -9,6 +9,9 @@ public class SongInfo {
     private Album album;
     private Song song;
 
+    //Required from Spring for JSON deserialization.
+    public SongInfo() {}
+
     public SongInfo(Artist artist, Album album, Song song) {
         this.artist = artist;
         this.album = album;

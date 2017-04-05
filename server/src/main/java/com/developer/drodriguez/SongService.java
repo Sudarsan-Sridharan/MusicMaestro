@@ -35,21 +35,6 @@ public class SongService {
     @Value("${library.path}")
     private String libraryPath;
 
-    SongService() {
-        //Dustin Kensrue: I Believe
-        artistMap.put(++artistIndex, new Artist(artistIndex, "Dustin Kensrue") );
-        albumMap.put(++albumIndex, new Album(albumIndex, artistIndex, "Please Come Home") );
-        songMap.put(++songIndex, new Song(songIndex, albumIndex,"I Believe", "2007", "/Users/Daniel/Music/library/Dustin Kensrue/Please Come Home/I Believe.mp3") );
-
-        //Dustin Kensrue: Consider the Ravens
-        songMap.put( ++songIndex, new Song(songIndex, albumIndex,"Consider the Ravens", "2007", "/Users/Daniel/Music/library/Dustin Kensrue/Please Come Home/Consider the Ravens.mp3") );
-
-        //Foo Fighters: Times Like These
-        artistMap.put( ++artistIndex, new Artist(artistIndex, "Foo Fighters") );
-        albumMap.put( ++albumIndex, new Album(albumIndex, artistIndex, "Greatest Hits") );
-        songMap.put( ++songIndex, new Song(songIndex, albumIndex, "Times Like These", "2009", "/Users/Daniel/Music/library/Foo Fighters/Greatest Hits/Times Like These.mp3") );
-    }
-
     public List<Artist> getArtists() {
         return new ArrayList<>(artistMap.values());
     }
@@ -88,6 +73,7 @@ public class SongService {
 
 
     public ResponseEntity<InputStreamResource> getSongFile(int artistId, int albumId, int songId) throws IOException {
+        System.out.println(getSong(artistId, albumId, songId));
         String filePath = getSong(artistId, albumId, songId).getFilePath();
         PathResource file = new PathResource(filePath);
         return ResponseEntity
@@ -172,44 +158,39 @@ public class SongService {
              */
 
             //Get ID for file's artist name.
-            for (Artist artist : artistMap.values()) {
+            for (Artist artist : artistMap.values())
                 if (artist.getName().equals(tArtistName)) {
                     artist.setName(tArtistName);
                     newArtistId = artist.getId();
                     break;
                 }
-            }
             if (newArtistId == 0) {
                 artistMap.put(++artistIndex, new Artist(artistIndex, tArtistName));
                 newArtistId = artistIndex;
             }
 
             //Get ID for file's album name.
-            for (Album album : albumMap.values()) {
+            for (Album album : albumMap.values())
                 if (album.getName().equals(tAlbumName)) {
                     album.setName(tAlbumName);
                     album.setArtistId(newArtistId);
                     newAlbumId = album.getId();
                     break;
                 }
-            }
             if (newAlbumId == 0) {
                 albumMap.put(++albumIndex, new Album(albumIndex, newArtistId, tAlbumName));
                 newArtistId = artistIndex;
             }
 
             //Get ID for file's song name.
-            for (Song song : songMap.values()) {
+            for (Song song : songMap.values())
                 if (song.getName().equals(tSongName)) {
                     song.setName(tSongName);
                     song.setAlbumId(newAlbumId);
                     newSongId = song.getId();
                 }
-            }
             if (newSongId == 0)
                 songMap.put(++songIndex, new Song(songIndex, newArtistId, tSongName, tYear, fullPath));
-
-            System.out.println();
 
             //Create any non-existing directories for file.
             File newDirs = new File(filePath);
@@ -238,17 +219,17 @@ public class SongService {
 
     }
 
-    /*
+    public synchronized SongInfo updateSongInfo(SongInfo songInfo) throws IOException, UnsupportedTagException, InvalidDataException, NotSupportedException {
 
-    public void updateSongInfo(Song song) throws IOException, UnsupportedTagException, InvalidDataException, NotSupportedException {
+        String oldPath = songMap.get(songInfo.getSong().getId()).getFilePath();
+        String fileType = oldPath.substring(oldPath.lastIndexOf(".") + 1, oldPath.length());
+        String artistPath = libraryPath + "/" + songInfo.getArtist().getName();
+        String albumPath = artistPath  + "/" + songInfo.getAlbum().getName();
+        String fileName = songInfo.getSong().getName() + "." + fileType;
+        String newPath = albumPath + "/" + fileName;
+        songInfo.getSong().setFilePath(newPath);    //JSON song objects have null filepaths, so add here.
 
-        String originalFilePath = song.getFilePath();
-        String fileType = originalFilePath.substring(originalFilePath.lastIndexOf(".") + 1, originalFilePath.length());
-        String filePath = libraryPath + "/" + song.getArtist() + "/" + song.getAlbum();
-        String fileName = song.getTitle() + "." + fileType;
-        String fullPath = filePath + "/" + fileName;
-
-        File file = new File(song.getFilePath());
+        File file = new File(oldPath);
         Mp3File mp3 = new Mp3File(file);
 
         if (mp3.hasId3v2Tag()) {
@@ -256,32 +237,132 @@ public class SongService {
             String albumImageMime = mp3.getId3v2Tag().getAlbumImageMimeType();
             mp3.removeId3v2Tag();
             ID3v2 tag = new ID3v24Tag();
-            tag.setTitle(song.getTitle());
-            tag.setArtist(song.getArtist());
-            tag.setAlbum(song.getAlbum());
-            tag.setYear(song.getYear());
+            tag.setTitle(songInfo.getSong().getName());
+            tag.setArtist(songInfo.getArtist().getName());
+            tag.setAlbum(songInfo.getAlbum().getName());
+            tag.setYear(songInfo.getSong().getYear());
             tag.setAlbumImage(albumImageBytes, albumImageMime);
             mp3.setId3v2Tag(tag);
-            //Only delete if the song title, album, or artist was modified by the user.
-            if (!song.getFilePath().equals(fullPath)) {
-                mp3.save(fullPath);
-                boolean isDeleted = file.delete();
+            //If names changes caused path change, then save new file and delete old one.
+            if (!oldPath.equals(newPath)) {
+                File artist = new File(artistPath);
+                File album = new File(albumPath);
+                if (!artist.exists())
+                    artist.mkdir();
+                if (!album.exists())
+                    album.mkdir();
+                mp3.save(newPath);
+                file.delete();
             }
         } else {
             throw new UnsupportedTagException("The associated file does not have a valid ID3v2 tag.");
         }
 
-        for (int i = 0; i < songs.size(); i++) {
-            Song s = songs.get(i);
-            if (s.getFilePath().equals(originalFilePath)) {
-                song.setFilePath(fullPath);
-                songs.set(i, song);
-                return;
+        int newArtistId = 0;
+        int newAlbumId = 0;
+        int oldArtistId = 0;
+        int oldAlbumId = 0;
+
+        for (Artist artist : artistMap.values())
+            if (artist.getId() == songInfo.getArtist().getId())
+                if (!artist.getName().equals(songInfo.getArtist().getName())) {
+                    oldArtistId = artist.getId();
+                    for (Artist artistMatch : artistMap.values())     //Check to see if changed artist already exists.
+                        if (artistMatch.getName().equals(songInfo.getArtist().getName())) {
+                            System.out.println("*** Changed artist name already exists!");
+                            newArtistId = artistMatch.getId();
+                            break;
+                        }
+                    if (newArtistId == 0) {
+                        newArtistId = ++artistIndex;
+                        songInfo.getArtist().setId(newArtistId);
+                        artistMap.put(newArtistId, songInfo.getArtist());
+                        break;
+                    }
+                }
+
+        //*** NEED TO FIX THIS BLOCK ***
+        for (Album album : albumMap.values()) {
+            if (album.getId() == songInfo.getAlbum().getId()) {
+                for (Album albumMatch : albumMap.values())  //Check to see if changed album already exists.
+                    if (albumMatch.getName().equals(songInfo.getAlbum().getName())) {
+                        newAlbumId = albumMatch.getId();
+                        break;
+                    }
+                    if (newAlbumId == 0) {
+                        if (newArtistId != 0)
+                            songInfo.getAlbum().setArtistId(newArtistId);
+                        if (!album.getName().equals(songInfo.getAlbum().getName())) {
+                            oldAlbumId = album.getId();
+                            newAlbumId = ++albumIndex;
+                            songInfo.getAlbum().setId(newAlbumId);
+                            albumMap.put(newAlbumId, songInfo.getAlbum());
+                            break;
+                        }
+                    }
             }
         }
 
+        for (Song song : songMap.values())
+            if (song.getId() == songInfo.getSong().getId()) {
+                if (newAlbumId != 0)
+                    songInfo.getSong().setAlbumId(newAlbumId);
+                songMap.put(song.getId(), songInfo.getSong());
+                break;
+            }
+
+        boolean isUsedAlbumId = false;
+        boolean isUsedArtistId = false;
+
+        System.out.println();
+        System.out.println("oldArtistId = " + oldArtistId);
+        System.out.println("oldAlbumId = " + oldAlbumId);
+        System.out.println("newArtistId = " + newArtistId);
+        System.out.println("newAlbumId = " + newAlbumId);
+
+        if (oldAlbumId != 0)
+            for (Song song : songMap.values())
+                if (song.getAlbumId() == oldAlbumId)
+                    isUsedAlbumId = true;
+        if (!isUsedAlbumId)
+            albumMap.remove(oldAlbumId);
+
+        System.out.println();
+        System.out.println("REMOVE ARTIST CHECK:");
+
+        if (oldArtistId != 0) {
+            System.out.println("oldArtistId != 0 --> " + (oldArtistId != 0));
+            for (Album album : albumMap.values()) {
+                System.out.println(album);
+                if (album.getArtistId() == oldArtistId) {
+                    isUsedArtistId = true;
+                    System.out.println("isUsedArtistId = " + isUsedArtistId);
+                }
+            }
+        }
+        if (!isUsedArtistId)
+            artistMap.remove(oldArtistId);
+
+        removeEmptyDirectories(oldPath);
+
+        System.out.println();
+        for (Artist artist : artistMap.values())
+            System.out.println(artist);
+        System.out.println();
+
+        for (Album album : albumMap.values())
+            System.out.println(album);
+        System.out.println();
+
+        for (Song song : songMap.values())
+            System.out.println(song);
+        System.out.println();
+
+        return songInfo;
 
     }
+
+    /*
 
     public void deleteSong(String artist, String album, String songTitle) {
         String filePath = null;
@@ -296,9 +377,11 @@ public class SongService {
         removeFiles(filePath);
     }
 
+    */
+
 
     //Delete song (if exists), as well as the album folder and the artist folder (if empty).
-    public void removeFiles(String filePath) {
+    public void removeSongAndEmptyDirectories(String filePath) {
         File songFile = new File(filePath);
         File albumFolder = songFile.getParentFile();
         File artistFolder = albumFolder.getParentFile();
@@ -313,7 +396,17 @@ public class SongService {
                 artistFolder.delete();
     }
 
-    */
+    public void removeEmptyDirectories(String filePath) {
+        File songFile = new File(filePath);
+        File albumFolder = songFile.getParentFile();
+        File artistFolder = albumFolder.getParentFile();
+        if (albumFolder.isDirectory())
+            if (albumFolder.list().length == 0)
+                albumFolder.delete();
+        if (artistFolder.isDirectory())
+            if (artistFolder.list().length == 0)
+                artistFolder.delete();
+    }
 
     public File convertMultipartToFile(MultipartFile file) throws IOException
     {

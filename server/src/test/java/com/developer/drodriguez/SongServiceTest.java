@@ -8,6 +8,10 @@ import org.junit.Test;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created by Daniel on 3/31/17.
@@ -36,10 +40,13 @@ public class SongServiceTest {
     }
 
     @Test
-    public void testMap() {
-        Map<Integer, String> map = new HashMap<>();
-        map.put(1, "Test Value");
-        System.out.println(map.get(2));
+    public void testSong() {
+        Map<Integer, Song> songMap = new TreeMap<>();
+        songMap.put(1, new Song(1, 1,"I Believe", "2007", "/Users/Daniel/Music/library/Dustin Kensrue/Please Come Home/I Believe.mp3") );
+        songMap.put(2, new Song(2, 1,"Consider the Ravens", "2007", "/Users/Daniel/Music/library/Dustin Kensrue/Please Come Home/Consider the Ravens.mp3") );
+        System.out.println(songMap.get(2));
+        assertTrue(songMap.containsValue(songMap.get(2)));
+
     }
 
 }

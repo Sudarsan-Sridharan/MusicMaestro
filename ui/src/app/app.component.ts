@@ -65,6 +65,7 @@ export class AppComponent implements OnInit {
     this.songService.getSongInfo(artistId, albumId, songId)
     .subscribe(songInfo => {
       this.currSongInfo = songInfo;
+      this.exitMenu();  //Clears out of current menu.
       this.playSong();
     });
   }
@@ -96,18 +97,15 @@ export class AppComponent implements OnInit {
     }
   }
 
-  /*
-
-  updateSongInfo() {
-    this.songService.updateSongInfo(this.currSong).subscribe( () => {
-      this.exitMenu();
-      this.songs = null;
+  updateSong() {
+    this.songService.updateSong(this.currSongInfo).subscribe( songInfo => {
+      this.currSongInfo = songInfo;
+      this.exitMenu();  //Clears out of current menu.
       this.refreshLibrary();
+      this.playSong();
       //this.markSongTitle(this.currSong.artist, this.currSong.album, this.currSong.title);
-      this.playSong(this.currSong);
     });
   }
-  */
 
   /*
   removeSong(i: number) {

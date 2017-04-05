@@ -4,7 +4,7 @@
       <div class="btn-group">
         <button type="button" class="btn btn-default" data-toggle="collapse" data-target="#songSelect"
         (click)="isActiveSection = [true, false, false, false]" [ngClass]="isActiveSection[0] == true ? 'active' : ''">Music Library</button>
-        <button type="button" class="btn btn-default" data-toggle="collapse" data-target="#editSong" [disabled]="currSong == null"
+        <button type="button" class="btn btn-default" data-toggle="collapse" data-target="#editSong" [disabled]="currSongInfo == null"
         (click)="isActiveSection = [false, true, false, false]" [ngClass]="isActiveSection[1] == true ? 'active' : ''">Edit Song</button>
         <div class="btn-group">
           <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" [ngClass]="isActiveSection[2] == true || isActiveSection[3] == true ? 'active' : ''">
@@ -103,10 +103,10 @@
     <div class="row">
       <div class="col-md-2 col-md-offset-1">
         <div class="btn-group">
-          <button class="btn btn-default btn-sm" [disabled]="currSong.title == null
-          || currSong.title == '' || currSong.album == null || currSong.album == ''
-          || currSong.artist == null || currSong.artist == ''"
-          (click)="updatecurrSongInfo()">Save</button>
+          <button class="btn btn-default btn-sm" [disabled]="currSongInfo.song.name == null
+          || currSongInfo.song.name == '' || currSongInfo.album.name == null || currSongInfo.album.name == ''
+          || currSongInfo.artist.name == null || currSongInfo.artist.name == ''"
+          (click)="updateSong()">Save</button>
           <button class="btn btn-default btn-danger btn-sm" (click)="removeSong()">Delete</button>
         </div>
       </div>
@@ -135,21 +135,27 @@
         </div>
       </div>
     </div>
-</div>
-<div class="row" *ngIf="isUploading">
-  <div class="col-md-4 col-md-offset-1">
-    <div class="progress">
-      <div class="progress-bar progress-bar-success" role="progressbar" [attr.aria-valuenow]="currProgress"
-      aria-valuemin="0" [attr.aria-valuemax]="maxProgress" [ngStyle]="{width: currProgress / maxProgress | percent: '1.0-1'}">
-      {{currProgress}} / {{maxProgress}} Uploaded
+  </div>
+  <div class="row" *ngIf="isUploading">
+    <div class="col-md-4 col-md-offset-1">
+      <div class="progress">
+        <div class="progress-bar progress-bar-success" role="progressbar" [attr.aria-valuenow]="currProgress"
+        aria-valuemin="0" [attr.aria-valuemax]="maxProgress" [ngStyle]="{width: currProgress / maxProgress | percent: '1.0-1'}">
+        {{currProgress}} / {{maxProgress}}
+      </div>
     </div>
   </div>
 </div>
-</div>
-<div class="row" *ngIf="currProgress == maxProgress">
-<div class="col-md-4 col-md-offset-1 text-center">
-  Upload complete!
-</div>
+<div class="row">
+  <div class="col-md-4 col-md-offset-1 text-center" *ngIf="isUploading && currProgress == 0">
+    Connecting...
+  </div>
+  <div class="col-md-4 col-md-offset-1 text-center" *ngIf="isUploading && currProgress > 0 && currProgress < maxProgress">
+    Uploading...
+  </div>
+  <div class="col-md-4 col-md-offset-1 text-center" *ngIf="isUploading && currProgress == maxProgress">
+    Upload complete!
+  </div>
 </div>
 </div>
 <div class="container" *ngIf="!isPlayingSong">
@@ -160,7 +166,7 @@
 <div class="container" *ngIf="isPlayingSong">
   <div class="row">
     <div class="col-md-4">
-      <img class="img-responsive img-rounded" [src]="songArtworkSrc">
+      <img class="img-responsive img-rounded img-border" [src]="songArtworkSrc">
     </div>
     <div class="col-md-6">
       <div class="row">

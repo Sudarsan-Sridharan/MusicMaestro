@@ -13,6 +13,9 @@ public class Artist {
     private int id;
     private String name;
 
+    //Required from Spring for JSON deserialization.
+    public Artist() {}
+
     public Artist(int id, String name) {
         this.id = id;
         this.name = name;

@@ -4,6 +4,7 @@ import { Observable } from 'rxjs/Observable';
 import { Artist } from './model/Artist';
 import { Album } from './model/Album';
 import { Song } from './model/Song';
+import { SongInfo } from './model/SongInfo';
 import 'rxjs/add/operator/map';
 
 @Injectable()
@@ -42,11 +43,12 @@ export class SongService {
     return this.http.post("http://localhost:8080/upload/file", formData);
   }
 
-/*
-  updateSongInfo(song: Song) {
-    return this.http.put("http://localhost:8080/library", song);
+  updateSong(songInfo: SongInfo) {
+    return this.http.put("http://localhost:8080/library", songInfo)
+    .map((response: Response) => response.json());
   }
 
+/*
   removeSong(song: Song) {
     return this.http.delete("http://localhost:8080/library/" + song.artist + "/" + song.album + "/" + song.title);
   }

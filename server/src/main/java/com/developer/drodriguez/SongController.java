@@ -6,6 +6,7 @@ import com.developer.drodriguez.model.Song;
 import com.developer.drodriguez.model.SongInfo;
 import com.mpatric.mp3agic.InvalidDataException;
 import com.mpatric.mp3agic.NoSuchTagException;
+import com.mpatric.mp3agic.NotSupportedException;
 import com.mpatric.mp3agic.UnsupportedTagException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
@@ -78,13 +79,13 @@ public class SongController {
         songService.addSongFile(file);
     }
 
-    /*
-
-    @RequestMapping(method=RequestMethod.PUT, value="/library/song")
-    public void updateSongInfo(@RequestBody Song song)
+    @RequestMapping(method=RequestMethod.PUT, value="/library")
+    public SongInfo updateSongInfo(@RequestBody SongInfo songInfo)
             throws IOException, InvalidDataException, NotSupportedException, UnsupportedTagException {
-        songService.updateSongInfo(song);
+        return songService.updateSongInfo(songInfo);
     }
+
+    /*
 
     @RequestMapping(method=RequestMethod.DELETE, value="/library/song/{id}")
     public void deleteSong(@PathVariable int id) {

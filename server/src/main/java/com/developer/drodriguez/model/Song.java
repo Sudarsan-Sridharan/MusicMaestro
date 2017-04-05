@@ -15,6 +15,7 @@ public class Song {
     @JsonIgnore
     private String filePath;
 
+    //Required from Spring for JSON deserialization.
     public Song() {}
 
     public Song(int id, int albumId, String name, String year) {
