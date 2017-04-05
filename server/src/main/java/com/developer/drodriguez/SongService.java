@@ -232,6 +232,148 @@ public class SongService {
         File file = new File(oldPath);
         Mp3File mp3 = new Mp3File(file);
 
+        /*
+         *
+         *  UPDATE THE ARTIST, ALBUM, AND SONG MAPS + DIRECTORIES
+         *
+         */
+
+        /*
+         *  Check if names exist at the specified IDs.
+         */
+
+        boolean hasChangedArtistName = false;
+        boolean hasChangedAlbumName = false;
+        boolean hasChangedSongName = false;
+
+        int oldArtistId = 0;
+        int oldAlbumId = 0;
+
+        //Check artist name at ID
+        for (Artist artist : artistMap.values())
+            if (artist.getId() == songInfo.getArtist().getId())
+                if (!artist.getName().equals(songInfo.getArtist().getName())) {
+                    hasChangedArtistName = true;
+                    oldArtistId = artist.getId();
+                    break;
+                }
+
+        //Check album name at ID
+        for (Album album : albumMap.values())
+            if (album.getId() == songInfo.getAlbum().getId())
+                if (!album.getName().equals(songInfo.getAlbum().getName())) {
+                    hasChangedAlbumName = true;
+                    oldAlbumId = album.getId();
+                    break;
+                }
+
+        //Check song name at ID
+        for (Song song : songMap.values())
+            if (song.getId() == songInfo.getSong().getId())
+                if (!song.getName().equals(songInfo.getSong().getId())) {
+                    hasChangedSongName = true;
+                    break;
+                }
+
+        /*
+         *  If changes detected, first check if the
+         *  changed artist or album names exists already at any other ID.
+         */
+
+        boolean hasArtistNameInMap = false;
+        boolean hasAlbumNameInMap = false;
+
+        int artistIdWithExistingName = 0;
+        int albumIdWithExistingName = 0;
+
+        //Check artist names at any ID (if applicable)
+        if (hasChangedArtistName)
+            for (Artist artist : artistMap.values())
+                if (artist.getName().equals(songInfo.getArtist().getName())) {
+                    hasArtistNameInMap = true;
+                    artistIdWithExistingName = artist.getId();
+                    break;
+                }
+
+        //Check album names at any ID (if applicable)
+        if (hasChangedAlbumName)
+            for (Album album : albumMap.values())
+                if (album.getName().equals(songInfo.getAlbum().getName())) {
+                    hasAlbumNameInMap = true;
+                    albumIdWithExistingName = album.getId();
+                    break;
+                }
+
+        /*
+         *  Modify artist, album, and song maps noted with changes.
+         */
+
+        int newArtistId = 0;
+        int newAlbumId = 0;
+
+        //Modify artist (if applicable)
+        if (hasChangedArtistName) {
+            if (hasArtistNameInMap)
+                newArtistId = artistIdWithExistingName;
+            else
+                newArtistId = ++artistIndex;
+            songInfo.getArtist().setId(newArtistId);
+            artistMap.put(newArtistId, songInfo.getArtist());
+        }
+
+        //Modify album (if applicable)
+        if (hasChangedAlbumName) {
+            if (hasChangedArtistName)
+                songInfo.getAlbum().setArtistId(newArtistId);
+            if (hasAlbumNameInMap)
+                newAlbumId = albumIdWithExistingName;
+            else
+                newAlbumId = ++albumIndex;
+            songInfo.getAlbum().setId(newAlbumId);
+            albumMap.put(newAlbumId, songInfo.getAlbum());
+        }
+
+        //Modify song (if applicable)
+        if (hasChangedSongName) {
+            if (hasChangedAlbumName)
+                songInfo.getSong().setAlbumId(newAlbumId);
+            songMap.put(songInfo.getSong().getId(), songInfo.getSong());
+        }
+
+        /*
+         *  Remove possible unused artist or album map entries at the old IDs.
+         */
+
+        boolean hasUsedAlbumId = false;
+        boolean hasUsedArtistId = false;
+
+        //Check for unused album
+        if (hasChangedAlbumName)
+            for (Song song : songMap.values())
+                if (song.getAlbumId() == oldAlbumId) {
+                    hasUsedAlbumId = true;
+                    break;
+                }
+
+        if (!hasUsedAlbumId)
+            albumMap.remove(oldAlbumId);
+
+        //Check for unused artist
+        if (hasChangedArtistName)
+            for (Album album : albumMap.values())
+                if (album.getArtistId() == oldArtistId) {
+                    hasUsedArtistId = true;
+                    break;
+                }
+
+        if (!hasUsedArtistId)
+            artistMap.remove(oldArtistId);
+
+        /*
+         *  Remove directories with the unused artist or album names (i.e. empty directories).
+         */
+
+        //Updates file tied to the SongInfo object with new name (if applicable) and tag info.
         if (mp3.hasId3v2Tag()) {
             byte[] albumImageBytes = mp3.getId3v2Tag().getAlbumImage();
             String albumImageMime = mp3.getId3v2Tag().getAlbumImageMimeType();
@@ -258,105 +400,8 @@ public class SongService {
             throw new UnsupportedTagException("The associated file does not have a valid ID3v2 tag.");
         }
 
-        int newArtistId = 0;
-        int newAlbumId = 0;
-        int oldArtistId = 0;
-        int oldAlbumId = 0;
-
-        for (Artist artist : artistMap.values())
-            if (artist.getId() == songInfo.getArtist().getId())
-                if (!artist.getName().equals(songInfo.getArtist().getName())) {
-                    oldArtistId = artist.getId();
-                    for (Artist artistMatch : artistMap.values())     //Check to see if changed artist already exists.
-                        if (artistMatch.getName().equals(songInfo.getArtist().getName())) {
-                            System.out.println("*** Changed artist name already exists!");
-                            newArtistId = artistMatch.getId();
-                            break;
-                        }
-                    if (newArtistId == 0) {
-                        newArtistId = ++artistIndex;
-                        songInfo.getArtist().setId(newArtistId);
-                        artistMap.put(newArtistId, songInfo.getArtist());
-                        break;
-                    }
-                }
-
-        //*** NEED TO FIX THIS BLOCK ***
-        for (Album album : albumMap.values()) {
-            if (album.getId() == songInfo.getAlbum().getId()) {
-                for (Album albumMatch : albumMap.values())  //Check to see if changed album already exists.
-                    if (albumMatch.getName().equals(songInfo.getAlbum().getName())) {
-                        newAlbumId = albumMatch.getId();
-                        break;
-                    }
-                    if (newAlbumId == 0) {
-                        if (newArtistId != 0)
-                            songInfo.getAlbum().setArtistId(newArtistId);
-                        if (!album.getName().equals(songInfo.getAlbum().getName())) {
-                            oldAlbumId = album.getId();
-                            newAlbumId = ++albumIndex;
-                            songInfo.getAlbum().setId(newAlbumId);
-                            albumMap.put(newAlbumId, songInfo.getAlbum());
-                            break;
-                        }
-                    }
-            }
-        }
-
-        for (Song song : songMap.values())
-            if (song.getId() == songInfo.getSong().getId()) {
-                if (newAlbumId != 0)
-                    songInfo.getSong().setAlbumId(newAlbumId);
-                songMap.put(song.getId(), songInfo.getSong());
-                break;
-            }
-
-        boolean isUsedAlbumId = false;
-        boolean isUsedArtistId = false;
-
-        System.out.println();
-        System.out.println("oldArtistId = " + oldArtistId);
-        System.out.println("oldAlbumId = " + oldAlbumId);
-        System.out.println("newArtistId = " + newArtistId);
-        System.out.println("newAlbumId = " + newAlbumId);
-
-        if (oldAlbumId != 0)
-            for (Song song : songMap.values())
-                if (song.getAlbumId() == oldAlbumId)
-                    isUsedAlbumId = true;
-        if (!isUsedAlbumId)
-            albumMap.remove(oldAlbumId);
-
-        System.out.println();
-        System.out.println("REMOVE ARTIST CHECK:");
-
-        if (oldArtistId != 0) {
-            System.out.println("oldArtistId != 0 --> " + (oldArtistId != 0));
-            for (Album album : albumMap.values()) {
-                System.out.println(album);
-                if (album.getArtistId() == oldArtistId) {
-                    isUsedArtistId = true;
-                    System.out.println("isUsedArtistId = " + isUsedArtistId);
-                }
-            }
-        }
-        if (!isUsedArtistId)
-            artistMap.remove(oldArtistId);
-
+        //Remove empty directories at the given old path.
         removeEmptyDirectories(oldPath);
-
-        System.out.println();
-        for (Artist artist : artistMap.values())
-            System.out.println(artist);
-        System.out.println();
-
-        for (Album album : albumMap.values())
-            System.out.println(album);
-        System.out.println();
-
-        for (Song song : songMap.values())
-            System.out.println(song);
-        System.out.println();
 
         return songInfo;
 
@@ -396,6 +441,11 @@ public class SongService {
                 artistFolder.delete();
     }
 
+
+    /*
+     *  Feed in a file (that does NOT get deleted), and the function checks
+     *  parent directories two levels deep and deletes them as long as they are empty.
+     */
     public void removeEmptyDirectories(String filePath) {
         File songFile = new File(filePath);
         File albumFolder = songFile.getParentFile();
