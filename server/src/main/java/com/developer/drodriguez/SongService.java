@@ -60,6 +60,7 @@ public class SongService {
         for (Song song : songMap.values())
             if (song.getAlbumId() == albumId)
                 newList.add(song);
+        Collections.sort(newList);  //Sorts list according to track numbers of each song.
         return newList;
     }
 
@@ -110,7 +111,6 @@ public class SongService {
                         .contentLength(bar.contentLength())
                         .contentType(MediaType.parseMediaType(mimeType))
                         .body(new InputStreamResource(bar.getInputStream()));
-
             }
         }
 
@@ -138,6 +138,10 @@ public class SongService {
 
             String tArtistName = tag.getArtist();
             String tAlbumName = tag.getAlbum();
+            String tTrackString = tag.getTrack();
+            int tTrack = 0;
+            if (tag.getTrack() != null)
+                tTrack = Integer.parseInt(tag.getTrack());
             String tSongName = tag.getTitle();
             String tYear = tag.getYear();
             String originalFileName = file.getOriginalFilename();
@@ -190,7 +194,7 @@ public class SongService {
                     newSongId = song.getId();
                 }
             if (newSongId == 0)
-                songMap.put(++songIndex, new Song(songIndex, newArtistId, tSongName, tYear, fullPath));
+                songMap.put(++songIndex, new Song(songIndex, newArtistId, tTrack, tSongName, tYear, fullPath));
 
             //Create any non-existing directories for file.
             File newDirs = new File(filePath);
@@ -210,7 +214,6 @@ public class SongService {
             bout.write(bytes);
             bout.flush();
             bout.close();
-
         }
 
         else {
@@ -242,8 +245,8 @@ public class SongService {
          *  Check if names exist at the specified IDs.
          */
 
-        boolean hasChangedArtistName = false;
-        boolean hasChangedAlbumName = false;
+        boolean hasChangedArtist = false;
+        boolean hasChangedAlbum = false;
         boolean hasChangedSongName = false;
 
         int oldArtistId = 0;
@@ -252,8 +255,8 @@ public class SongService {
         //Check artist name at ID
         for (Artist artist : artistMap.values())
             if (artist.getId() == songInfo.getArtist().getId())
-                if (!artist.getName().equals(songInfo.getArtist().getName())) {
-                    hasChangedArtistName = true;
+                if (!artist.equals(songInfo.getArtist())) {
+                    hasChangedArtist = true;
                     oldArtistId = artist.getId();
                     break;
                 }
@@ -261,12 +264,12 @@ public class SongService {
         //Check album name at ID
         for (Album album : albumMap.values())
             if (album.getId() == songInfo.getAlbum().getId())
-                if (!album.getName().equals(songInfo.getAlbum().getName())) {
-                    hasChangedAlbumName = true;
+                if (!album.equals(songInfo.getAlbum())) {
+                    hasChangedAlbum = true;
                     oldAlbumId = album.getId();
                     System.out.println("Assign Album ID = " + oldAlbumId + " due to album change.");
                     break;
-                } else if (hasChangedArtistName) {
+                } else if (hasChangedArtist) {
                     oldAlbumId = album.getId();
                     System.out.println("Assign Album ID = " + oldAlbumId + " due to artist change only.");
                 }
@@ -274,8 +277,9 @@ public class SongService {
         //Check song name at ID
         for (Song song : songMap.values())
             if (song.getId() == songInfo.getSong().getId())
-                if (!song.getName().equals(songInfo.getSong().getName())) {
+                if (!song.equals(songInfo.getSong())) {
                     hasChangedSongName = true;
+                    System.out.println("Has changed Song.");
                     break;
                 }
 
@@ -291,7 +295,7 @@ public class SongService {
         int albumIdWithExistingName = 0;
 
         //Check artist names at any ID (if applicable)
-        if (hasChangedArtistName)
+        if (hasChangedArtist)
             for (Artist artist : artistMap.values())
                 if (artist.getName().equals(songInfo.getArtist().getName())) {
                     hasArtistNameInMap = true;
@@ -302,7 +306,7 @@ public class SongService {
                 }
 
         //Check album names at any ID (if applicable)
-        if (hasChangedArtistName || hasChangedAlbumName)
+        if (hasChangedArtist || hasChangedAlbum)
             for (Album album : albumMap.values())
                 if (album.getName().equals(songInfo.getAlbum().getName())) {
                     hasAlbumNameInMap = true;
@@ -320,7 +324,7 @@ public class SongService {
         int newAlbumId = 0;
 
         //Modify artist (if applicable)
-        if (hasChangedArtistName) {
+        if (hasChangedArtist) {
             if (hasArtistNameInMap)
                 newArtistId = artistIdWithExistingName;
             else
@@ -330,10 +334,10 @@ public class SongService {
         }
 
         //Modify album (if applicable)
-        if (hasChangedAlbumName || hasChangedArtistName) {
-            if (hasChangedArtistName)
+        if (hasChangedAlbum || hasChangedArtist) {
+            if (hasChangedArtist)
                 songInfo.getAlbum().setArtistId(newArtistId);
-            if (hasAlbumNameInMap && (hasChangedArtistName && hasArtistNameInMap))
+            if (hasAlbumNameInMap && (hasChangedArtist && hasArtistNameInMap))
                 newAlbumId = albumIdWithExistingName;
             else
                 newAlbumId = ++albumIndex;
@@ -342,8 +346,8 @@ public class SongService {
         }
 
         //Modify song (if applicable)
-        if (hasChangedSongName || hasChangedAlbumName || hasChangedArtistName) {
-            if (hasChangedAlbumName || hasChangedArtistName)
+        if (hasChangedSongName || hasChangedAlbum || hasChangedArtist) {
+            if (hasChangedAlbum || hasChangedArtist)
                 songInfo.getSong().setAlbumId(newAlbumId);
             songMap.put(songInfo.getSong().getId(), songInfo.getSong());
         }
@@ -358,7 +362,7 @@ public class SongService {
         //Check for unused album
         System.out.println();
         System.out.println("CHECK FOR UNUSED ALBUM:");
-        if (hasChangedAlbumName || hasChangedArtistName)
+        if (hasChangedAlbum || hasChangedArtist)
             for (Song song : songMap.values()) {
                 System.out.println(song.getAlbumId() + " == " + oldAlbumId);
                 if (song.getAlbumId() == oldAlbumId) {
@@ -378,7 +382,7 @@ public class SongService {
         //Check for unused artist
         System.out.println();
         System.out.println("CHECK FOR UNUSED ARTIST:");
-        if (hasChangedArtistName)
+        if (hasChangedArtist)
             for (Album album : albumMap.values()) {
                 System.out.println(album.getArtistId() + " == " + oldArtistId);
                 if (album.getArtistId() == oldArtistId) {

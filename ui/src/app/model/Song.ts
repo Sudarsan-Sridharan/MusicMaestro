@@ -4,6 +4,7 @@ import { Injectable } from '@angular/core';
 export class Song {
   id: number;
   albumId: number;
+  track: number;
   name: String;
   year: String;
 }

@@ -6,9 +6,7 @@ import com.developer.drodriguez.model.Song;
 import org.junit.Test;
 
 import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -42,11 +40,28 @@ public class SongServiceTest {
     @Test
     public void testSong() {
         Map<Integer, Song> songMap = new TreeMap<>();
-        songMap.put(1, new Song(1, 1,"I Believe", "2007", "/Users/Daniel/Music/library/Dustin Kensrue/Please Come Home/I Believe.mp3") );
-        songMap.put(2, new Song(2, 1,"Consider the Ravens", "2007", "/Users/Daniel/Music/library/Dustin Kensrue/Please Come Home/Consider the Ravens.mp3") );
+        songMap.put(1, new Song(1, 1, 0, "I Believe", "2007", "/Users/Daniel/Music/library/Dustin Kensrue/Please Come Home/I Believe.mp3") );
+        songMap.put(2, new Song(2, 1, 0, "Consider the Ravens", "2007","/Users/Daniel/Music/library/Dustin Kensrue/Please Come Home/Consider the Ravens.mp3") );
         System.out.println(songMap.get(2));
         assertTrue(songMap.containsValue(songMap.get(2)));
+    }
 
+    @Test
+    public void songSort() {
+        Map<Integer, Song> songMap = new TreeMap<>();
+        songMap.put(1, new Song(1, 1, 3, "I Believe", "2007", "/Users/Daniel/Music/library/Dustin Kensrue/Please Come Home/I Believe.mp3") );
+        songMap.put(2, new Song(2, 1, 2, "Consider the Ravens", "2007","/Users/Daniel/Music/library/Dustin Kensrue/Please Come Home/Consider the Ravens.mp3") );
+        songMap.put(3, new Song(3, 2, 7, "Test Song", "Test Album", "Test Year"));
+        List<Song> newList = new ArrayList<>();
+        System.out.println("BEFORE SORT");
+        for (Song song : songMap.values())
+            newList.add(song);
+        for (Song song : newList)
+            System.out.println(song);
+        Collections.sort(newList);
+        System.out.println("AFTER SORT");
+        for (Song song : newList)
+            System.out.println(song);
     }
 
 }
