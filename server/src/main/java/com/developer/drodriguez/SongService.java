@@ -264,13 +264,17 @@ public class SongService {
                 if (!album.getName().equals(songInfo.getAlbum().getName())) {
                     hasChangedAlbumName = true;
                     oldAlbumId = album.getId();
+                    System.out.println("Assign Album ID = " + oldAlbumId + " due to album change.");
                     break;
+                } else if (hasChangedArtistName) {
+                    oldAlbumId = album.getId();
+                    System.out.println("Assign Album ID = " + oldAlbumId + " due to artist change only.");
                 }
 
         //Check song name at ID
         for (Song song : songMap.values())
             if (song.getId() == songInfo.getSong().getId())
-                if (!song.getName().equals(songInfo.getSong().getId())) {
+                if (!song.getName().equals(songInfo.getSong().getName())) {
                     hasChangedSongName = true;
                     break;
                 }
@@ -322,7 +326,7 @@ public class SongService {
         }
 
         //Modify album (if applicable)
-        if (hasChangedAlbumName) {
+        if (hasChangedAlbumName || hasChangedArtistName) {
             if (hasChangedArtistName)
                 songInfo.getAlbum().setArtistId(newArtistId);
             if (hasAlbumNameInMap)
@@ -332,10 +336,14 @@ public class SongService {
             songInfo.getAlbum().setId(newAlbumId);
             albumMap.put(newAlbumId, songInfo.getAlbum());
         }
+        else if (!hasChangedAlbumName && hasChangedArtistName) {
+            newAlbumId = ++albumIndex;
+            albumMap.put(newAlbumId, songInfo.getAlbum());
+        }
 
         //Modify song (if applicable)
-        if (hasChangedSongName) {
-            if (hasChangedAlbumName)
+        if (hasChangedSongName || hasChangedAlbumName || hasChangedArtistName) {
+            if (hasChangedAlbumName || hasChangedArtistName)
                 songInfo.getSong().setAlbumId(newAlbumId);
             songMap.put(songInfo.getSong().getId(), songInfo.getSong());
         }
@@ -348,26 +356,60 @@ public class SongService {
         boolean hasUsedArtistId = false;
 
         //Check for unused album
-        if (hasChangedAlbumName)
-            for (Song song : songMap.values())
+        System.out.println();
+        System.out.println("CHECK FOR UNUSED ALBUM:");
+        if (hasChangedAlbumName || hasChangedArtistName)
+            for (Song song : songMap.values()) {
+                System.out.println(song.getAlbumId() + " == " + oldAlbumId);
                 if (song.getAlbumId() == oldAlbumId) {
                     hasUsedAlbumId = true;
+                    System.out.println("hasUsedAlbumId = " + hasUsedAlbumId);
                     break;
                 }
+            }
 
-        if (!hasUsedAlbumId)
+        if (!hasUsedAlbumId) {
+            System.out.println("REMOVE ALBUM.");
             albumMap.remove(oldAlbumId);
+        }
+
+        System.out.println();
 
         //Check for unused artist
+        System.out.println();
+        System.out.println("CHECK FOR UNUSED ARTIST:");
         if (hasChangedArtistName)
-            for (Album album : albumMap.values())
+            for (Album album : albumMap.values()) {
+                System.out.println(album.getArtistId() + " == " + oldArtistId);
                 if (album.getArtistId() == oldArtistId) {
                     hasUsedArtistId = true;
+                    System.out.println("hasUsedArtistId = " + hasUsedArtistId);
                     break;
                 }
+            }
 
-        if (!hasUsedArtistId)
+        if (!hasUsedArtistId) {
+            System.out.println("REMOVE ARTIST.");
             artistMap.remove(oldArtistId);
+        }
+
+        System.out.println("DONE.");
+
+        System.out.println();
+        System.out.println("MAP VALUES:");
+        System.out.println();
+        System.out.println("ARTIST MAP:");
+        for (Artist artist : artistMap.values())
+            System.out.println(artist);
+        System.out.println();
+        System.out.println("ALBUM MAP:");
+        for (Album album : albumMap.values())
+            System.out.println(album);
+        System.out.println();
+        System.out.println("SONG MAP:");
+        for (Song song : songMap.values())
+            System.out.println(song);
+        System.out.println();
 
         /*
          *  Remove directories with the unused artist or album names (i.e. empty directories).
