@@ -138,17 +138,20 @@ public class SongService {
 
             String tArtistName = tag.getArtist();
             String tAlbumName = tag.getAlbum();
-            String tTrackString = tag.getTrack();
             int tTrack = 0;
             if (tag.getTrack() != null)
-                tTrack = Integer.parseInt(tag.getTrack());
+                if (tag.getTrack().contains("/"))
+                    tTrack = Integer.parseInt(tag.getTrack().substring(0, tag.getTrack().lastIndexOf("/"))); //Substring removes "out of total tracks" (x"/xx") extension.
+                else
+                    tTrack = Integer.parseInt(tag.getTrack());
             String tSongName = tag.getTitle();
             String tYear = tag.getYear();
             String originalFileName = file.getOriginalFilename();
             String fileType = originalFileName.substring(originalFileName.lastIndexOf(".") + 1, originalFileName.length());
-            String filePath = libraryPath + "/" + tArtistName + "/" + tAlbumName;
-            String fileName = tSongName + "." + fileType;
-            String fullPath = filePath + "/" + fileName;
+            String filePath = libraryPath + File.separator
+                    + removeInvalidPathChars(tArtistName) + File.separator + removeInvalidPathChars(tAlbumName);
+            String fileName = removeInvalidPathChars(tSongName) + "." + fileType;
+            String fullPath = filePath + File.separator + fileName;
 
             tempFile.delete();
 
@@ -169,8 +172,8 @@ public class SongService {
                     break;
                 }
             if (newArtistId == 0) {
-                artistMap.put(++artistIndex, new Artist(artistIndex, tArtistName));
-                newArtistId = artistIndex;
+                newArtistId = ++artistIndex;
+                artistMap.put(newArtistId, new Artist(newArtistId, tArtistName));
             }
 
             //Get ID for file's album name.
@@ -182,8 +185,8 @@ public class SongService {
                     break;
                 }
             if (newAlbumId == 0) {
-                albumMap.put(++albumIndex, new Album(albumIndex, newArtistId, tAlbumName));
-                newArtistId = artistIndex;
+                newAlbumId = ++albumIndex;
+                albumMap.put(newAlbumId, new Album(newAlbumId, newAlbumId, tAlbumName));
             }
 
             //Get ID for file's song name.
@@ -193,8 +196,10 @@ public class SongService {
                     song.setAlbumId(newAlbumId);
                     newSongId = song.getId();
                 }
-            if (newSongId == 0)
-                songMap.put(++songIndex, new Song(songIndex, newArtistId, tTrack, tSongName, tYear, fullPath));
+            if (newSongId == 0) {
+                newSongId = ++songIndex;
+                songMap.put(newSongId, new Song(newSongId, newAlbumId, tTrack, tSongName, tYear, fullPath));
+            }
 
             //Create any non-existing directories for file.
             File newDirs = new File(filePath);
@@ -226,10 +231,10 @@ public class SongService {
 
         String oldPath = songMap.get(songInfo.getSong().getId()).getFilePath();
         String fileType = oldPath.substring(oldPath.lastIndexOf(".") + 1, oldPath.length());
-        String artistPath = libraryPath + "/" + songInfo.getArtist().getName();
-        String albumPath = artistPath  + "/" + songInfo.getAlbum().getName();
-        String fileName = songInfo.getSong().getName() + "." + fileType;
-        String newPath = albumPath + "/" + fileName;
+        String artistPath = libraryPath + File.separator + removeInvalidPathChars(songInfo.getArtist().getName());
+        String albumPath = artistPath  + File.separator + removeInvalidPathChars(songInfo.getAlbum().getName());
+        String fileName = removeInvalidPathChars(songInfo.getSong().getName()) + "." + fileType;
+        String newPath = albumPath + File.separator + fileName;
         songInfo.getSong().setFilePath(newPath);    //JSON song objects have null filepaths, so add here.
 
         File file = new File(oldPath);
@@ -514,4 +519,14 @@ public class SongService {
         return convFile;
     }
 
+    //Replaces any occurrence of an invalid path character with '_'
+    public String removeInvalidPathChars(String originalString) {
+        char[] originalChars = originalString.toCharArray();
+        char[] badChars = {'\\', '/', ':', '*', '?', '<', '>', '|', ']'};
+        for (int i = 0; i < originalChars.length; i++)
+            for (int j = 0; j < badChars.length; j++)
+                if (originalChars[i] == badChars[j])
+                    originalChars[i] = '_';
+        return new String(originalChars);
+    }
 }

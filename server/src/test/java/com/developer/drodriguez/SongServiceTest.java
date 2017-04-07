@@ -64,4 +64,28 @@ public class SongServiceTest {
             System.out.println(song);
     }
 
+    @Test
+    public void removeInvalidPathCharacters() {
+        String originalString ="AC/DC";
+        char[] originalChars = originalString.toCharArray();
+        char[] badChars = {'\\', '/', ':', '*', '?', '<', '>', '|', ']'};
+        for (int i = 0; i < originalChars.length; i++)
+            for (int j = 0; j < badChars.length; j++)
+                if (originalChars[i] == badChars[j])
+                    originalChars[i] = '_';
+        System.out.println(new String(originalChars));
+    }
+
+    @Test
+    public void convertTrackToInteger() {
+        String tagTrack = "1/12";
+        int tTrack = 0;
+        if (tagTrack != null)
+            if (tagTrack.contains("/"))
+                tTrack = Integer.parseInt(tagTrack.substring(0, tagTrack.lastIndexOf("/"))); //Substring removes "out of total tracks" (x"/xx") extension.
+            else
+                tTrack = Integer.parseInt(tagTrack);
+            System.out.println(tTrack);
+    }
+
 }

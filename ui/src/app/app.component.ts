@@ -16,8 +16,8 @@ export class AppComponent implements OnInit {
   constructor(private songService: SongService) {}
 
   //isActiveSection --> Keeps one menu section active at a time:
-  //["Music Library", "Edit Song", "Add a Song"->"Single", "Add a Song"->"Multiple"]
-  isActiveSection: Array<boolean> = [false, false, false, false];
+  //["Music Library", "Edit Song", "Add Song"]
+  isActiveSection: Array<boolean> = [false, false, false];
   isUploading: boolean = false;
   isPlayingSong: boolean = false;
   hasSelSong: boolean = false;
@@ -77,6 +77,7 @@ export class AppComponent implements OnInit {
     if (this.songPlayback == null) { this.songPlayback = new Audio(); }
     this.songArtworkSrc = "http://localhost:8080/artwork/artist/" + this.currSongInfo.artist.id + "/album/" + this.currSongInfo.album.id + "/song/" + this.currSongInfo.song.id;
     this.songPlayback.src = "http://localhost:8080/playback/artist/" + this.currSongInfo.artist.id + "/album/" + this.currSongInfo.album.id + "/song/" + this.currSongInfo.song.id;
+    this.songPlayback.loop = true;
   }
 
   playSong() {
@@ -89,6 +90,11 @@ export class AppComponent implements OnInit {
     this.isPlayingSong = false;
   }
 
+  stopSong() {
+    this.loadSong();
+    this.isPlayingSong = false;
+  }
+
 
   addSongs(fileList: FileList) {
     this.isUploading = true;   //Used in view to show progress bar.
@@ -97,7 +103,7 @@ export class AppComponent implements OnInit {
       this.songService.addSong(fileList[i]).subscribe( () => {  //Send song to server.
         this.currProgress++; //Increment the current value for progress bar.
         if (i == fileList.length - 1) { //During last loop,
-          this.refreshLibrary(); //Refresh library
+          this.resetLibrary(); //Refresh library
           setTimeout( () => { //Delay 0.8 seconds.
             this.exitMenu();  //Clears out of current menu.
             this.resetProgressBar(); //Resets the current and max values for the progress bar.
@@ -112,10 +118,10 @@ export class AppComponent implements OnInit {
     this.songService.updateSong(this.currSongInfo).subscribe( songInfo => {
       this.currSongInfo = songInfo;
       this.exitMenu();  //Clears out of current menu.
-      this.refreshLibrary();
+      this.refreshLibrary(this.currSongInfo.artist.id, this.currSongInfo.album.id);
+      this.setLibrarySelections(this.currSongInfo.artist.id, this.currSongInfo.album.id, this.currSongInfo.song.id);
       this.loadSong();
       this.playSong();
-      //this.markSongTitle(this.currSong.artist, this.currSong.album, this.currSong.title);
     });
   }
 
@@ -137,7 +143,9 @@ export class AppComponent implements OnInit {
   */
 
   exitMenu() {
-    this.isActiveSection = [false, false, false, false];
+    for (let i = 0; i < this.isActiveSection.length; i++) {
+      this.isActiveSection[i] = false;
+    }
   }
 
   resetProgressBar() {
@@ -145,22 +153,25 @@ export class AppComponent implements OnInit {
     this.maxProgress = 1;
   }
 
-  refreshLibrary() {
-    this.selArtistId = null;
-    this.selAlbumId = null;
-    this.selSongId = null;
+  resetLibrary() {
+    this.artists = null;
+    this.albums = null;
     this.songs = null;
-    this.getArtists();
+    this.setLibrarySelections(null, null, null);
   }
-/*
-  markSongTitle(artistId: number, albumId: number, titleId: number) {
+
+  refreshLibrary(artistId: number, albumId: number) {
+    this.getArtists();
+    this.getAlbums(artistId);
+    this.getSongs(artistId, albumId);
+  }
+
+  setLibrarySelections(artistId: number, albumId: number, titleId: number) {
     this.selArtistId = artistId;
     this.selAlbumId = albumId;
     this.selSongId = titleId;
     this.getArtists();
-    //this.getAlbums(artistId);
-    //this.getSongs(albumId);
   }
-  */
+
 
 }
