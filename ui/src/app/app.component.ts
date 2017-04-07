@@ -20,6 +20,7 @@ export class AppComponent implements OnInit {
   isActiveSection: Array<boolean> = [false, false, false, false];
   isUploading: boolean = false;
   isPlayingSong: boolean = false;
+  hasSelSong: boolean = false;
   currProgress: number = 0;
   maxProgress: number = 1;
   selArtistId: number;
@@ -66,18 +67,28 @@ export class AppComponent implements OnInit {
     .subscribe(songInfo => {
       this.currSongInfo = songInfo;
       this.exitMenu();  //Clears out of current menu.
-      this.playSong();
+      this.hasSelSong = true;
+      this.loadSong();
+      setTimeout( () => this.playSong(), 300);
     });
   }
 
-  playSong() {
+  loadSong() {
     if (this.songPlayback == null) { this.songPlayback = new Audio(); }
-    this.isPlayingSong = true;
     this.songArtworkSrc = "http://localhost:8080/artwork/artist/" + this.currSongInfo.artist.id + "/album/" + this.currSongInfo.album.id + "/song/" + this.currSongInfo.song.id;
     this.songPlayback.src = "http://localhost:8080/playback/artist/" + this.currSongInfo.artist.id + "/album/" + this.currSongInfo.album.id + "/song/" + this.currSongInfo.song.id;
-    this.songPlayback.load();
-    this.songPlayback.play();
   }
+
+  playSong() {
+      this.songPlayback.play();
+      this.isPlayingSong = true;
+  }
+
+  pauseSong() {
+    this.songPlayback.pause();
+    this.isPlayingSong = false;
+  }
+
 
   addSongs(fileList: FileList) {
     this.isUploading = true;   //Used in view to show progress bar.
@@ -102,6 +113,7 @@ export class AppComponent implements OnInit {
       this.currSongInfo = songInfo;
       this.exitMenu();  //Clears out of current menu.
       this.refreshLibrary();
+      this.loadSong();
       this.playSong();
       //this.markSongTitle(this.currSong.artist, this.currSong.album, this.currSong.title);
     });
@@ -137,8 +149,6 @@ export class AppComponent implements OnInit {
     this.selArtistId = null;
     this.selAlbumId = null;
     this.selSongId = null;
-    this.songs = null;
-    this.songs = null;
     this.songs = null;
     this.getArtists();
   }

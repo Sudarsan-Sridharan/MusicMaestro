@@ -3,12 +3,17 @@
     <div class="col-md-offset-1">
       <div class="btn-group">
         <button type="button" class="btn btn-default" data-toggle="collapse" data-target="#songSelect"
-        (click)="isActiveSection = [true, false, false, false]" [ngClass]="isActiveSection[0] == true ? 'active' : ''">Music Library</button>
+        (click)="isActiveSection = [true, false, false, false]" [ngClass]="isActiveSection[0] == true ? 'active' : ''">
+          <i class="glyphicon glyphicon-music"></i>&nbsp;Library
+        </button>
         <button type="button" class="btn btn-default" data-toggle="collapse" data-target="#editSong" [disabled]="currSongInfo == null"
-        (click)="isActiveSection = [false, true, false, false]" [ngClass]="isActiveSection[1] == true ? 'active' : ''">Edit Song</button>
+        (click)="isActiveSection = [false, true, false, false]" [ngClass]="isActiveSection[1] == true ? 'active' : ''">
+          <i class="glyphicon glyphicon-pencil"></i>&nbsp;Edit Song
+        </button>
         <div class="btn-group">
-          <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" [ngClass]="isActiveSection[2] == true || isActiveSection[3] == true ? 'active' : ''">
-            Add a Song
+          <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"
+          [ngClass]="isActiveSection[2] == true || isActiveSection[3] == true ? 'active' : ''">
+            <i class="glyphicon glyphicon-cloud-upload"></i>&nbsp;Add a Song
             <span class="caret"></span>
           </button>
           <ul class="dropdown-menu" role="menu">
@@ -166,24 +171,29 @@
   </div>
 </div>
 </div>
-<div class="container" *ngIf="!isPlayingSong">
+<div class="container" *ngIf="!hasSelSong">
   <h2 class="text-list-title text-center">
     Please select a song above.
   </h2>
 </div>
-<div class="container" *ngIf="isPlayingSong">
+<div class="container" *ngIf="hasSelSong">
   <div class="row">
     <div class="col-md-4">
       <img class="img-responsive img-rounded img-border" [src]="songArtworkSrc">
     </div>
     <div class="col-md-6">
-      <div class="row">
+      <div id="playback-controls" class="row">
         <div class="col-md-6">
-          <div class="btn-group">
-            <button class="btn btn-default btn-primary btn-sm" (click)="songPlayback.play()">Play</button>
-            <button class="btn btn-default btn-primary btn-sm" (click)="songPlayback.pause()">Pause</button>
+            <button class="btn btn-primary btn-circle" *ngIf="isPlayingSong" disabled>
+              <i class="glyphicon glyphicon-repeat glyphicon-normal-right-spinner"></i>
+            </button>
+            <button type="button" class="btn btn-primary btn-circle" *ngIf="!isPlayingSong" (click)="playSong()">
+              <i class="glyphicon glyphicon-play"></i>
+            </button>
+            <button type="button" class="btn btn-default btn-circle" (click)="pauseSong()" [disabled]="!isPlayingSong">
+              <i class="glyphicon glyphicon-pause"></i>
+            </button>
           </div>
-        </div>
       </div>
       <div class="row">
         <div class="col-md-12">
