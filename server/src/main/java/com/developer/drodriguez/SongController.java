@@ -27,65 +27,65 @@ public class SongController {
     @Autowired
     private SongService songService;
 
-    @RequestMapping(method=RequestMethod.GET, value="/library/artist")
+    @RequestMapping(method=RequestMethod.GET, value="/artists")
     public List<Artist> getArtists() {
         return songService.getArtists();
     }
 
-    @RequestMapping(method=RequestMethod.GET, value="/library/artist/{artistId}")
+    @RequestMapping(method=RequestMethod.GET, value="/artists/{artistId}")
     public Artist getArtist(@PathVariable int artistId) {
         return songService.getArtist(artistId);
     }
 
-    @RequestMapping(method=RequestMethod.GET, value="/library/artist/{artistId}/album")
+    @RequestMapping(method=RequestMethod.GET, value="/artists/{artistId}/albums")
     public List<Album> getAlbums(@PathVariable int artistId) {
         return songService.getAlbums(artistId);
     }
 
-    @RequestMapping(method=RequestMethod.GET, value="/library/artist/{artistId}/album/{albumId}")
+    @RequestMapping(method=RequestMethod.GET, value="/artists/{artistId}/albums/{albumId}")
     public Album getAlbum(@PathVariable int artistId, @PathVariable int albumId) {
         return songService.getAlbum(artistId, albumId);
     }
 
-    @RequestMapping(method=RequestMethod.GET, value="/library/artist/{artistId}/album/{albumId}/song")
+    @RequestMapping(method=RequestMethod.GET, value="/artists/{artistId}/albums/{albumId}/songs")
     public List<Song> getSongs(@PathVariable int artistId, @PathVariable int albumId) {
         return songService.getSongs(artistId, albumId);
     }
 
-    @RequestMapping(method=RequestMethod.GET, value="/library/artist/{artistId}/album/{albumId}/song/{songId}")
+    @RequestMapping(method=RequestMethod.GET, value="/artists/{artistId}/albums/{albumId}/songs/{songId}")
     public Song getSong(@PathVariable int artistId, @PathVariable int albumId, @PathVariable int songId) {
         return songService.getSong(artistId, albumId, songId);
     }
 
-    @RequestMapping(method=RequestMethod.GET, value="/library/artist/{artistId}/album/{albumId}/song/{songId}/info")
+    @RequestMapping(method=RequestMethod.GET, value="/artists/{artistId}/albums/{albumId}/songs/{songId}/info")
     public SongInfo getSongInfo(@PathVariable int artistId, @PathVariable int albumId, @PathVariable int songId) {
         return songService.getSongInfo(artistId, albumId, songId);
     }
 
-    @RequestMapping(method=RequestMethod.GET, value="/playback/artist/{artistId}/album/{albumId}/song/{songId}")
+    @RequestMapping(method=RequestMethod.GET, value="/artists/{artistId}/albums/{albumId}/songs/{songId}/file")
     public ResponseEntity<InputStreamResource> getSongFile(@PathVariable int artistId, @PathVariable int albumId, @PathVariable int songId) throws IOException {
         return songService.getSongFile(artistId, albumId, songId);
     }
 
-    @RequestMapping(method=RequestMethod.GET, value="/artwork/artist/{artistId}/album/{albumId}/song/{songId}")
+    @RequestMapping(method=RequestMethod.GET, value="/artists/{artistId}/albums/{albumId}/songs/{songId}/artwork")
     public ResponseEntity<InputStreamResource> getSongArtwork(@PathVariable int artistId, @PathVariable int albumId, @PathVariable int songId)
             throws IOException, UnsupportedTagException, InvalidDataException {
         return songService.getSongArtwork(artistId, albumId, songId);
     }
 
-    @RequestMapping(method=RequestMethod.POST, value="/upload/file")
+    @RequestMapping(method=RequestMethod.POST, value="/file")
     public void addSongFile(@RequestParam("file") MultipartFile file)
             throws IOException, UnsupportedTagException, InvalidDataException, NoSuchTagException {
         songService.addSongFile(file);
     }
 
-    @RequestMapping(method=RequestMethod.PUT, value="/library")
-    public SongInfo updateSongInfo(@RequestBody SongInfo songInfo)
+    @RequestMapping(method=RequestMethod.PUT, value="/artists/{artistId}/albums/{albumId}/songs/{songId}")
+    public SongInfo updateSongInfo(@RequestBody SongInfo songInfo, @PathVariable int artistId, @PathVariable int albumId, @PathVariable int songId)
             throws IOException, InvalidDataException, NotSupportedException, UnsupportedTagException {
-        return songService.updateSongInfo(songInfo);
+        return songService.updateSongInfo(songInfo, artistId, albumId, songId);
     }
 
-    @RequestMapping(method=RequestMethod.DELETE, value="/library/artist/{artistId}/album/{albumId}/song/{songId}")
+    @RequestMapping(method=RequestMethod.DELETE, value="/artists/{artistId}/albums/{albumId}/songs/{songId}")
     public void deleteSong(@PathVariable int artistId, @PathVariable int albumId, @PathVariable int songId) {
         songService.deleteSong(artistId, albumId, songId);
     }

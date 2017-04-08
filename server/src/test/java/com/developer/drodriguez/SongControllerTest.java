@@ -39,10 +39,6 @@ public class SongControllerTest {
             if (imageData != null) {
                 String mimeType = songTags.getAlbumImageMimeType();
                 System.out.println("Mime type: " + mimeType);
-                // Write image to file - can determine appropriate file extension from the mime type
-                RandomAccessFile file = new RandomAccessFile("album-artwork", "rw");
-                file.write(imageData);
-                file.close();
             }
         }
     }

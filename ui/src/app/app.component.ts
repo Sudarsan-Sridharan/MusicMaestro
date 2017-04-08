@@ -66,7 +66,7 @@ export class AppComponent implements OnInit {
     this.songService.getSongInfo(artistId, albumId, songId)
     .subscribe(songInfo => {
       this.currSongInfo = songInfo;
-      this.exitMenu();  //Clears out of current menu.
+      this.exitMenu();
       this.hasSelSong = true;
       this.loadSong();
       setTimeout( () => this.playSong(), 300);
@@ -75,8 +75,8 @@ export class AppComponent implements OnInit {
 
   loadSong() {
     if (this.songPlayback == null) { this.songPlayback = new Audio(); }
-    this.songArtworkSrc = "http://localhost:8080/artwork/artist/" + this.currSongInfo.artist.id + "/album/" + this.currSongInfo.album.id + "/song/" + this.currSongInfo.song.id;
-    this.songPlayback.src = "http://localhost:8080/playback/artist/" + this.currSongInfo.artist.id + "/album/" + this.currSongInfo.album.id + "/song/" + this.currSongInfo.song.id;
+    this.songArtworkSrc = "http://localhost:8080/artists/" + this.currSongInfo.artist.id + "/albums/" + this.currSongInfo.album.id + "/songs/" + this.currSongInfo.song.id + "/artwork";
+    this.songPlayback.src = "http://localhost:8080/artists/" + this.currSongInfo.artist.id + "/albums/" + this.currSongInfo.album.id + "/songs/" + this.currSongInfo.song.id + "/file";
     this.songPlayback.loop = true;
   }
 
@@ -115,11 +115,12 @@ export class AppComponent implements OnInit {
   }
 
   updateSong() {
-    this.songService.updateSong(this.currSongInfo).subscribe( songInfo => {
+    this.songService.updateSong(this.currSongInfo, this.currSongInfo.artist.id, this.currSongInfo.album.id, this.currSongInfo.song.id).subscribe( songInfo => {
       this.currSongInfo = songInfo;
-      this.exitMenu();  //Clears out of current menu.
+      this.exitMenu();
       this.refreshLibrary(this.currSongInfo.artist.id, this.currSongInfo.album.id);
       this.setLibrarySelections(this.currSongInfo.artist.id, this.currSongInfo.album.id, this.currSongInfo.song.id);
+      this.hasSelSong = true;
       this.loadSong();
       this.playSong();
     });

@@ -35,8 +35,36 @@
 }
 
 #playback-controls .glyphicon-normal-right-spinner {
-    -webkit-animation: glyphicon-spin-r 2s infinite linear;
-    animation: glyphicon-spin-r 2s infinite linear;
+  -webkit-animation: glyphicon-spin-r 2s infinite linear;
+  animation: glyphicon-spin-r 2s infinite linear;
+}
+
+@media(max-width: 991px) {
+  #song-info-name {
+    padding-top: 10px;
+    font-size: 16pt;
+    font-weight: normal;
+  }
+
+  .song-info {
+    padding-top: 10px;
+    font-size: 14pt;
+    font-weight: lighter;
+  }
+}
+
+@media(min-width: 992px) {
+  #song-info-name {
+    padding-top: 10px;
+    font-size: 18pt;
+    font-weight: normal;
+  }
+
+  .song-info {
+    padding-top: 10px;
+    font-size: 16pt;
+    font-weight: lighter;
+  }
 }
 
 .input-textbox-xs {
@@ -110,25 +138,25 @@ a:link, a:visited, a:hover, a:active {
 }
 
 @-webkit-keyframes glyphicon-spin-r {
-    0% {
-        -webkit-transform: rotate(0deg);
-        transform: rotate(0deg);
-    }
+  0% {
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
 
-    100% {
-        -webkit-transform: rotate(359deg);
-        transform: rotate(359deg);
-    }
+  100% {
+    -webkit-transform: rotate(359deg);
+    transform: rotate(359deg);
+  }
 }
 
 @keyframes glyphicon-spin-r {
-    0% {
-        -webkit-transform: rotate(0deg);
-        transform: rotate(0deg);
-    }
+  0% {
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
 
-    100% {
-        -webkit-transform: rotate(359deg);
-        transform: rotate(359deg);
-    }
+  100% {
+    -webkit-transform: rotate(359deg);
+    transform: rotate(359deg);
+  }
 }

@@ -99,11 +99,6 @@ public class SongService {
             imageData = songTags.getAlbumImage();
             if (imageData != null) {
                 mimeType = songTags.getAlbumImageMimeType();
-                // Write image to file - can determine appropriate file extension from the mime type
-                RandomAccessFile file = new RandomAccessFile("album-artwork", "rw");
-                file.write(imageData);
-                file.close();
-
                 ByteArrayResource bar = new ByteArrayResource(imageData);
 
                 return ResponseEntity
@@ -227,7 +222,7 @@ public class SongService {
 
     }
 
-    public synchronized SongInfo updateSongInfo(SongInfo songInfo) throws IOException, UnsupportedTagException, InvalidDataException, NotSupportedException {
+    public synchronized SongInfo updateSongInfo(SongInfo songInfo, int artistId, int albumId, int songId) throws IOException, UnsupportedTagException, InvalidDataException, NotSupportedException {
 
         String oldPath = songMap.get(songInfo.getSong().getId()).getFilePath();
         String fileType = oldPath.substring(oldPath.lastIndexOf(".") + 1, oldPath.length());
@@ -259,7 +254,7 @@ public class SongService {
 
         //Check artist name at ID
         for (Artist artist : artistMap.values())
-            if (artist.getId() == songInfo.getArtist().getId())
+            if (artist.getId() == artistId)
                 if (!artist.equals(songInfo.getArtist())) {
                     hasChangedArtist = true;
                     oldArtistId = artist.getId();
@@ -268,7 +263,7 @@ public class SongService {
 
         //Check album name at ID
         for (Album album : albumMap.values())
-            if (album.getId() == songInfo.getAlbum().getId())
+            if (album.getId() == albumId)
                 if (!album.equals(songInfo.getAlbum())) {
                     hasChangedAlbum = true;
                     oldAlbumId = album.getId();
@@ -281,7 +276,7 @@ public class SongService {
 
         //Check song name at ID
         for (Song song : songMap.values())
-            if (song.getId() == songInfo.getSong().getId())
+            if (song.getId() == songId)
                 if (!song.equals(songInfo.getSong())) {
                     hasChangedSongName = true;
                     System.out.println("Has changed Song.");
@@ -531,7 +526,7 @@ public class SongService {
     //Replaces any occurrence of an invalid path character with '_'
     public String removeInvalidPathChars(String originalString) {
         char[] originalChars = originalString.toCharArray();
-        char[] badChars = {'\\', '/', ':', '*', '?', '<', '>', '|', ']'};
+        char[] badChars = {'\\', '/', ':', '*', '?', '<', '>', '|'};
         for (int i = 0; i < originalChars.length; i++)
             for (int j = 0; j < badChars.length; j++)
                 if (originalChars[i] == badChars[j])

@@ -13,43 +13,43 @@ export class SongService {
   constructor(private http: Http) { }
 
   getArtists() {
-    return this.http.get("http://localhost:8080/library/artist")
+    return this.http.get("http://localhost:8080/artists")
     .map((response: Response) => response.json());
   }
 
   getAlbums(artistId: number) {
-    return this.http.get("http://localhost:8080/library/artist/" + artistId + "/album")
+    return this.http.get("http://localhost:8080/artists/" + artistId + "/albums")
     .map((response: Response) => response.json());
   }
 
   getSongs(artistId: number, albumId: number) {
-    return this.http.get("http://localhost:8080/library/artist/" + artistId + "/album/" + albumId + "/song")
+    return this.http.get("http://localhost:8080/artists/" + artistId + "/albums/" + albumId + "/songs")
     .map((response: Response) => response.json());
   }
 
   getSong(artistId: number, albumId: number, songId: number) {
-    return this.http.get("http://localhost:8080/library/artist/" + artistId + "/album/" + albumId + "/song/" + songId)
+    return this.http.get("http://localhost:8080/artists/" + artistId + "/albums/" + albumId + "/songs/" + songId)
     .map((response: Response) => response.json());
   }
 
   getSongInfo(artistId: number, albumId: number, songId: number) {
-    return this.http.get("http://localhost:8080/library/artist/" + artistId + "/album/" + albumId + "/song/" + songId + "/info")
+    return this.http.get("http://localhost:8080/artists/" + artistId + "/albums/" + albumId + "/songs/" + songId + "/info")
     .map((response: Response) => response.json());
   }
 
   addSong(file: File) {
     let formData:FormData = new FormData();
     formData.append('file', file, file.name);
-    return this.http.post("http://localhost:8080/upload/file", formData);
+    return this.http.post("http://localhost:8080/file", formData);
   }
 
-  updateSong(songInfo: SongInfo) {
-    return this.http.put("http://localhost:8080/library", songInfo)
+  updateSong(songInfo: SongInfo, artistId: number, albumId: number, songId: number) {
+    return this.http.put("http://localhost:8080/artists/" + artistId + "/albums/" + albumId + "/songs/" + songId, songInfo)
     .map((response: Response) => response.json());
   }
 
   removeSong(artistId: number, albumId: number, songId: number) {
-    return this.http.delete("http://localhost:8080/library/artist/" + artistId + "/album/" + albumId + "/song/" + songId);
+    return this.http.delete("http://localhost:8080/artists/" + artistId + "/albums/" + albumId + "/songs/" + songId);
   }
 
 }
