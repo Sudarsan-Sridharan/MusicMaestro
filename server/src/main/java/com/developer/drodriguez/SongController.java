@@ -85,13 +85,9 @@ public class SongController {
         return songService.updateSongInfo(songInfo);
     }
 
-    /*
-
-    @RequestMapping(method=RequestMethod.DELETE, value="/library/song/{id}")
-    public void deleteSong(@PathVariable int id) {
-        songService.deleteSong(id);
+    @RequestMapping(method=RequestMethod.DELETE, value="/library/artist/{artistId}/album/{albumId}/song/{songId}")
+    public void deleteSong(@PathVariable int artistId, @PathVariable int albumId, @PathVariable int songId) {
+        songService.deleteSong(artistId, albumId, songId);
     }
-
-    */
 
 }

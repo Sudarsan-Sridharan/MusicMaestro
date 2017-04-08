@@ -125,22 +125,15 @@ export class AppComponent implements OnInit {
     });
   }
 
-  /*
-  removeSong(i: number) {
-    this.songService.removeSong(this.currSong).subscribe( () => {
-      this.songPlayback.pause();
-      this.songPlayback.remove();
-      this.songPlayback = null;
-      this.currSong = null;
+  removeSong() {
+    this.songService.removeSong(this.currSongInfo.artist.id, this.currSongInfo.album.id, this.currSongInfo.song.id).subscribe( () => {
       this.exitMenu();
-      this.refreshLibrary();
+      this.resetLibrary();
+      this.songPlayback.pause();
+      this.songPlayback = null;
+      this.currSongInfo = null;
     });
   }
-
-  clearNewSong() {
-    this.newSong = {title: null, album: null, artist: null, year: null, filePath: null};
-  }
-  */
 
   exitMenu() {
     for (let i = 0; i < this.isActiveSection.length; i++) {
@@ -157,6 +150,7 @@ export class AppComponent implements OnInit {
     this.artists = null;
     this.albums = null;
     this.songs = null;
+    this.currSongInfo = null;
     this.setLibrarySelections(null, null, null);
   }
 
@@ -167,6 +161,7 @@ export class AppComponent implements OnInit {
   }
 
   setLibrarySelections(artistId: number, albumId: number, titleId: number) {
+    this.hasSelSong = false;
     this.selArtistId = artistId;
     this.selAlbumId = albumId;
     this.selSongId = titleId;

@@ -48,10 +48,8 @@ export class SongService {
     .map((response: Response) => response.json());
   }
 
-/*
-  removeSong(song: Song) {
-    return this.http.delete("http://localhost:8080/library/" + song.artist + "/" + song.album + "/" + song.title);
+  removeSong(artistId: number, albumId: number, songId: number) {
+    return this.http.delete("http://localhost:8080/library/artist/" + artistId + "/album/" + albumId + "/song/" + songId);
   }
-  */
 
 }

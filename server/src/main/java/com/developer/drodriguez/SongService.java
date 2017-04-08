@@ -138,16 +138,16 @@ public class SongService {
 
             String tArtistName = tag.getArtist();
             String tAlbumName = tag.getAlbum();
-            int tTrack = 0;
+            int tSongTrack = 0;
             if (tag.getTrack() != null)
                 if (tag.getTrack().contains("/"))
-                    tTrack = Integer.parseInt(tag.getTrack().substring(0, tag.getTrack().lastIndexOf("/"))); //Substring removes "out of total tracks" (x"/xx") extension.
+                    tSongTrack = Integer.parseInt(tag.getTrack().substring(0, tag.getTrack().lastIndexOf("/"))); //Substring removes "out of total tracks" (x"/xx") extension.
                 else
-                    tTrack = Integer.parseInt(tag.getTrack());
+                    tSongTrack = Integer.parseInt(tag.getTrack());
             String tSongName = tag.getTitle();
-            String tYear = tag.getYear();
-            String originalFileName = file.getOriginalFilename();
-            String fileType = originalFileName.substring(originalFileName.lastIndexOf(".") + 1, originalFileName.length());
+            String tSongYear = tag.getYear();
+            String originalFilename = file.getOriginalFilename();
+            String fileType = originalFilename.substring(originalFilename.lastIndexOf(".") + 1, originalFilename.length());
             String filePath = libraryPath + File.separator
                     + removeInvalidPathChars(tArtistName) + File.separator + removeInvalidPathChars(tAlbumName);
             String fileName = removeInvalidPathChars(tSongName) + "." + fileType;
@@ -198,7 +198,7 @@ public class SongService {
                 }
             if (newSongId == 0) {
                 newSongId = ++songIndex;
-                songMap.put(newSongId, new Song(newSongId, newAlbumId, tTrack, tSongName, tYear, fullPath));
+                songMap.put(newSongId, new Song(newSongId, newAlbumId, tSongTrack, tSongName, tSongYear, fullPath));
             }
 
             //Create any non-existing directories for file.
@@ -458,26 +458,35 @@ public class SongService {
 
     }
 
-    /*
+    public void deleteSong(int artistId, int albumId, int songId) {
 
-    public void deleteSong(String artist, String album, String songTitle) {
-        String filePath = null;
-        for (int i = 0; i < songs.size(); i++) {
-            Song s = songs.get(i);
-            if (s.getArtist().equals(artist) && s.getAlbum().equals(album) && s.getTitle().equals(songTitle)) {
-                filePath = songs.get(i).getFilePath();
-                songs.remove(i);
-                break;
-            }
-        }
-        removeFiles(filePath);
+        String filePath = songMap.remove(songId).getFilePath();
+
+        boolean hasArtistId = false;
+        boolean hasAlbumId = false;
+
+        //If no song references the given album ID, delete the album in its map.
+        for (Song song : songMap.values())
+            if (song.getAlbumId() == albumId)
+                hasAlbumId = true;
+        if (!hasAlbumId)
+            albumMap.remove(albumId);
+
+        //If no album references the given artist ID, delete the artist in its map.
+        for (Album album : albumMap.values())
+            if (album.getArtistId() == artistId)
+                hasArtistId = true;
+        if (!hasArtistId)
+            artistMap.remove(artistId);
+
+        removeFileAndEmptyDirectories(filePath);
+
+        System.out.println("REMOVED SONG ID: " + songId);
+
     }
 
-    */
-
-
     //Delete song (if exists), as well as the album folder and the artist folder (if empty).
-    public void removeSongAndEmptyDirectories(String filePath) {
+    public void removeFileAndEmptyDirectories(String filePath) {
         File songFile = new File(filePath);
         File albumFolder = songFile.getParentFile();
         File artistFolder = albumFolder.getParentFile();
@@ -529,4 +538,5 @@ public class SongService {
                     originalChars[i] = '_';
         return new String(originalChars);
     }
+
 }
