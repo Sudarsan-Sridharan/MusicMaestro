@@ -35,8 +35,14 @@ public class SongService {
     @Value("${library.path}")
     private String libraryPath;
 
+    SongService() throws IOException {
+        readLibraryFile();
+    }
+
     public List<Artist> getArtists() {
-        return new ArrayList<>(artistMap.values());
+        List<Artist> newList = new ArrayList<>(artistMap.values());
+        Collections.sort(new ArrayList<>(artistMap.values()));
+        return newList;
     }
 
     public Artist getArtist(int artistId) {
@@ -48,6 +54,7 @@ public class SongService {
         for (Album album : albumMap.values())
             if(album.getArtistId() == artistId)
                 newList.add(album);
+        Collections.sort(newList);
         return newList;
     }
 
@@ -214,6 +221,9 @@ public class SongService {
             bout.write(bytes);
             bout.flush();
             bout.close();
+
+            writeLibraryFile();
+
         }
 
         else {
@@ -449,6 +459,8 @@ public class SongService {
         //Remove empty directories at the given old path.
         removeEmptyDirectories(oldPath);
 
+        writeLibraryFile();
+
         return songInfo;
 
     }
@@ -532,6 +544,102 @@ public class SongService {
                 if (originalChars[i] == badChars[j])
                     originalChars[i] = '_';
         return new String(originalChars);
+    }
+
+    public void readLibraryFile() throws IOException, FileNotFoundException {
+
+        System.out.println("READING LIBRARY FILE...");
+
+        File library = new File("/Users/Daniel/Music/library/library.mpl");
+        if (!library.exists())  //Create empty library file if it does not exist.
+            writeLibraryFile();
+        Scanner scanner = new Scanner(new FileReader(library));
+        String section = null;
+        String line = null;
+
+        //Only read file if it contains the proper header.
+        if (!scanner.nextLine().equals("**MPLIBRARY**"))
+            return;
+
+        while (scanner.hasNextLine()) {
+            line = scanner.nextLine();
+            if (line.equals("--ARTIST--") || line.equals("--ALBUM--") || line.equals("--SONG--")) {
+                section = line;
+                line = scanner.nextLine();
+            }
+            if (line.equals("**MPEND**"))
+                break;
+
+            String[] fields = line.split(",");
+
+            if (section.equals("--ARTIST--") && !line.equals("--ALBUM--"))
+                artistMap.put(Integer.parseInt(fields[0]), new Artist(Integer.parseInt(fields[0]), fields[1]));
+            else if (section.equals("--ALBUM--") && !line.equals("--SONG--"))
+                albumMap.put(Integer.parseInt(fields[0]), new Album(Integer.parseInt(fields[0]), Integer.parseInt(fields[1]), fields[2]));
+            else if (section.equals("--SONG--"))
+                songMap.put(Integer.parseInt(fields[0]), new Song(Integer.parseInt(fields[0]),
+                        Integer.parseInt(fields[1]), Integer.parseInt(fields[2]), fields[3], fields[4], fields[5]));
+        }
+
+        scanner.close();
+
+        for (Artist artist : artistMap.values())
+            System.out.println(artist);
+        for (Album album : albumMap.values())
+            System.out.println(album);
+        for (Song song : songMap.values())
+            System.out.println(song);
+
+    }
+
+    public void writeLibraryFile () throws IOException, FileNotFoundException {
+
+        //Backup current library
+        File library = new File("/Users/Daniel/Music/library/library.mpl");
+        File libraryBackup = new File("/Users/Daniel/Music/library/library.mpl.bak");
+        library.renameTo(libraryBackup);
+        library.delete();
+
+        //Create and open stream for new library
+        File newLibrary = new File("/Users/Daniel/Music/library/library.mpl");
+        FileOutputStream fos = new FileOutputStream(newLibrary);
+        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fos));
+
+        bw.write("**MPLIBRARY**");
+        bw.newLine();
+
+        bw.write("--ARTIST--");
+        bw.newLine();
+
+        for (Artist artist : artistMap.values()) {
+            bw.write(artist.getId() + "," + artist.getName());
+            bw.newLine();
+        }
+
+        bw.write("--ALBUM--");
+        bw.newLine();
+
+        for (Album album : albumMap.values()) {
+            bw.write(album.getId() + "," + album.getArtistId() + "," + album.getName());
+            bw.newLine();
+        }
+
+        bw.write("--SONG--");
+        bw.newLine();
+
+        for (Song song : songMap.values()) {
+            bw.write(song.getId() + "," + song.getAlbumId() + "," + song.getTrack()
+                    + "," + song.getName() + "," + song.getYear() + "," + song.getFilePath());
+            bw.newLine();
+        }
+
+        bw.write("**MPEND**");
+
+        bw.close();
+        fos.close();
+
+        libraryBackup.delete();
+
     }
 
 }

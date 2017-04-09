@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * Created by Daniel on 4/3/17.
  */
-public class Artist {
+public class Artist implements Comparable<Artist> {
 
     private int id;
     private String name;
@@ -35,6 +35,11 @@ public class Artist {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    @Override
+    public int compareTo(Artist artist) {
+        return this.name.compareTo(artist.name);
     }
 
     @Override
