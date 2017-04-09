@@ -43,12 +43,12 @@ export class AppComponent implements OnInit {
 
   getAlbums(artistId: number) {
     this.selArtistId = null; //Triggers albums animation by reseting to null first..
-      this.selAlbumId = null;  //Hides song listing in the view.
-      this.songService.getAlbums(artistId)
-      .subscribe(albums => {
-        this.selArtistId = artistId;
-        this.albums = albums;
-      });
+    this.selAlbumId = null;  //Hides song listing in the view.
+    this.songService.getAlbums(artistId)
+    .subscribe(albums => {
+      this.selArtistId = artistId;
+      this.albums = albums;
+    });
 
   }
 
@@ -81,16 +81,20 @@ export class AppComponent implements OnInit {
     if (this.songPlayback == null) { this.songPlayback = new Audio(); }
     this.songArtworkSrc = "http://localhost:8080/artists/" + this.currSongInfo.artist.id + "/albums/" + this.currSongInfo.album.id + "/songs/" + this.currSongInfo.song.id + "/artwork";
     this.songPlayback.src = "http://localhost:8080/artists/" + this.currSongInfo.artist.id + "/albums/" + this.currSongInfo.album.id + "/songs/" + this.currSongInfo.song.id + "/file";
+    this.songPlayback.oncanplaythrough = function() {
+    alert("Can play through video without stopping");
+};
+    this.songPlayback.load();
   }
 
   playSong() {
-      this.songPlayback.play();
-      this.isPlayingSong = true;
-      let self = this;
-      self.songPlayback.addEventListener('ended', function() {
-        console.log("'ended' Audio event heard. Stopping song.");
-        self.stopSong();
-      }, false);
+    this.songPlayback.play();
+    this.isPlayingSong = true;
+    let self = this;
+    self.songPlayback.addEventListener('ended', function() {
+      console.log("'ended' Audio event heard. Stopping song.");
+      self.stopSong();
+    }, false);
   }
 
   pauseSong() {
@@ -123,6 +127,7 @@ export class AppComponent implements OnInit {
   }
 
   updateSong() {
+    this.hasSelSong = false;  //Set to false before update to execute loading animation.
     this.songService.updateSong(this.currSongInfo, this.currSongInfo.artist.id, this.currSongInfo.album.id, this.currSongInfo.song.id).subscribe( songInfo => {
       this.currSongInfo = songInfo;
       this.refreshLibrary(this.currSongInfo.artist.id, this.currSongInfo.album.id);

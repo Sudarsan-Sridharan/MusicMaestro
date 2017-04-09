@@ -52,7 +52,7 @@ public class SongService {
     public List<Album> getAlbums(int artistId) {
         List<Album> newList = new ArrayList<>();
         for (Album album : albumMap.values())
-            if(album.getArtistId() == artistId)
+            if (album.getArtistId() == artistId)
                 newList.add(album);
         Collections.sort(newList);
         return newList;
@@ -84,6 +84,7 @@ public class SongService {
         System.out.println(getSong(artistId, albumId, songId));
         String filePath = getSong(artistId, albumId, songId).getFilePath();
         PathResource file = new PathResource(filePath);
+        System.out.println("file.contentLength() = " + file.contentLength());
         return ResponseEntity
                 .ok()
                 .contentLength(file.contentLength())
@@ -138,16 +139,38 @@ public class SongService {
 
             ID3v2 tag = mp3.getId3v2Tag();
 
-            String tArtistName = tag.getArtist();
-            String tAlbumName = tag.getAlbum();
+            String tArtistName = null;
+            String tAlbumName = null;
+            String tSongName = null;
             int tSongTrack = 0;
+            String tSongYear = null;
+
+            if (tag.getArtist() != null)
+                tArtistName = tag.getArtist();
+            else
+                tArtistName = "";
+
+            if (tag.getAlbum() != null)
+                tAlbumName = tag.getAlbum();
+            else
+                tAlbumName = "";
+
+            if (tag.getTitle() != null)
+                tSongName = tag.getTitle();
+            else
+                tSongName = "";
+
             if (tag.getTrack() != null)
                 if (tag.getTrack().contains("/"))
                     tSongTrack = Integer.parseInt(tag.getTrack().substring(0, tag.getTrack().lastIndexOf("/"))); //Substring removes "out of total tracks" (x"/xx") extension.
                 else
                     tSongTrack = Integer.parseInt(tag.getTrack());
-            String tSongName = tag.getTitle();
-            String tSongYear = tag.getYear();
+
+            if (tag.getYear() != null)
+                tSongYear = tag.getYear();
+            else
+                tSongYear = "";
+
             String originalFilename = file.getOriginalFilename();
             String fileType = originalFilename.substring(originalFilename.lastIndexOf(".") + 1, originalFilename.length());
             String filePath = libraryPath + File.separator
@@ -188,7 +211,7 @@ public class SongService {
                 }
             if (newAlbumId == 0) {
                 newAlbumId = ++albumIndex;
-                albumMap.put(newAlbumId, new Album(newAlbumId, newAlbumId, tAlbumName));
+                albumMap.put(newAlbumId, new Album(newAlbumId, newArtistId, tAlbumName));
             }
 
             //Get ID for file's song name.
@@ -549,17 +572,25 @@ public class SongService {
     public void readLibraryFile() throws IOException, FileNotFoundException {
 
         System.out.println("READING LIBRARY FILE...");
-
         File library = new File("/Users/Daniel/Music/library/library.mpl");
         if (!library.exists())  //Create empty library file if it does not exist.
             writeLibraryFile();
+
         Scanner scanner = new Scanner(new FileReader(library));
+        String indices[] = null;
         String section = null;
         String line = null;
 
         //Only read file if it contains the proper header.
         if (!scanner.nextLine().equals("**MPLIBRARY**"))
             return;
+
+        if (scanner.nextLine().equals("--INDEX--"))
+            indices = scanner.nextLine().split(",");
+
+        artistIndex = Integer.parseInt(indices[0]);
+        albumIndex = Integer.parseInt(indices[1]);
+        songIndex = Integer.parseInt(indices[2]);
 
         while (scanner.hasNextLine()) {
             line = scanner.nextLine();
@@ -606,6 +637,12 @@ public class SongService {
         BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fos));
 
         bw.write("**MPLIBRARY**");
+        bw.newLine();
+
+        bw.write("--INDEX--");
+        bw.newLine();
+
+        bw.write(artistIndex + "," + albumIndex + "," + songIndex);
         bw.newLine();
 
         bw.write("--ARTIST--");

@@ -92,19 +92,29 @@ public class SongServiceTest {
         System.out.println(tTrack);
     }
 
-    /*
     @Test
     public void readLibraryFile() throws IOException, FileNotFoundException {
+
         Scanner scanner = new Scanner(new FileReader(("/Users/Daniel/Music/library/library.mpl")));
         Map<Integer, Artist> artistMap = new HashMap<>();
         Map<Integer, Album> albumMap = new HashMap<>();
         Map<Integer, Song> songMap = new HashMap<>();
+        String[] indices = null;
         String section = null;
         String line = null;
 
         //Only read file if it contains the proper header.
         if (!scanner.nextLine().equals("**MPLIBRARY**"))
             return;
+
+        if (scanner.nextLine().equals("--INDEX--"))
+            indices = scanner.nextLine().split(",");
+
+        int artistIndex = Integer.parseInt(indices[0]);
+        int albumIndex = Integer.parseInt(indices[1]);
+        int songIndex = Integer.parseInt(indices[2]);
+
+        System.out.println(artistIndex + " " + albumIndex + " " + songIndex);
 
         System.out.println("PRINT SONGS:");
         while (scanner.hasNextLine()) {
@@ -137,6 +147,8 @@ public class SongServiceTest {
             System.out.println(song);
 
     }
+
+    /*
 
     @Test
     public void writeLibraryFile () throws IOException, FileNotFoundException {

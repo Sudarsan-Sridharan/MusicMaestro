@@ -32,7 +32,13 @@
         <div class="text-list-title">Artists</div>
         <ul class="hide-bullets">
           <span *ngFor="let artist of artists">
-            <li class="show-list-item"><a href="#" [ngClass]="artist.id == selArtistId ? 'text-selected' : ''" (click)="getAlbums(artist.id)">{{artist.name}}</a></li>
+            <li class="show-list-item">
+              <a href="#" [ngClass]="artist.id == selArtistId ? 'text-selected' : ''"
+              (click)="getAlbums(artist.id)">
+                <span *ngIf="artist.name != ''">{{artist.name}}</span>
+                <span *ngIf="artist.name == ''">[Unnamed Artist]</span>
+              </a>
+            </li>
           </span>
         </ul>
       </div>
@@ -40,7 +46,13 @@
         <div class="text-list-title">Albums</div>
         <ul class="hide-bullets">
           <span *ngFor="let album of albums">
-            <li class="show-list-item"><a href="#" [ngClass]="album.id == selAlbumId ? 'text-selected' : ''" (click)="getSongs(selArtistId, album.id)">{{album.name}}</a></li>
+            <li class="show-list-item">
+              <a href="#" [ngClass]="album.id == selAlbumId ? 'text-selected' : ''"
+              (click)="getSongs(selArtistId, album.id)">
+                <span *ngIf="album.name != ''">{{album.name}}</span>
+                <span *ngIf="album.name == ''">[Unnamed Album]</span>
+              </a>
+            </li>
           </span>
         </ul>
       </div>
@@ -48,13 +60,19 @@
         <div class="text-list-title">Songs</div>
         <ul class="hide-bullets">
           <span *ngFor="let song of songs">
-            <li class="show-list-item"><a href="#" [ngClass]="song.id == selSongId ? 'text-selected' : ''" (click)="getSong(song.id)"
-              data-toggle="collapse" data-target="#song-select">{{song.track}}. {{song.name}}</a></li>
-          </span>
-        </ul>
-      </div>
+            <li class="show-list-item">
+              <a href="#" [ngClass]="song.id == selSongId ? 'text-selected' : ''"
+              (click)="getSong(song.id)" data-toggle="collapse" data-target="#song-select">
+              <span *ngIf="song.track != 0">{{song.track}}. </span>
+              <span *ngIf="song.name != ''">{{song.name}}</span>
+              <span *ngIf="song.name == ''">[Unnamed Song]</span>
+            </a>
+          </li>
+        </span>
+      </ul>
     </div>
   </div>
+</div>
 </div>
 <div id="edit-song" class="collapse" *ngIf="isActiveSection[1]">
   <br />
