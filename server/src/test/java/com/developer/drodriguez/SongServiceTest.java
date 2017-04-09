@@ -50,20 +50,22 @@ public class SongServiceTest {
 
     @Test
     public void songSort() {
-        Map<Integer, Song> songMap = new TreeMap<>();
-        songMap.put(1, new Song(1, 1, 3, "I Believe", "2007", "/Users/Daniel/Music/library/Dustin Kensrue/Please Come Home/I Believe.mp3") );
-        songMap.put(2, new Song(2, 1, 2, "Consider the Ravens", "2007","/Users/Daniel/Music/library/Dustin Kensrue/Please Come Home/Consider the Ravens.mp3") );
-        songMap.put(3, new Song(3, 2, 7, "Test Song", "Test Album", "Test Year"));
-        List<Song> newList = new ArrayList<>();
+        Map<Integer, Artist> artistMap = new TreeMap<>();
+        List<Artist> newList = new ArrayList<>();
+
+        artistMap.put(1, new Artist(1, "Apples"));
+        artistMap.put(2, new Artist(2, "Chocolate"));
+        artistMap.put(3, new Artist(3, "Bananas"));
+
         System.out.println("BEFORE SORT");
-        for (Song song : songMap.values())
-            newList.add(song);
-        for (Song song : newList)
-            System.out.println(song);
+        for (Artist artist : artistMap.values())
+            newList.add(artist);
+
         Collections.sort(newList);
+
         System.out.println("AFTER SORT");
-        for (Song song : newList)
-            System.out.println(song);
+        for (Artist artist : newList)
+            System.out.println(artist);
     }
 
     @Test
@@ -90,6 +92,7 @@ public class SongServiceTest {
         System.out.println(tTrack);
     }
 
+    /*
     @Test
     public void readLibraryFile() throws IOException, FileNotFoundException {
         Scanner scanner = new Scanner(new FileReader(("/Users/Daniel/Music/library/library.mpl")));
@@ -194,5 +197,6 @@ public class SongServiceTest {
         bw.close();
         fos.close();
     }
+    */
 
 }

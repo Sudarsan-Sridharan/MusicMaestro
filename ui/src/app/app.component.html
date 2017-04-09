@@ -28,27 +28,28 @@
   </div>
   <div *ngIf="artists.length != 0">
     <div class="row text-list">
-      <div class="col-md-3 col-md-offset-1">
+      <div class="col-md-3 col-md-offset-1 show-list">
         <div class="text-list-title">Artists</div>
         <ul class="hide-bullets">
           <span *ngFor="let artist of artists">
-            <li><a href="#" [ngClass]="artist.id == selArtistId ? 'text-selected' : ''" (click)="getAlbums(artist.id)">{{artist.name}}</a></li>
+            <li class="show-list-item"><a href="#" [ngClass]="artist.id == selArtistId ? 'text-selected' : ''" (click)="getAlbums(artist.id)">{{artist.name}}</a></li>
           </span>
         </ul>
       </div>
-      <div class="col-md-3" *ngIf="selArtistId != null">
+      <div class="col-md-3 show-list" *ngIf="selArtistId != null">
         <div class="text-list-title">Albums</div>
         <ul class="hide-bullets">
           <span *ngFor="let album of albums">
-            <li><a href="#" [ngClass]="album.id == selAlbumId ? 'text-selected' : ''" (click)="getSongs(selArtistId, album.id)">{{album.name}}</a></li>
+            <li class="show-list-item"><a href="#" [ngClass]="album.id == selAlbumId ? 'text-selected' : ''" (click)="getSongs(selArtistId, album.id)">{{album.name}}</a></li>
           </span>
         </ul>
       </div>
-      <div class="col-md-5" *ngIf="selAlbumId != null" >
+      <div class="col-md-4 show-list" *ngIf="selAlbumId != null" >
         <div class="text-list-title">Songs</div>
         <ul class="hide-bullets">
           <span *ngFor="let song of songs">
-            <li><a href="#" [ngClass]="song.id == selSongId ? 'text-selected' : ''" (click)="getSong(song.id)">{{song.track}}. {{song.name}}</a></li>
+            <li class="show-list-item"><a href="#" [ngClass]="song.id == selSongId ? 'text-selected' : ''" (click)="getSong(song.id)"
+              data-toggle="collapse" data-target="#song-select">{{song.track}}. {{song.name}}</a></li>
           </span>
         </ul>
       </div>
@@ -105,8 +106,9 @@
         <button class="btn btn-default btn-sm" [disabled]="currSongInfo.song.name == null
         || currSongInfo.song.name == '' || currSongInfo.album.name == null || currSongInfo.album.name == ''
         || currSongInfo.artist.name == null || currSongInfo.artist.name == ''"
-        (click)="updateSong()">Save</button>
-        <button class="btn btn-default btn-danger btn-sm" (click)="removeSong()">Delete</button>
+        (click)="updateSong()" data-toggle="collapse" data-target="#edit-song">Save</button>
+        <button class="btn btn-default btn-danger btn-sm" (click)="removeSong()"
+        data-toggle="collapse" data-target="#edit-song">Delete</button>
       </div>
     </div>
   </div>
@@ -128,7 +130,8 @@
   <div class="col-md-2 col-md-offset-1">
     <div class="progress">
       <div class="progress-bar progress-bar-success" role="progressbar" [attr.aria-valuenow]="currProgress"
-      aria-valuemin="0" [attr.aria-valuemax]="maxProgress" [ngStyle]="{width: currProgress / maxProgress | percent: '1.0-1'}">
+      aria-valuemin="0" [attr.aria-valuemax]="maxProgress" [ngStyle]="{width: currProgress / maxProgress | percent: '1.0-1'}"
+      data-toggle="collapse" data-target="#song-select">
       {{currProgress}} / {{maxProgress}} Files
     </div>
   </div>
@@ -151,7 +154,7 @@
     Please select a song above.
   </h2>
 </div>
-<div class="container" *ngIf="hasSelSong">
+<div class="container show-playback-info" *ngIf="hasSelSong">
   <div class="row">
     <div class="col-md-4">
       <img class="img-responsive img-rounded img-border" [src]="songArtworkSrc">

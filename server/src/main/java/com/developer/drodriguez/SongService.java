@@ -41,7 +41,7 @@ public class SongService {
 
     public List<Artist> getArtists() {
         List<Artist> newList = new ArrayList<>(artistMap.values());
-        Collections.sort(new ArrayList<>(artistMap.values()));
+        Collections.sort(newList);
         return newList;
     }
 

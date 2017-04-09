@@ -42,10 +42,14 @@ export class AppComponent implements OnInit {
   }
 
   getAlbums(artistId: number) {
-    this.selArtistId = artistId;
-    this.selAlbumId = null;  //Hides song listing in the view.
-    this.songService.getAlbums(artistId)
-    .subscribe(albums => this.albums = albums);
+    this.selArtistId = null; //Triggers albums animation by reseting to null first..
+      this.selAlbumId = null;  //Hides song listing in the view.
+      this.songService.getAlbums(artistId)
+      .subscribe(albums => {
+        this.selArtistId = artistId;
+        this.albums = albums;
+      });
+
   }
 
   getSongs(artistId: number, albumId: number) {
@@ -55,6 +59,7 @@ export class AppComponent implements OnInit {
   }
 
   getSong(songId: number) {
+    this.hasSelSong = false; //Triggers animation for changing from previous song.
     this.selSongId = songId;
     this.songService.getSong(this.selArtistId, this.selAlbumId, songId)
     .subscribe( () => {
@@ -66,7 +71,6 @@ export class AppComponent implements OnInit {
     this.songService.getSongInfo(artistId, albumId, songId)
     .subscribe(songInfo => {
       this.currSongInfo = songInfo;
-      this.exitMenu();
       this.hasSelSong = true;
       this.loadSong();
       setTimeout( () => this.playSong(), 300);
@@ -77,12 +81,16 @@ export class AppComponent implements OnInit {
     if (this.songPlayback == null) { this.songPlayback = new Audio(); }
     this.songArtworkSrc = "http://localhost:8080/artists/" + this.currSongInfo.artist.id + "/albums/" + this.currSongInfo.album.id + "/songs/" + this.currSongInfo.song.id + "/artwork";
     this.songPlayback.src = "http://localhost:8080/artists/" + this.currSongInfo.artist.id + "/albums/" + this.currSongInfo.album.id + "/songs/" + this.currSongInfo.song.id + "/file";
-    this.songPlayback.loop = true;
   }
 
   playSong() {
       this.songPlayback.play();
       this.isPlayingSong = true;
+      let self = this;
+      self.songPlayback.addEventListener('ended', function() {
+        console.log("'ended' Audio event heard. Stopping song.");
+        self.stopSong();
+      }, false);
   }
 
   pauseSong() {
@@ -103,7 +111,7 @@ export class AppComponent implements OnInit {
       this.songService.addSong(fileList[i]).subscribe( () => {  //Send song to server.
         this.currProgress++; //Increment the current value for progress bar.
         if (i == fileList.length - 1) { //During last loop,
-          this.resetLibrary(); //Refresh library
+          this.setLibrarySelections(null, null, null); //Refresh library
           setTimeout( () => { //Delay 0.8 seconds.
             this.exitMenu();  //Clears out of current menu.
             this.resetProgressBar(); //Resets the current and max values for the progress bar.
@@ -117,7 +125,6 @@ export class AppComponent implements OnInit {
   updateSong() {
     this.songService.updateSong(this.currSongInfo, this.currSongInfo.artist.id, this.currSongInfo.album.id, this.currSongInfo.song.id).subscribe( songInfo => {
       this.currSongInfo = songInfo;
-      this.exitMenu();
       this.refreshLibrary(this.currSongInfo.artist.id, this.currSongInfo.album.id);
       this.setLibrarySelections(this.currSongInfo.artist.id, this.currSongInfo.album.id, this.currSongInfo.song.id);
       this.hasSelSong = true;
@@ -128,6 +135,7 @@ export class AppComponent implements OnInit {
 
   removeSong() {
     this.songService.removeSong(this.currSongInfo.artist.id, this.currSongInfo.album.id, this.currSongInfo.song.id).subscribe( () => {
+      this.hasSelSong = false;
       this.exitMenu();
       this.resetLibrary();
       this.songPlayback.pause();
@@ -162,7 +170,6 @@ export class AppComponent implements OnInit {
   }
 
   setLibrarySelections(artistId: number, albumId: number, titleId: number) {
-    this.hasSelSong = false;
     this.selArtistId = artistId;
     this.selAlbumId = albumId;
     this.selSongId = titleId;

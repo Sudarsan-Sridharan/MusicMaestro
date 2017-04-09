@@ -20,8 +20,8 @@
 }
 
 #playback-controls .btn-playing {
-  font-size: 24px;
-  padding: 11px 11px;
+  font-size: 22px;
+  padding: 11.5px 11px;
 }
 
 #playback-controls .btn-pause {
@@ -35,7 +35,6 @@
 }
 
 #playback-controls .glyphicon-normal-right-spinner {
-  -webkit-animation: glyphicon-spin-r 2s infinite linear;
   animation: glyphicon-spin-r 2s infinite linear;
 }
 
@@ -65,6 +64,18 @@
     font-size: 16pt;
     font-weight: lighter;
   }
+}
+
+.show-list {
+  animation: show-list 0.4s ease-out;
+}
+
+.show-list-item {
+  animation: show-list-item 0.4s linear;
+}
+
+.show-playback-info {
+  animation: show-playback-info 0.8s ease-out;
 }
 
 .input-textbox-xs {
@@ -137,26 +148,39 @@ a:link, a:visited, a:hover, a:active {
   }
 }
 
-@-webkit-keyframes glyphicon-spin-r {
+@keyframes show-playback-info {
   0% {
-    -webkit-transform: rotate(0deg);
-    transform: rotate(0deg);
+    opacity: 0;
   }
-
   100% {
-    -webkit-transform: rotate(359deg);
-    transform: rotate(359deg);
+    opacity: 1;
+  }
+}
+
+@keyframes show-list {
+  0% {
+    transform: translate(-30px, 0);
+  }
+  100% {
+    transform: translate(0, 0);
+  }
+}
+
+@keyframes show-list-item {
+  0% {
+    opacity: 0.1;
+  }
+  100% {
+    opacity: 1;
   }
 }
 
 @keyframes glyphicon-spin-r {
   0% {
-    -webkit-transform: rotate(0deg);
     transform: rotate(0deg);
   }
 
   100% {
-    -webkit-transform: rotate(359deg);
     transform: rotate(359deg);
   }
 }
