@@ -186,10 +186,7 @@
           <button class="btn btn-primary btn-circle btn-playing" *ngIf="isPlayingSong" disabled>
             <i class="glyphicon glyphicon-repeat glyphicon-normal-right-spinner"></i>
           </button>
-          <button type="button" class="btn btn-default btn-circle btn-pause" (click)="pauseSong()" [disabled]="!isPlayingSong">
-            <i class="glyphicon glyphicon-pause"></i>
-          </button>
-          <button type="button" class="btn btn-danger btn-circle btn-stop" (click)="stopSong()">
+          <button type="button" class="btn btn-danger btn-circle btn-stop" (click)="stopSong()"  [disabled]="!isPlayingSong">
             <i class="glyphicon glyphicon-stop"></i>
           </button>
         </div>

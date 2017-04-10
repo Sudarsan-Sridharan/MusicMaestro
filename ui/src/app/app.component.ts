@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { SongService } from './song.service';
 import { Observable } from 'rxjs/Observable';
+
 import { Artist } from './model/Artist';
 import { Album } from './model/Album';
 import { Song } from './model/Song';
@@ -20,9 +21,11 @@ export class AppComponent implements OnInit {
   isActiveSection: Array<boolean> = [false, false, false];
   isUploading: boolean = false;
   isPlayingSong: boolean = false;
+  hasStoppedAudio: boolean = false;
   hasSelSong: boolean = false;
   currProgress: number = 0;
   maxProgress: number = 1;
+  lastAudioPos: number = 0;
   selArtistId: number;
   selAlbumId: number;
   selSongId: number;
@@ -31,7 +34,8 @@ export class AppComponent implements OnInit {
   songs: Array<Song>;
   currSongInfo: SongInfo;
   songArtworkSrc: String;
-  songPlayback;
+  audioBufferSourceNode: AudioBufferSourceNode = null;
+  audioContext: AudioContext = null;
 
   ngOnInit() {
     this.getArtists();
@@ -72,22 +76,56 @@ export class AppComponent implements OnInit {
     .subscribe(songInfo => {
       this.currSongInfo = songInfo;
       this.hasSelSong = true;
-      this.loadSong();
+      //this.loadSong();
       setTimeout( () => this.playSong(), 300);
     });
   }
 
+/*
   loadSong() {
     if (this.songPlayback == null) { this.songPlayback = new Audio(); }
     this.songArtworkSrc = "http://localhost:8080/artists/" + this.currSongInfo.artist.id + "/albums/" + this.currSongInfo.album.id + "/songs/" + this.currSongInfo.song.id + "/artwork";
     this.songPlayback.src = "http://localhost:8080/artists/" + this.currSongInfo.artist.id + "/albums/" + this.currSongInfo.album.id + "/songs/" + this.currSongInfo.song.id + "/file";
-    this.songPlayback.oncanplaythrough = function() {
-    alert("Can play through video without stopping");
-};
     this.songPlayback.load();
   }
-
+*/
   playSong() {
+
+    this.isPlayingSong = true;
+    this.songArtworkSrc = "http://localhost:8080/artists/" + this.currSongInfo.artist.id + "/albums/" + this.currSongInfo.album.id + "/songs/" + this.currSongInfo.song.id + "/artwork";
+
+    let request = new XMLHttpRequest();
+    request.open('GET', "http://localhost:8080/artists/" + this.currSongInfo.artist.id + "/albums/" + this.currSongInfo.album.id + "/songs/" + this.currSongInfo.song.id + "/file", true);
+    request.responseType = 'arraybuffer';
+    request.send();
+    let self = this;
+
+    request.onload = function () {
+      self.audioContext = new AudioContext();
+      let undecodedAudio = request.response;
+      self.audioContext.decodeAudioData(undecodedAudio, function (buffer) {
+        if (self.audioBufferSourceNode != null ) { self.audioBufferSourceNode.stop(); }
+        self.audioBufferSourceNode = self.audioContext.createBufferSource();
+        self.audioBufferSourceNode.buffer = buffer;
+        self.audioBufferSourceNode.connect(self.audioContext.destination);
+        console.log("Fully loaded!");
+        console.log("testPlay(), lastAudioPos = " + self.lastAudioPos);
+        self.audioBufferSourceNode.start(self.audioContext.currentTime);
+        console.log("Playing!");
+      });
+    };
+
+    self.audioBufferSourceNode.addEventListener('ended', function() {
+      console.log("'ended' Audio event heard. Stopping song.");
+      self.stopSong();
+    }, false);
+
+    self.audioBufferSourceNode.addEventListener('timeupdate', function() {
+      console.log("'ended' Audio event heard. Stopping song.");
+      self.stopSong();
+    }, false);
+
+    /*
     this.songPlayback.play();
     this.isPlayingSong = true;
     let self = this;
@@ -95,15 +133,11 @@ export class AppComponent implements OnInit {
       console.log("'ended' Audio event heard. Stopping song.");
       self.stopSong();
     }, false);
-  }
-
-  pauseSong() {
-    this.songPlayback.pause();
-    this.isPlayingSong = false;
+    */
   }
 
   stopSong() {
-    this.loadSong();
+    this.audioBufferSourceNode.stop();
     this.isPlayingSong = false;
   }
 
@@ -133,7 +167,7 @@ export class AppComponent implements OnInit {
       this.refreshLibrary(this.currSongInfo.artist.id, this.currSongInfo.album.id);
       this.setLibrarySelections(this.currSongInfo.artist.id, this.currSongInfo.album.id, this.currSongInfo.song.id);
       this.hasSelSong = true;
-      this.loadSong();
+      //this.loadSong();
       this.playSong();
     });
   }
@@ -143,8 +177,8 @@ export class AppComponent implements OnInit {
       this.hasSelSong = false;
       this.exitMenu();
       this.resetLibrary();
-      this.songPlayback.pause();
-      this.songPlayback = null;
+      //this.songPlayback.pause();
+      //this.songPlayback = null;
       this.currSongInfo = null;
     });
   }
@@ -181,5 +215,38 @@ export class AppComponent implements OnInit {
     this.getArtists();
   }
 
+  testPlay() {
+
+    let request = new XMLHttpRequest();
+    request.open('GET', "http://localhost:8080/artists/5/albums/5/songs/56/file", true);
+    request.responseType = 'arraybuffer';
+    request.send();
+    let self = this;
+
+    request.onload = function () {
+      self.audioContext = new AudioContext();
+      let undecodedAudio = request.response;
+      self.audioContext.decodeAudioData(undecodedAudio, function (buffer) {
+        if (self.audioBufferSourceNode != null ) { self.audioBufferSourceNode.stop(); }
+        self.audioBufferSourceNode = self.audioContext.createBufferSource();
+        self.audioBufferSourceNode.buffer = buffer;
+        self.audioBufferSourceNode.connect(self.audioContext.destination);
+        console.log("Fully loaded!");
+        console.log("testPlay(), lastAudioPos = " + self.lastAudioPos);
+        self.audioBufferSourceNode.start(self.audioContext.currentTime + 5);
+        console.log("Playing!");
+      });
+    };
+  }
+
+  testPause() {
+    this.lastAudioPos = this.audioContext.currentTime;
+    console.log("testPause(), lastAudioPos = " + this.lastAudioPos);
+    this.audioBufferSourceNode.stop();
+  }
+
+  testStop() {
+    this.audioBufferSourceNode.stop();
+  }
 
 }
