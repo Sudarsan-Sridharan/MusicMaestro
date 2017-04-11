@@ -32,6 +32,10 @@ export class AppComponent implements OnInit {
   currSongInfo: SongInfo;
   songArtworkSrc: String;
   songPlayback;
+  currPlayPos: number = 0;
+  maxPlayPos: number = 1;
+  currPlayPosFormatted: String = "00:00";
+  maxPlayPosFormatted: String = "00:00";
 
   ngOnInit() {
     this.getArtists();
@@ -80,21 +84,45 @@ export class AppComponent implements OnInit {
   loadSong() {
     if (this.songPlayback == null) { this.songPlayback = new Audio(); }
     this.songArtworkSrc = "http://localhost:8080/artists/" + this.currSongInfo.artist.id + "/albums/" + this.currSongInfo.album.id + "/songs/" + this.currSongInfo.song.id + "/artwork";
-    this.songPlayback.src = "http://localhost:8080/artists/" + this.currSongInfo.artist.id + "/albums/" + this.currSongInfo.album.id + "/songs/" + this.currSongInfo.song.id + "/file";
-    this.songPlayback.oncanplaythrough = function() {
-    alert("Can play through video without stopping");
-};
-    this.songPlayback.load();
+
+    let xhr = new XMLHttpRequest();
+    let self = this;
+
+    xhr.addEventListener('progress', function(e) {
+        if (e.lengthComputable) {
+            let percentComplete = e.loaded / e.total;
+            console.log('Downloading: ' + percentComplete + '%');
+        }
+    });
+
+    xhr.addEventListener('load', function(blob) {
+        if (xhr.status == 200) {
+            self.songPlayback.src = window.URL.createObjectURL(xhr.response);
+        }
+    });
+
+    let src = "http://localhost:8080/artists/" + this.currSongInfo.artist.id + "/albums/" + this.currSongInfo.album.id + "/songs/" + this.currSongInfo.song.id + "/file";
+    xhr.open('GET', src);
+    xhr.responseType = 'blob';
+    xhr.send(null);
+
   }
 
   playSong() {
+    console.log(this.currSongInfo.song.name.length);
     this.songPlayback.play();
     this.isPlayingSong = true;
+    this.maxPlayPos = this.songPlayback.duration;
+    this.maxPlayPosFormatted = this.convertPlayTimeFormat(this.maxPlayPos);
     let self = this;
     self.songPlayback.addEventListener('ended', function() {
       console.log("'ended' Audio event heard. Stopping song.");
       self.stopSong();
     }, false);
+    self.songPlayback.addEventListener('timeupdate', function() {
+      self.currPlayPos = self.songPlayback.currentTime;
+      self.currPlayPosFormatted = self.convertPlayTimeFormat(self.currPlayPos);
+    });
   }
 
   pauseSong() {
@@ -105,6 +133,14 @@ export class AppComponent implements OnInit {
   stopSong() {
     this.loadSong();
     this.isPlayingSong = false;
+  }
+
+  convertPlayTimeFormat(seconds: number) {
+      let minutes: any = Math.floor(seconds / 60);
+      let secs: any = Math.floor(seconds % 60);
+      if (minutes < 10) { minutes = '0' + minutes; }
+      if (secs < 10) { secs = '0' + secs; }
+      return minutes +  ':' + secs;
   }
 
 

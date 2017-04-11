@@ -35,43 +35,43 @@
             <li class="show-list-item">
               <a href="#" [ngClass]="artist.id == selArtistId ? 'text-selected' : ''"
               (click)="getAlbums(artist.id)">
-                <span *ngIf="artist.name != ''">{{artist.name}}</span>
-                <span *ngIf="artist.name == ''">[Unnamed Artist]</span>
-              </a>
-            </li>
-          </span>
-        </ul>
-      </div>
-      <div class="col-md-3 show-list" *ngIf="selArtistId != null">
-        <div class="text-list-title">Albums</div>
-        <ul class="hide-bullets">
-          <span *ngFor="let album of albums">
-            <li class="show-list-item">
-              <a href="#" [ngClass]="album.id == selAlbumId ? 'text-selected' : ''"
-              (click)="getSongs(selArtistId, album.id)">
-                <span *ngIf="album.name != ''">{{album.name}}</span>
-                <span *ngIf="album.name == ''">[Unnamed Album]</span>
-              </a>
-            </li>
-          </span>
-        </ul>
-      </div>
-      <div class="col-md-4 show-list" *ngIf="selAlbumId != null" >
-        <div class="text-list-title">Songs</div>
-        <ul class="hide-bullets">
-          <span *ngFor="let song of songs">
-            <li class="show-list-item">
-              <a href="#" [ngClass]="song.id == selSongId ? 'text-selected' : ''"
-              (click)="getSong(song.id)" data-toggle="collapse" data-target="#song-select">
-              <span *ngIf="song.track != 0">{{song.track}}. </span>
-              <span *ngIf="song.name != ''">{{song.name}}</span>
-              <span *ngIf="song.name == ''">[Unnamed Song]</span>
+              <span *ngIf="artist.name != ''">{{artist.name}}</span>
+              <span *ngIf="artist.name == ''">[Unnamed Artist]</span>
             </a>
           </li>
         </span>
       </ul>
     </div>
+    <div class="col-md-3 show-list" *ngIf="selArtistId != null">
+      <div class="text-list-title">Albums</div>
+      <ul class="hide-bullets">
+        <span *ngFor="let album of albums">
+          <li class="show-list-item">
+            <a href="#" [ngClass]="album.id == selAlbumId ? 'text-selected' : ''"
+            (click)="getSongs(selArtistId, album.id)">
+            <span *ngIf="album.name != ''">{{album.name}}</span>
+            <span *ngIf="album.name == ''">[Unnamed Album]</span>
+          </a>
+        </li>
+      </span>
+    </ul>
   </div>
+  <div class="col-md-4 show-list" *ngIf="selAlbumId != null" >
+    <div class="text-list-title">Songs</div>
+    <ul class="hide-bullets">
+      <span *ngFor="let song of songs">
+        <li class="show-list-item">
+          <a href="#" [ngClass]="song.id == selSongId ? 'text-selected' : ''"
+          (click)="getSong(song.id)" data-toggle="collapse" data-target="#song-select">
+          <span *ngIf="song.track != 0">{{song.track}}. </span>
+          <span *ngIf="song.name != ''">{{song.name}}</span>
+          <span *ngIf="song.name == ''">[Unnamed Song]</span>
+        </a>
+      </li>
+    </span>
+  </ul>
+</div>
+</div>
 </div>
 </div>
 <div id="edit-song" class="collapse" *ngIf="isActiveSection[1]">
@@ -148,8 +148,7 @@
   <div class="col-md-2 col-md-offset-1">
     <div class="progress">
       <div class="progress-bar progress-bar-success" role="progressbar" [attr.aria-valuenow]="currProgress"
-      aria-valuemin="0" [attr.aria-valuemax]="maxProgress" [ngStyle]="{width: currProgress / maxProgress | percent: '1.0-1'}"
-      data-toggle="collapse" data-target="#song-select">
+      aria-valuemin="0" [attr.aria-valuemax]="maxProgress" [ngStyle]="{width: currProgress / maxProgress | percent: '1.0-1'}">
       {{currProgress}} / {{maxProgress}} Files
     </div>
   </div>
@@ -178,6 +177,11 @@
       <img class="img-responsive img-rounded img-border" [src]="songArtworkSrc">
     </div>
     <div class="col-md-6">
+      <div id="play-progress" class="row">
+        <div class="col-md-6">
+          {{currPlayPosFormatted}} / {{maxPlayPosFormatted}}
+        </div>
+      </div>
       <div id="playback-controls" class="row">
         <div class="col-md-6">
           <button type="button" class="btn btn-primary btn-circle btn-play" *ngIf="!isPlayingSong" (click)="playSong()">
@@ -195,23 +199,32 @@
         </div>
       </div>
       <div class="row">
-        <div class="col-md-12">
-          <div id="song-info-name">{{currSongInfo.song.name}}</div>
+        <div class="col-md-6">
+          <hr>
         </div>
       </div>
-      <div class="row">
-        <div class="col-md-12">
-          <div class="song-info">{{currSongInfo.artist.name}}</div>
+      <div id="song-info">
+        <div class="row">
+          <div class="col-md-12">
+            <div id="song-info-name">
+              <p [ngClass]="{'song-info-name-r' : currSongInfo.song.name.length > 30}">{{currSongInfo.song.name}}</p>
+            </div>
+          </div>
         </div>
-      </div>
-      <div class="row">
-        <div class="col-md-12">
-          <div class="song-info">{{currSongInfo.album.name}}</div>
+        <div class="row">
+          <div class="col-md-12">
+            <div>{{currSongInfo.artist.name}}</div>
+          </div>
         </div>
-      </div>
-      <div class="row">
-        <div class="col-md-12">
-          <div class="song-info">{{currSongInfo.song.year}}</div>
+        <div class="row">
+          <div class="col-md-12">
+            <div>{{currSongInfo.album.name}}</div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12">
+            <div>{{currSongInfo.song.year}}</div>
+          </div>
         </div>
       </div>
     </div>
