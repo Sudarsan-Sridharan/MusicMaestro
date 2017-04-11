@@ -202,7 +202,7 @@ public class SongService {
 
             //Get ID for file's album name.
             for (Album album : albumMap.values())
-                if (album.getName().equals(tAlbumName)) {
+                if (album.getName().equals(tAlbumName) && (newArtistId == 0 || album.getArtistId() == newArtistId) ) {
                     album.setName(tAlbumName);
                     album.setArtistId(newArtistId);
                     newAlbumId = album.getId();
@@ -215,7 +215,7 @@ public class SongService {
 
             //Get ID for file's song name.
             for (Song song : songMap.values())
-                if (song.getName().equals(tSongName) && newArtistId == 0) {
+                if (song.getName().equals(tSongName) && (newAlbumId == 0 || song.getAlbumId() == newAlbumId) ) {
                     song.setName(tSongName);
                     song.setAlbumId(newAlbumId);
                     newSongId = song.getId();

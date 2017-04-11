@@ -166,11 +166,6 @@
   </div>
 </div>
 </div>
-<div class="container" *ngIf="!hasSelSong">
-  <h2 class="text-list-title text-center">
-    Please select a song above.
-  </h2>
-</div>
 <div class="container show-playback-info" *ngIf="hasSelSong">
   <div class="row">
     <div class="col-md-4">
@@ -178,28 +173,45 @@
     </div>
     <div class="col-md-6">
       <div id="play-progress" class="row">
-        <div class="col-md-6">
+        <div class="col-md-8">
           {{currPlayPosFormatted}} / {{maxPlayPosFormatted}}
         </div>
       </div>
       <div id="playback-controls" class="row">
-        <div class="col-md-6">
-          <button type="button" class="btn btn-primary btn-circle btn-play" *ngIf="!isPlayingSong" (click)="playSong()">
-            <i class="glyphicon glyphicon-play"></i>
+        <div class="col-md-10">
+          <button class="btn btn-primary btn-circle" [ngClass]="{'btn-play' : !isPlayingSong, 'btn-playing' : isPlayingSong}"
+          (click)="playSong()" [disabled]="isPlayingSong">
+            <i class="glyphicon" [ngClass]="{'glyphicon-refresh glyphicon-spin' : isPlayingSong, 'glyphicon-play' : !isPlayingSong}"></i>
           </button>
-          <button class="btn btn-primary btn-circle btn-playing" *ngIf="isPlayingSong" disabled>
-            <i class="glyphicon glyphicon-repeat glyphicon-normal-right-spinner"></i>
-          </button>
-          <button type="button" class="btn btn-default btn-circle btn-pause" (click)="pauseSong()" [disabled]="!isPlayingSong">
+          <button type="button" class="btn btn-info btn-circle btn-pause" (click)="pauseSong()" [disabled]="!isPlayingSong">
             <i class="glyphicon glyphicon-pause"></i>
           </button>
           <button type="button" class="btn btn-danger btn-circle btn-stop" (click)="stopSong()">
             <i class="glyphicon glyphicon-stop"></i>
           </button>
+          <button type="button" class="btn btn-default btn-circle btn-previous" (click)="previousSong()">
+            <i class="glyphicon glyphicon-fast-backward"></i>
+          </button>
+          <button type="button" class="btn btn-default btn-circle btn-next" (click)="nextSong()">
+            <i class="glyphicon glyphicon-fast-forward"></i>
+          </button>
+          <button type="button" class="btn btn-circle btn-settings" [ngClass]="{'btn-success glyphicon-spin-slow' : doRepeat, 'btn-basic' : !doRepeat}"
+          data-toggle="collapse" data-target="#playback-settings">
+            <i class="glyphicon glyphicon-cog"></i>
+          </button>
+        </div>
+      </div>
+      <div id="playback-settings" class="row collapse">
+        <div class="col-md-10">
+          <button type="button" class="btn btn-success btn-circle btn-repeat" [ngClass]="{'btn-success glyphicon-spin-slow' : doRepeat, 'btn-basic' : !doRepeat}"
+          (click)="doRepeat = !doRepeat" data-content="Popover with data-trigger" rel="popover" data-placement="bottom"
+          data-original-title="Title" data-trigger="hover">
+            <i class="glyphicon glyphicon-repeat"></i>
+          </button>
         </div>
       </div>
       <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-7">
           <hr>
         </div>
       </div>

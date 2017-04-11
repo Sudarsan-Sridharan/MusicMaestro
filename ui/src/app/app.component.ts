@@ -21,6 +21,7 @@ export class AppComponent implements OnInit {
   isUploading: boolean = false;
   isPlayingSong: boolean = false;
   hasSelSong: boolean = false;
+  doRepeat: boolean = false;
   currProgress: number = 0;
   maxProgress: number = 1;
   selArtistId: number;
@@ -29,6 +30,7 @@ export class AppComponent implements OnInit {
   artists: Array<Artist>;
   albums: Array<Album>;
   songs: Array<Song>;
+  currSongs: Array<Song>;
   currSongInfo: SongInfo;
   songArtworkSrc: String;
   songPlayback;
@@ -65,6 +67,7 @@ export class AppComponent implements OnInit {
   getSong(songId: number) {
     this.hasSelSong = false; //Triggers animation for changing from previous song.
     this.selSongId = songId;
+    this.currSongs = this.songs;  //For playback through album in player.
     this.songService.getSong(this.selArtistId, this.selAlbumId, songId)
     .subscribe( () => {
       this.getSongInfo(this.selArtistId, this.selAlbumId, this.selSongId);
@@ -91,7 +94,6 @@ export class AppComponent implements OnInit {
     xhr.addEventListener('progress', function(e) {
         if (e.lengthComputable) {
             let percentComplete = e.loaded / e.total;
-            console.log('Downloading: ' + percentComplete + '%');
         }
     });
 
@@ -109,7 +111,6 @@ export class AppComponent implements OnInit {
   }
 
   playSong() {
-    console.log(this.currSongInfo.song.name.length);
     this.songPlayback.play();
     this.isPlayingSong = true;
     this.maxPlayPos = this.songPlayback.duration;
@@ -117,7 +118,8 @@ export class AppComponent implements OnInit {
     let self = this;
     self.songPlayback.addEventListener('ended', function() {
       console.log("'ended' Audio event heard. Stopping song.");
-      self.stopSong();
+      if (self.doRepeat) { self.getSong(self.selSongId); }
+      else { self.stopSong(); }
     }, false);
     self.songPlayback.addEventListener('timeupdate', function() {
       self.currPlayPos = self.songPlayback.currentTime;
@@ -133,6 +135,24 @@ export class AppComponent implements OnInit {
   stopSong() {
     this.loadSong();
     this.isPlayingSong = false;
+  }
+
+  previousSong() {
+    for (let i = 0; i < this.currSongs.length; i++) {
+      if (this.currSongs[i].track == (this.currSongInfo.song.track - 1)) {
+        this.getSong(this.currSongs[i].id);
+        break;
+      }
+    }
+  }
+
+  nextSong() {
+    for (let i = 0; i < this.currSongs.length; i++) {
+      if (this.currSongs[i].track == (this.currSongInfo.song.track + 1)) {
+        this.getSong(this.currSongs[i].id);
+        break;
+      }
+    }
   }
 
   convertPlayTimeFormat(seconds: number) {

@@ -68,12 +68,59 @@
   padding: 12px 14px;
 }
 
-#playback-controls .glyphicon-normal-right-spinner {
-  animation: glyphicon-spin-r 2s infinite linear;
+#playback-controls .btn-next {
+  font-size: 20px;
+  padding: 12px 15px;
+}
+
+#playback-controls .btn-previous {
+  font-size: 20px;
+  padding: 12px 15px;
+}
+
+#playback-controls .btn-settings {
+  font-size: 26px;
+  padding: 10px 10px;
+}
+
+#playback-settings .btn-repeat {
+  font-size: 24px;
+  padding: 11px 11px;
+}
+
+#playback-settings {
+  padding-bottom: 15px;
+}
+
+#playback-settings button {
+  margin-right: 8px;
+}
+
+#playback-settings .btn {
+  width: 50px;
+  height: 50px;
+  line-height: 1.33;
+  border-radius: 25px;
+}
+
+#playback-controls .glyphicon-spin {
+  animation: glyphicon-spin 2s infinite linear;
+}
+
+#playback-controls .glyphicon-spin-slow {
+  animation: glyphicon-spin 3.5s infinite linear;
+}
+
+#playback-controls .glyphicon-spin {
+  animation: glyphicon-spin 2s infinite linear;
+}
+
+#playback-settings .glyphicon-spin-slow {
+  animation: glyphicon-spin 3.5s infinite linear;
 }
 
 #play-progress {
-  font-size: 36px;
+  font-size: 58px;
   font-weight: lighter;
   padding-top: 10px;
 }
@@ -200,7 +247,7 @@ a:link, a:visited, a:hover, a:active {
   }
 }
 
-@keyframes glyphicon-spin-r {
+@keyframes glyphicon-spin {
   0% {
     transform: rotate(0deg);
   }
