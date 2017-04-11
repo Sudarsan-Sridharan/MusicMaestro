@@ -84,7 +84,6 @@ public class SongService {
         System.out.println(getSong(artistId, albumId, songId));
         String filePath = getSong(artistId, albumId, songId).getFilePath();
         PathResource file = new PathResource(filePath);
-        System.out.println("file.contentLength() = " + file.contentLength());
         return ResponseEntity
                 .ok()
                 .contentLength(file.contentLength())
@@ -216,7 +215,7 @@ public class SongService {
 
             //Get ID for file's song name.
             for (Song song : songMap.values())
-                if (song.getName().equals(tSongName)) {
+                if (song.getName().equals(tSongName) && newArtistId == 0) {
                     song.setName(tSongName);
                     song.setAlbumId(newAlbumId);
                     newSongId = song.getId();
