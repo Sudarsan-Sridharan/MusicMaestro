@@ -1,10 +1,10 @@
 @media(max-width: 991px) {
   hr {
-      margin-top: 0;
-      margin-bottom: 10px;
+    margin-top: 10px;
+    margin-bottom: 0;
   }
   #song-info-name {
-    font-size: 16pt;
+    font-size: 18pt;
     font-weight: normal;
   }
 
@@ -16,36 +16,52 @@
 
 @media(min-width: 992px) {
   hr {
-      margin-top: 0;
-      margin-bottom: 0;;
+      margin-top: 10px;
+      margin-bottom: 0;
   }
   #song-info-name {
-    padding-top: 5px;
-    font-size: 18pt;
+    font-size: 20pt;
     font-weight: normal;
   }
 
   #song-info {
-    padding-top: 6px;
-    font-size: 16pt;
+    font-size: 18pt;
     font-weight: lighter;
   }
 }
 
-#playback-controls {
-  padding-top: 5px;
-  padding-bottom: 15px;
+.well {
+  padding-top: 0;
+  padding-bottom: 0;
 }
 
-#playback-controls button {
-  margin-right: 8px;
+#nav-bar .nav-pills > li.active > a:enabled {
+  border-bottom: 2px solid Crimson;
+  color: Gray;
+  background-color: transparent;
 }
 
-#playback-controls .btn {
-  width: 50px;
-  height: 50px;
-  line-height: 1.33;
-  border-radius: 25px;
+#nav-bar .nav-pills > li > a:enabled {
+  background-color: transparent;
+}
+
+
+#song-info-name {
+  margin-top: 10px;
+  white-space: nowrap;
+  overflow: hidden;
+  width: 355px;
+  height: 40px;
+}
+
+#play-progress-text {
+  font-size: 40pt;
+  font-weight: lighter;
+}
+
+#play-progress-bar {
+  width: 365px;
+  margin-bottom: 20px;
 }
 
 #playback-controls .btn-play {
@@ -88,54 +104,49 @@
   padding: 11px 11px;
 }
 
+#playback-settings .btn-shuffle {
+  font-size: 24px;
+  padding: 11px 11px;
+}
+
 #playback-settings {
-  padding-bottom: 15px;
+  margin-top: 6px;
+  animation: fade-in 0.7s ease-out;
 }
 
-#playback-settings button {
-  margin-right: 8px;
+#playback-settings .volume-slider {
+    display: table-cell;
+    vertical-align: middle;
+    height: 50px;
+    width: 220px;
 }
 
-#playback-settings .btn {
+.btn-circle {
   width: 50px;
   height: 50px;
   line-height: 1.33;
   border-radius: 25px;
+  margin-right: 4px;
 }
 
-#playback-controls .glyphicon-spin {
+.glyphicon-spin {
   animation: glyphicon-spin 2s infinite linear;
 }
 
-#playback-controls .glyphicon-spin-slow {
+.glyphicon-spin-slow {
   animation: glyphicon-spin 3.5s infinite linear;
 }
 
-#playback-controls .glyphicon-spin {
-  animation: glyphicon-spin 2s infinite linear;
+.glyphicon-shake {
+  animation: glyphicon-shake 0.6s infinite linear;
 }
 
-#playback-settings .glyphicon-spin-slow {
-  animation: glyphicon-spin 3.5s infinite linear;
+.song-info-slide {
+  animation: text-slide 14s infinite linear;
 }
 
-#play-progress {
-  font-size: 58px;
-  font-weight: lighter;
-  padding-top: 10px;
-}
-
-#song-info-name {
-  white-space: nowrap;
-  overflow: hidden;
-  width: 350px;
-  height: 45px;
-}
-
-
-
-.song-info-name-r {
-  animation: song-title-r 12s infinite linear;
+.library-text-slide {
+  animation: text-slide-short 7s infinite linear;
 }
 
 .show-list {
@@ -150,6 +161,24 @@
   animation: show-playback-info 0.8s ease-out;
 }
 
+.library-list-artist {
+  white-space: nowrap;
+  overflow: hidden;
+  width: 240px;
+}
+
+.library-list-album {
+  white-space: nowrap;
+  overflow: hidden;
+  width: 300px;
+}
+
+.library-list-songs {
+  white-space: nowrap;
+  overflow: hidden;
+  width: 350px;
+}
+
 .input-textbox-xs {
   width: 50px;
 }
@@ -157,6 +186,10 @@
 input[type="file"] {
   font-size: 11pt;
   line-height: 0ex;
+}
+
+li a {
+  display: block;
 }
 
 .text-center {
@@ -179,7 +212,7 @@ input[type="file"] {
 }
 
 .img-border {
-  border: 1px solid #DDDDDD;
+  border: 1px solid #DDD;
 }
 
 .extra-padding .row {
@@ -221,62 +254,51 @@ a:link, a:visited, a:hover, a:active {
 }
 
 @keyframes show-playback-info {
-  0% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
-  }
+  0% { opacity: 0; }
+  100% { opacity: 1; }
 }
 
 @keyframes show-list {
-  0% {
-    transform: translateX(-30px);
-  }
-  100% {
-    transform: translateX(0);
-  }
+  0% { transform: translateX(-30px); }
+  100% { transform: translateX(0); }
 }
 
 @keyframes show-list-item {
-  0% {
-    opacity: 0.1;
-  }
-  100% {
-    opacity: 1;
-  }
+  0% { opacity: 0.1; }
+  100% { opacity: 1; }
 }
 
 @keyframes glyphicon-spin {
-  0% {
-    transform: rotate(0deg);
-  }
-
-  100% {
-    transform: rotate(359deg);
-  }
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(359deg); }
 }
 
-@keyframes song-title-r {
-  0% {
-    opacity: 0;
-    transform: translateX(0);
-  }
+@keyframes glyphicon-shake {
+  0% { transform: translate(0,0); }
+  20% { transform: translate(1px,-1px); }
+  40% { transform: translate(1px,1px); }
+  60% { transform: translate(-1px,-1px); }
+  80% { transform: translate(-1px,1px); }
+  100% { transform: translate(0px, 0px); }
+}
 
-  10% {
-    opacity: 1;
-  }
+@keyframes text-slide {
+  0% { opacity: 0; transform: translateX(0); }
+  10% { opacity: 1; }
+  25% { transform: translateX(0); }
+  85% { opacity: 1; }
+  100% { opacity: 0; transform: translateX(-220%); }
+}
 
-  25% {
-    transform: translateX(0);
-  }
+@keyframes text-slide-short {
+  0% { opacity: 0.1; transform: translateX(0); }
+  5% { opacity: 1; }
+  30% { transform: translateX(0); }
+  85% { opacity: 1; }
+  100% { opacity: 0; transform: translateX(-150%); }
+}
 
-  85% {
-    opacity: 1;
-  }
-
-  100% {
-    opacity: 0;
-    transform: translateX(-175%);
-  }
+@keyframes fade-in {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
 }

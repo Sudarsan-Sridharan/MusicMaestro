@@ -52,4 +52,8 @@ export class SongService {
     return this.http.delete("http://localhost:8080/artists/" + artistId + "/albums/" + albumId + "/songs/" + songId);
   }
 
+  getRandomInt(min, max) {
+    return Math.round(Math.random() * (max - min) + min);
+  }
+
 }

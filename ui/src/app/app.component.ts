@@ -18,10 +18,13 @@ export class AppComponent implements OnInit {
   //isActiveSection --> Keeps one menu section active at a time:
   //["Music Library", "Edit Song", "Add Song"]
   isActiveSection: Array<boolean> = [false, false, false];
+  isActiveTab: Array<boolean> = [false, false, false];
   isUploading: boolean = false;
   isPlayingSong: boolean = false;
   hasSelSong: boolean = false;
+  doShowSettings: boolean = false;
   doRepeat: boolean = false;
+  doShuffle: boolean = false;
   currProgress: number = 0;
   maxProgress: number = 1;
   selArtistId: number;
@@ -65,11 +68,16 @@ export class AppComponent implements OnInit {
   }
 
   getSong(songId: number) {
-    this.hasSelSong = false; //Triggers animation for changing from previous song.
+    //If getSong() is for a song in a different album, then trigger animation.
+    if (this.currSongInfo == null || this.currSongInfo.album.id != this.selAlbumId) {
+      this.hasSelSong = false;  //Triggers animation for changing from previous song.
+    }
     this.selSongId = songId;
     this.currSongs = this.songs;  //For playback through album in player.
+    console.log("INSIDE GETSONG(). selSongId = " + this.selSongId);
     this.songService.getSong(this.selArtistId, this.selAlbumId, songId)
     .subscribe( () => {
+      console.log("SUBSCRIBING TO songService.getSong()");
       this.getSongInfo(this.selArtistId, this.selAlbumId, this.selSongId);
     });
   }
@@ -79,6 +87,7 @@ export class AppComponent implements OnInit {
     .subscribe(songInfo => {
       this.currSongInfo = songInfo;
       this.hasSelSong = true;
+      console.log("currSongInfo.song.name = " + this.currSongInfo.song.name);
       this.loadSong();
       setTimeout( () => this.playSong(), 300);
     });
@@ -87,22 +96,14 @@ export class AppComponent implements OnInit {
   loadSong() {
     if (this.songPlayback == null) { this.songPlayback = new Audio(); }
     this.songArtworkSrc = "http://localhost:8080/artists/" + this.currSongInfo.artist.id + "/albums/" + this.currSongInfo.album.id + "/songs/" + this.currSongInfo.song.id + "/artwork";
-
-    let xhr = new XMLHttpRequest();
     let self = this;
-
+    let xhr = new XMLHttpRequest();
     xhr.addEventListener('progress', function(e) {
-        if (e.lengthComputable) {
-            let percentComplete = e.loaded / e.total;
-        }
+      if (e.lengthComputable) { let percentComplete = e.loaded / e.total; }
     });
-
     xhr.addEventListener('load', function(blob) {
-        if (xhr.status == 200) {
-            self.songPlayback.src = window.URL.createObjectURL(xhr.response);
-        }
+      if (xhr.status == 200) { self.songPlayback.src = window.URL.createObjectURL(xhr.response); }
     });
-
     let src = "http://localhost:8080/artists/" + this.currSongInfo.artist.id + "/albums/" + this.currSongInfo.album.id + "/songs/" + this.currSongInfo.song.id + "/file";
     xhr.open('GET', src);
     xhr.responseType = 'blob';
@@ -111,19 +112,21 @@ export class AppComponent implements OnInit {
   }
 
   playSong() {
+    this.exitMenu();
     this.songPlayback.play();
     this.isPlayingSong = true;
     this.maxPlayPos = this.songPlayback.duration;
     this.maxPlayPosFormatted = this.convertPlayTimeFormat(this.maxPlayPos);
     let self = this;
     self.songPlayback.addEventListener('ended', function() {
-      console.log("'ended' Audio event heard. Stopping song.");
-      if (self.doRepeat) { self.getSong(self.selSongId); }
-      else { self.stopSong(); }
+      self.songPlayback = null;
+      self.nextSong();
     }, false);
     self.songPlayback.addEventListener('timeupdate', function() {
-      self.currPlayPos = self.songPlayback.currentTime;
-      self.currPlayPosFormatted = self.convertPlayTimeFormat(self.currPlayPos);
+      if (self.hasSelSong) {
+        self.currPlayPos = self.songPlayback.currentTime;
+        self.currPlayPosFormatted = self.convertPlayTimeFormat(self.currPlayPos);
+      }
     });
   }
 
@@ -139,28 +142,41 @@ export class AppComponent implements OnInit {
 
   previousSong() {
     for (let i = 0; i < this.currSongs.length; i++) {
-      if (this.currSongs[i].track == (this.currSongInfo.song.track - 1)) {
-        this.getSong(this.currSongs[i].id);
+      if (this.currSongs[i].id == this.currSongInfo.song.id && i > 0) {
+        this.getSong(this.currSongs[i-1].id);
         break;
       }
     }
   }
 
   nextSong() {
-    for (let i = 0; i < this.currSongs.length; i++) {
-      if (this.currSongs[i].track == (this.currSongInfo.song.track + 1)) {
-        this.getSong(this.currSongs[i].id);
-        break;
+    if (this.doRepeat) { this.getSong(this.selSongId); }
+    else if (this.doShuffle) { this.getSong(this.getShuffledSongId()); }
+    else {
+      for (let i = 0; i < this.currSongs.length; i++) {
+        if (this.currSongs[i].id == this.currSongInfo.song.id && (i < this.currSongs.length - 1)) {
+          this.getSong(this.currSongs[i+1].id);
+          break;
+        }
       }
     }
   }
 
+  changeSongPos(value: number) {
+    this.songPlayback.currentTime = value;
+  }
+
+  changeVolume(value: number) {
+    console.log(value);
+    this.songPlayback.volume = value;
+  }
+
   convertPlayTimeFormat(seconds: number) {
-      let minutes: any = Math.floor(seconds / 60);
-      let secs: any = Math.floor(seconds % 60);
-      if (minutes < 10) { minutes = '0' + minutes; }
-      if (secs < 10) { secs = '0' + secs; }
-      return minutes +  ':' + secs;
+    let minutes: any = Math.floor(seconds / 60);
+    let secs: any = Math.floor(seconds % 60);
+    if (minutes < 10) { minutes = '0' + minutes; }
+    if (secs < 10) { secs = '0' + secs; }
+    return minutes +  ':' + secs;
   }
 
 
@@ -195,20 +211,14 @@ export class AppComponent implements OnInit {
   }
 
   removeSong() {
+    this.hasSelSong = false;
+    this.exitMenu();
+    this.songPlayback.pause();
+    this.songPlayback = null;
     this.songService.removeSong(this.currSongInfo.artist.id, this.currSongInfo.album.id, this.currSongInfo.song.id).subscribe( () => {
-      this.hasSelSong = false;
-      this.exitMenu();
       this.resetLibrary();
-      this.songPlayback.pause();
-      this.songPlayback = null;
       this.currSongInfo = null;
     });
-  }
-
-  exitMenu() {
-    for (let i = 0; i < this.isActiveSection.length; i++) {
-      this.isActiveSection[i] = false;
-    }
   }
 
   resetProgressBar() {
@@ -237,5 +247,36 @@ export class AppComponent implements OnInit {
     this.getArtists();
   }
 
+  getShuffledSongId(): number {
+    let currSongIndex = 0;
+    for (let i = 0; i < this.currSongs.length; i++) {
+      if (this.currSongs[i].id == this.selSongId) { currSongIndex = i; }
+    }
+    let randomInt = currSongIndex;  //Initialize this way to enter while loop.
+    while (randomInt == currSongIndex) {
+      randomInt = this.songService.getRandomInt(0, this.currSongs.length - 1);
+    }
+    return this.currSongs[randomInt].id;
+  }
+
+  setActiveTab(boolIndex) {
+    for (let i = 0; i < this.isActiveSection.length; i++) {
+      if (i == boolIndex) {
+        this.isActiveSection[boolIndex] = true;
+        this.isActiveTab[boolIndex] = !this.isActiveTab[boolIndex];
+      }
+      else {
+        this.isActiveSection[i] = false;
+        this.isActiveTab[i] = false;
+      }
+    }
+  }
+
+  exitMenu() {
+    for (let i = 0; i < this.isActiveSection.length; i++) {
+      this.isActiveSection[i] = false;
+      this.isActiveTab[i] = false;
+    }
+  }
 
 }
