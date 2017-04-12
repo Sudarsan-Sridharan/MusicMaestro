@@ -102,13 +102,13 @@ export class AppComponent implements OnInit {
       if (e.lengthComputable) { let percentComplete = e.loaded / e.total; }
     });
     xhr.addEventListener('load', function(blob) {
+      console.log("LOADED SONG.");
       if (xhr.status == 200) { self.songPlayback.src = window.URL.createObjectURL(xhr.response); }
     });
     let src = "http://localhost:8080/artists/" + this.currSongInfo.artist.id + "/albums/" + this.currSongInfo.album.id + "/songs/" + this.currSongInfo.song.id + "/file";
     xhr.open('GET', src);
     xhr.responseType = 'blob';
     xhr.send(null);
-
   }
 
   playSong() {
@@ -119,6 +119,7 @@ export class AppComponent implements OnInit {
     this.maxPlayPosFormatted = this.convertPlayTimeFormat(this.maxPlayPos);
     let self = this;
     self.songPlayback.addEventListener('ended', function() {
+      console.log("STOPPED SONG.");
       self.songPlayback = null;
       self.nextSong();
     }, false);
@@ -128,6 +129,7 @@ export class AppComponent implements OnInit {
         self.currPlayPosFormatted = self.convertPlayTimeFormat(self.currPlayPos);
       }
     });
+    console.log("STARTED SONG.");
   }
 
   pauseSong() {
@@ -167,7 +169,6 @@ export class AppComponent implements OnInit {
   }
 
   changeVolume(value: number) {
-    console.log(value);
     this.songPlayback.volume = value;
   }
 
@@ -205,7 +206,6 @@ export class AppComponent implements OnInit {
       this.refreshLibrary(this.currSongInfo.artist.id, this.currSongInfo.album.id);
       this.setLibrarySelections(this.currSongInfo.artist.id, this.currSongInfo.album.id, this.currSongInfo.song.id);
       this.hasSelSong = true;
-      this.loadSong();
       this.playSong();
     });
   }

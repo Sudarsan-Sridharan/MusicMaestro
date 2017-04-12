@@ -31,6 +31,8 @@ public class SongService {
     private int artistIndex = 0;
     private int albumIndex = 0;
     private int songIndex = 0;
+    private String escDelimiter = "\\|";
+    private String delimiter = "|";
 
     @Value("${library.path}")
     private String libraryPath;
@@ -169,6 +171,10 @@ public class SongService {
                 tSongYear = tag.getYear();
             else
                 tSongYear = "";
+
+            //Crop year out of possible date tags.
+            if (tSongYear.length() > 4)
+                tSongYear = tSongYear.substring(0, 3);
 
             String originalFilename = file.getOriginalFilename();
             String fileType = originalFilename.substring(originalFilename.lastIndexOf(".") + 1, originalFilename.length());
@@ -585,7 +591,7 @@ public class SongService {
             return;
 
         if (scanner.nextLine().equals("--INDEX--"))
-            indices = scanner.nextLine().split(",");
+            indices = scanner.nextLine().split(escDelimiter);
 
         artistIndex = Integer.parseInt(indices[0]);
         albumIndex = Integer.parseInt(indices[1]);
@@ -600,7 +606,7 @@ public class SongService {
             if (line.equals("**MPEND**"))
                 break;
 
-            String[] fields = line.split(",");
+            String[] fields = line.split(escDelimiter);
 
             if (section.equals("--ARTIST--") && !line.equals("--ALBUM--"))
                 artistMap.put(Integer.parseInt(fields[0]), new Artist(Integer.parseInt(fields[0]), fields[1]));
@@ -641,14 +647,14 @@ public class SongService {
         bw.write("--INDEX--");
         bw.newLine();
 
-        bw.write(artistIndex + "," + albumIndex + "," + songIndex);
+        bw.write(artistIndex + delimiter + albumIndex + delimiter + songIndex);
         bw.newLine();
 
         bw.write("--ARTIST--");
         bw.newLine();
 
         for (Artist artist : artistMap.values()) {
-            bw.write(artist.getId() + "," + artist.getName());
+            bw.write(artist.getId() + delimiter + artist.getName());
             bw.newLine();
         }
 
@@ -656,7 +662,7 @@ public class SongService {
         bw.newLine();
 
         for (Album album : albumMap.values()) {
-            bw.write(album.getId() + "," + album.getArtistId() + "," + album.getName());
+            bw.write(album.getId() + delimiter + album.getArtistId() + delimiter + album.getName());
             bw.newLine();
         }
 
@@ -664,8 +670,8 @@ public class SongService {
         bw.newLine();
 
         for (Song song : songMap.values()) {
-            bw.write(song.getId() + "," + song.getAlbumId() + "," + song.getTrack()
-                    + "," + song.getName() + "," + song.getYear() + "," + song.getFilePath());
+            bw.write(song.getId() + delimiter + song.getAlbumId() + delimiter + song.getTrack()
+                    + delimiter + song.getName() + delimiter + song.getYear() + delimiter + song.getFilePath());
             bw.newLine();
         }
 

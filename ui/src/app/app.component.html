@@ -70,14 +70,16 @@
   </div>
 </div>
 </div>
+<br />
 </div>
 <div id="edit-song" class="collapse" *ngIf="isActiveSection[1]">
-  <br />
     <div class="row text-list" *ngIf="!hasSelSong">
+      <br />
       <div class="col-md-4 col-md-offset-1">
         <p>Select a song from the library first.</p>
       </div>
   </div>
+  <br />
   <div *ngIf="hasSelSong">
     <div class="extra-padding text-list vcenter">
       <div class="row">
@@ -133,6 +135,7 @@
         </div>
       </div>
     </div>
+    <br />
   </div>
 </div>
 <div id="add-song" class="collapse" *ngIf="isActiveSection[2]">
@@ -148,7 +151,7 @@
     </div>
   </div>
   <div class="row" *ngIf="isUploading">
-    <div class="col-md-2 col-md-offset-1">
+    <div class="col-md-3 col-md-offset-1">
       <div class="progress">
         <div class="progress-bar progress-bar-success" role="progressbar" [attr.aria-valuenow]="currProgress"
         aria-valuemin="0" [attr.aria-valuemax]="maxProgress" [ngStyle]="{width: currProgress / maxProgress | percent: '1.0-1'}">
@@ -158,22 +161,23 @@
   </div>
 </div>
 <div class="row">
-  <div class="col-md-2 col-md-offset-1 text-center" *ngIf="isUploading && currProgress == 0">
+  <div class="col-md-3 col-md-offset-1 text-center" *ngIf="isUploading && currProgress == 0">
     Connecting...
   </div>
-  <div class="col-md-2 col-md-offset-1 text-center" *ngIf="isUploading && currProgress > 0 && currProgress < maxProgress">
+  <div class="col-md-3 col-md-offset-1 text-center" *ngIf="isUploading && currProgress > 0 && currProgress < maxProgress">
     Uploading...
   </div>
-  <div class="col-md-2 col-md-offset-1 text-center" *ngIf="isUploading && currProgress == maxProgress">
+  <div class="col-md-3 col-md-offset-1 text-center" *ngIf="isUploading && currProgress == maxProgress">
     Upload complete!
   </div>
 </div>
+<br />
 </div>
 </div>
 <div class="container show-playback-info" *ngIf="hasSelSong">
   <div class="row">
     <div class="col-md-5">
-      <img class="img-responsive img-rounded img-border" [src]="songArtworkSrc">
+      <img id="album-art" class="img-responsive img-rounded img-border" [src]="songArtworkSrc">
     </div>
     <div class="col-md-7">
       <div class="row">
@@ -201,7 +205,7 @@
         </div>
       </div>
       <div class="row">
-        <div class="col-md-7">
+        <div class="col-md-8">
           <hr>
         </div>
       </div>
@@ -212,7 +216,7 @@
       </div>
       <div id="play-progress-bar" class="row">
         <div class="col-md-12">
-          <input (change)="changeSongPos($event.target.value)" type="range" min="0" value="{{currPlayPos}}" max="{{maxPlayPos}}">
+          <input (change)="changeSongPos($event.target.value)" type="range" step="0.001" min="0" value="{{currPlayPos}}" max="{{maxPlayPos}}">
         </div>
       </div>
       <div id="playback-controls" class="row">
@@ -249,7 +253,7 @@
     (click)="doShuffle = !doShuffle" [disabled]="doRepeat">
     <i class="glyphicon glyphicon-random" [ngClass]="{'glyphicon-shake' : doShuffle}"></i>
   </button>
-  <input class="volume-slider" (change)="changeVolume($event.target.value)" type="range" min="0" step="0.001" value="1" max="1">
+  <input class="volume-slider" (change)="changeVolume($event.target.value)" type="range" step="0.001" min="0" value="1" max="1">
 </div>
 </div>
 </div>

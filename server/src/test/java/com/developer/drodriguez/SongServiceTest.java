@@ -99,6 +99,8 @@ public class SongServiceTest {
         Map<Integer, Artist> artistMap = new HashMap<>();
         Map<Integer, Album> albumMap = new HashMap<>();
         Map<Integer, Song> songMap = new HashMap<>();
+        String escDelimiter = "\\|";
+        String delimiter = "|";
         String[] indices = null;
         String section = null;
         String line = null;
@@ -108,7 +110,7 @@ public class SongServiceTest {
             return;
 
         if (scanner.nextLine().equals("--INDEX--"))
-            indices = scanner.nextLine().split(",");
+            indices = scanner.nextLine().split(escDelimiter);
 
         int artistIndex = Integer.parseInt(indices[0]);
         int albumIndex = Integer.parseInt(indices[1]);
@@ -126,7 +128,7 @@ public class SongServiceTest {
             if (line.equals("**MPEND**"))
                 break;
 
-            String[] fields = line.split(",");
+            String[] fields = line.split(delimiter);
 
             if (section.equals("--ARTIST--") && !line.equals("--ALBUM--"))
                 artistMap.put(Integer.parseInt(fields[0]), new Artist(Integer.parseInt(fields[0]), fields[1]));
@@ -147,68 +149,5 @@ public class SongServiceTest {
             System.out.println(song);
 
     }
-
-    /*
-
-    @Test
-    public void writeLibraryFile () throws IOException, FileNotFoundException {
-
-        Map<Integer, Artist> artistMap = new HashMap<>();
-        Map<Integer, Album> albumMap = new HashMap<>();
-        Map<Integer, Song> songMap = new HashMap<>();
-
-        System.out.println("MODIFY MAPS");
-
-        artistMap.put(1, new Artist(1, "Test Artist"));
-        albumMap.put(1, new Album(1, 1, "Test Album"));
-        songMap.put(1, new Song(1, 1, 1, "TEST SONG 1", "2015", "/Users/Daniel/Music/library/Test Artist/Test Album/Test Song.mp3"));
-
-        System.out.println();
-        System.out.println("WRITE NEW FILE");
-
-        //Backup current library
-        File library = new File("/Users/Daniel/Music/library/library.mpl");
-        library.renameTo(new File("/Users/Daniel/Music/library/library.mpl.bak"));
-        library.delete();
-
-        //Create and open stream for new library
-        File newLibrary = new File("/Users/Daniel/Music/library/library.mpl");
-        FileOutputStream fos = new FileOutputStream(newLibrary);
-        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fos));
-
-        bw.write("**MPLIBRARY**");
-        bw.newLine();
-
-        bw.write("--ARTIST--");
-        bw.newLine();
-
-        for (Artist artist : artistMap.values()) {
-            bw.write(artist.getId() + "," + artist.getName());
-            bw.newLine();
-        }
-
-        bw.write("--ALBUM--");
-        bw.newLine();
-
-        for (Album album : albumMap.values()) {
-            bw.write(album.getId() + "," + album.getArtistId() + "," + album.getName());
-            bw.newLine();
-        }
-
-        bw.write("--SONG--");
-        bw.newLine();
-
-        for (Song song : songMap.values()) {
-            bw.write(song.getId() + "," + song.getAlbumId() + "," + song.getTrack()
-                    + "," + song.getName() + "," + song.getYear() + "," + song.getFilePath());
-            bw.newLine();
-        }
-
-        bw.write("**MPEND**");
-
-        bw.close();
-        fos.close();
-    }
-    */
 
 }

@@ -6,6 +6,7 @@
   #song-info-name {
     font-size: 18pt;
     font-weight: normal;
+    width: 355px;
   }
 
   #song-info {
@@ -20,8 +21,9 @@
       margin-bottom: 0;
   }
   #song-info-name {
-    font-size: 20pt;
+    font-size: 22pt;
     font-weight: normal;
+    width: 450px;
   }
 
   #song-info {
@@ -45,12 +47,14 @@
   background-color: transparent;
 }
 
+#album-art {
+  width: 100%;
+}
 
 #song-info-name {
   margin-top: 10px;
   white-space: nowrap;
   overflow: hidden;
-  width: 355px;
   height: 40px;
 }
 
@@ -164,7 +168,7 @@
 .library-list-artist {
   white-space: nowrap;
   overflow: hidden;
-  width: 240px;
+  width: 220px;
 }
 
 .library-list-album {
