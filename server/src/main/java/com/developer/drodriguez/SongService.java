@@ -33,11 +33,10 @@ public class SongService {
     private int songIndex = 0;
     private String escDelimiter = "\\|";
     private String delimiter = "|";
-
-    @Value("${library.path}")
     private String libraryPath;
 
-    SongService() throws IOException {
+    SongService(@Value("${library.path}") String initLibraryPath) throws IOException {
+        libraryPath = initLibraryPath;
         readLibraryFile();
     }
 
@@ -174,7 +173,7 @@ public class SongService {
 
             //Crop year out of possible date tags.
             if (tSongYear.length() > 4)
-                tSongYear = tSongYear.substring(0, 3);
+                tSongYear = tSongYear.substring(0, 4);
 
             String originalFilename = file.getOriginalFilename();
             String fileType = originalFilename.substring(originalFilename.lastIndexOf(".") + 1, originalFilename.length());
@@ -577,7 +576,7 @@ public class SongService {
     public void readLibraryFile() throws IOException, FileNotFoundException {
 
         System.out.println("READING LIBRARY FILE...");
-        File library = new File("/Users/Daniel/Music/library/library.mpl");
+        File library = new File(libraryPath + File.separator + "library.mpl");
         if (!library.exists())  //Create empty library file if it does not exist.
             writeLibraryFile();
 
@@ -631,13 +630,13 @@ public class SongService {
     public void writeLibraryFile () throws IOException, FileNotFoundException {
 
         //Backup current library
-        File library = new File("/Users/Daniel/Music/library/library.mpl");
-        File libraryBackup = new File("/Users/Daniel/Music/library/library.mpl.bak");
+        File library = new File(libraryPath + File.separator + "library.mpl");
+        File libraryBackup = new File(libraryPath + File.separator + "library.mpl.bak");
         library.renameTo(libraryBackup);
         library.delete();
 
         //Create and open stream for new library
-        File newLibrary = new File("/Users/Daniel/Music/library/library.mpl");
+        File newLibrary = new File(libraryPath + File.separator + "library.mpl");
         FileOutputStream fos = new FileOutputStream(newLibrary);
         BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fos));
 
