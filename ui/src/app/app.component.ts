@@ -35,12 +35,12 @@ export class AppComponent implements OnInit {
   songs: Array<Song>;
   currSongs: Array<Song>;
   currSongInfo: SongInfo;
-  songArtworkSrc: String;
+  songArtworkSrc: string;
   songPlayback;
   currPlayPos: number = 0;
   maxPlayPos: number = 1;
-  currPlayPosFormatted: String = "00:00";
-  maxPlayPosFormatted: String = "00:00";
+  currPlayPosFormatted: string = "00:00";
+  maxPlayPosFormatted: string = "00:00";
 
   ngOnInit() {
     this.getArtists();
@@ -152,11 +152,11 @@ export class AppComponent implements OnInit {
   }
 
   nextSong() {
-    if (this.doRepeat) { this.getSong(this.selSongId); }
+    if (this.doRepeat) { this.getSong(this.currSongInfo.song.id); }
     else if (this.doShuffle) { this.getSong(this.getShuffledSongId()); }
     else {
       for (let i = 0; i < this.currSongs.length; i++) {
-        if (this.currSongs[i].id == this.currSongInfo.song.id && (i < this.currSongs.length - 1)) {
+        if (this.currSongs[i].id == this.currSongInfo.song.id && i < this.currSongs.length - 1) {
           this.getSong(this.currSongs[i+1].id);
           break;
         }
@@ -206,7 +206,6 @@ export class AppComponent implements OnInit {
       this.refreshLibrary(this.currSongInfo.artist.id, this.currSongInfo.album.id);
       this.setLibrarySelections(this.currSongInfo.artist.id, this.currSongInfo.album.id, this.currSongInfo.song.id);
       this.hasSelSong = true;
-      this.playSong();
     });
   }
 

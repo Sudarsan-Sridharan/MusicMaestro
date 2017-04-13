@@ -17,8 +17,8 @@
 
 @media(min-width: 992px) {
   hr {
-      margin-top: 10px;
-      margin-bottom: 0;
+    margin-top: 10px;
+    margin-bottom: 0;
   }
   #song-info-name {
     font-size: 22pt;
@@ -40,10 +40,6 @@
 #nav-bar .nav-pills > li.active > a:enabled {
   border-bottom: 2px solid Crimson;
   color: Gray;
-  background-color: transparent;
-}
-
-#nav-bar .nav-pills > li > a:enabled {
   background-color: transparent;
 }
 
@@ -119,10 +115,10 @@
 }
 
 #playback-settings .volume-slider {
-    display: table-cell;
-    vertical-align: middle;
-    height: 50px;
-    width: 220px;
+  display: table-cell;
+  vertical-align: middle;
+  height: 50px;
+  width: 220px;
 }
 
 .btn-circle {

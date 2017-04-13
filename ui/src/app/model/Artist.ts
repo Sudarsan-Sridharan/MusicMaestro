@@ -4,5 +4,5 @@ import { Album } from './Album';
 @Injectable()
 export class Artist {
   id: number;
-  name: String;
+  name: string;
 }

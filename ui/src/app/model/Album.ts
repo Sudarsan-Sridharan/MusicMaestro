@@ -5,5 +5,5 @@ import { Song } from './Song';
 export class Album {
   id: number;
   artistId: number;
-  name: String;
+  name: string;
 }

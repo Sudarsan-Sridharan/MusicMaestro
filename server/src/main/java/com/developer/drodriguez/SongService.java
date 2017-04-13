@@ -259,7 +259,7 @@ public class SongService {
 
     }
 
-    public synchronized SongInfo updateSongInfo(SongInfo songInfo, int artistId, int albumId, int songId) throws IOException, UnsupportedTagException, InvalidDataException, NotSupportedException {
+    public synchronized SongInfo updateSong(SongInfo songInfo, int artistId, int albumId, int songId) throws IOException, UnsupportedTagException, InvalidDataException, NotSupportedException {
 
         String oldPath = songMap.get(songInfo.getSong().getId()).getFilePath();
         String fileType = oldPath.substring(oldPath.lastIndexOf(".") + 1, oldPath.length());
@@ -345,7 +345,7 @@ public class SongService {
         //Check album names at any ID (if applicable)
         if (hasChangedArtist || hasChangedAlbum)
             for (Album album : albumMap.values())
-                if (album.getName().equals(songInfo.getAlbum().getName())) {
+                if (album.getName().equals(songInfo.getAlbum().getName()) && album.getArtistId() == artistIdWithExistingName) {
                     hasAlbumNameInMap = true;
                     albumIdWithExistingName = album.getId();
                     System.out.println("hasAlbumNameInMap = " + hasAlbumNameInMap);

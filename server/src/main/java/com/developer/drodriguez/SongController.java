@@ -82,7 +82,7 @@ public class SongController {
     @RequestMapping(method=RequestMethod.PUT, value="/artists/{artistId}/albums/{albumId}/songs/{songId}")
     public SongInfo updateSongInfo(@RequestBody SongInfo songInfo, @PathVariable int artistId, @PathVariable int albumId, @PathVariable int songId)
             throws IOException, InvalidDataException, NotSupportedException, UnsupportedTagException {
-        return songService.updateSongInfo(songInfo, artistId, albumId, songId);
+        return songService.updateSong(songInfo, artistId, albumId, songId);
     }
 
     @RequestMapping(method=RequestMethod.DELETE, value="/artists/{artistId}/albums/{albumId}/songs/{songId}")
