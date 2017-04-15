@@ -1,10 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { SongService } from './song.service';
 import { Observable } from 'rxjs/Observable';
 import { Artist } from './model/Artist';
 import { Album } from './model/Album';
 import { Song } from './model/Song';
 import { SongInfo } from './model/SongInfo';
+import { PlayerComponent } from './player/player.component';
 
 @Component({
   selector: 'app-root',
@@ -15,16 +16,15 @@ export class AppComponent implements OnInit {
 
   constructor(private songService: SongService) {}
 
+  @ViewChild(PlayerComponent)
+  private player: PlayerComponent;
+
   //isActiveSection --> Keeps one menu section active at a time:
   //["Music Library", "Edit Song", "Add Song"]
   isActiveSection: Array<boolean> = [false, false, false];
   isActiveTab: Array<boolean> = [false, false, false];
   isUploading: boolean = false;
-  isPlayingSong: boolean = false;
   hasSelSong: boolean = false;
-  doShowSettings: boolean = false;
-  doRepeat: boolean = false;
-  doShuffle: boolean = false;
   currProgress: number = 0;
   maxProgress: number = 1;
   selArtistId: number;
@@ -35,12 +35,7 @@ export class AppComponent implements OnInit {
   songs: Array<Song>;
   currSongs: Array<Song>;
   currSongInfo: SongInfo;
-  songArtworkSrc: string;
-  songPlayback;
-  currPlayPos: number = 0;
-  maxPlayPos: number = 1;
-  currPlayPosFormatted: string = "00:00";
-  maxPlayPosFormatted: string = "00:00";
+
 
   ngOnInit() {
     this.getArtists();
@@ -88,98 +83,13 @@ export class AppComponent implements OnInit {
       this.currSongInfo = songInfo;
       this.hasSelSong = true;
       console.log("currSongInfo.song.name = " + this.currSongInfo.song.name);
-      this.loadSong();
-      setTimeout( () => this.playSong(), 300);
+
+      //Need to grant time for player component to load.
+      //Otherwise, "ViewChild" will return undefined due to ngIf conditional.
+      setTimeout( () => this.player.loadSong(), 150);
+      setTimeout( () => this.player.playSong(), 500);
     });
   }
-
-  loadSong() {
-    if (this.songPlayback == null) { this.songPlayback = new Audio(); }
-    this.songArtworkSrc = "http://localhost:8080/artists/" + this.currSongInfo.artist.id + "/albums/" + this.currSongInfo.album.id + "/songs/" + this.currSongInfo.song.id + "/artwork";
-    let self = this;
-    let xhr = new XMLHttpRequest();
-    xhr.addEventListener('progress', function(e) {
-      if (e.lengthComputable) { let percentComplete = e.loaded / e.total; }
-    });
-    xhr.addEventListener('load', function(blob) {
-      console.log("LOADED SONG.");
-      if (xhr.status == 200) { self.songPlayback.src = window.URL.createObjectURL(xhr.response); }
-    });
-    let src = "http://localhost:8080/artists/" + this.currSongInfo.artist.id + "/albums/" + this.currSongInfo.album.id + "/songs/" + this.currSongInfo.song.id + "/file";
-    xhr.open('GET', src);
-    xhr.responseType = 'blob';
-    xhr.send(null);
-  }
-
-  playSong() {
-    this.exitMenu();
-    this.songPlayback.play();
-    this.isPlayingSong = true;
-    this.maxPlayPos = this.songPlayback.duration;
-    this.maxPlayPosFormatted = this.convertPlayTimeFormat(this.maxPlayPos);
-    let self = this;
-    self.songPlayback.addEventListener('ended', function() {
-      console.log("STOPPED SONG.");
-      self.songPlayback = null;
-      self.nextSong();
-    }, false);
-    self.songPlayback.addEventListener('timeupdate', function() {
-      if (self.hasSelSong) {
-        self.currPlayPos = self.songPlayback.currentTime;
-        self.currPlayPosFormatted = self.convertPlayTimeFormat(self.currPlayPos);
-      }
-    });
-    console.log("STARTED SONG.");
-  }
-
-  pauseSong() {
-    this.songPlayback.pause();
-    this.isPlayingSong = false;
-  }
-
-  stopSong() {
-    this.loadSong();
-    this.isPlayingSong = false;
-  }
-
-  previousSong() {
-    for (let i = 0; i < this.currSongs.length; i++) {
-      if (this.currSongs[i].id == this.currSongInfo.song.id && i > 0) {
-        this.getSong(this.currSongs[i-1].id);
-        break;
-      }
-    }
-  }
-
-  nextSong() {
-    if (this.doRepeat) { this.getSong(this.currSongInfo.song.id); }
-    else if (this.doShuffle) { this.getSong(this.getShuffledSongId()); }
-    else {
-      for (let i = 0; i < this.currSongs.length; i++) {
-        if (this.currSongs[i].id == this.currSongInfo.song.id && i < this.currSongs.length - 1) {
-          this.getSong(this.currSongs[i+1].id);
-          break;
-        }
-      }
-    }
-  }
-
-  changeSongPos(value: number) {
-    this.songPlayback.currentTime = value;
-  }
-
-  changeVolume(value: number) {
-    this.songPlayback.volume = value;
-  }
-
-  convertPlayTimeFormat(seconds: number) {
-    let minutes: any = Math.floor(seconds / 60);
-    let secs: any = Math.floor(seconds % 60);
-    if (minutes < 10) { minutes = '0' + minutes; }
-    if (secs < 10) { secs = '0' + secs; }
-    return minutes +  ':' + secs;
-  }
-
 
   addSongs(fileList: FileList) {
     this.isUploading = true;   //Used in view to show progress bar.
@@ -212,8 +122,8 @@ export class AppComponent implements OnInit {
   removeSong() {
     this.hasSelSong = false;
     this.exitMenu();
-    this.songPlayback.pause();
-    this.songPlayback = null;
+    this.player.songPlayback.pause();
+    this.player.songPlayback = null;
     this.songService.removeSong(this.currSongInfo.artist.id, this.currSongInfo.album.id, this.currSongInfo.song.id).subscribe( () => {
       this.resetLibrary();
       this.currSongInfo = null;
@@ -244,18 +154,6 @@ export class AppComponent implements OnInit {
     this.selAlbumId = albumId;
     this.selSongId = titleId;
     this.getArtists();
-  }
-
-  getShuffledSongId(): number {
-    let currSongIndex = 0;
-    for (let i = 0; i < this.currSongs.length; i++) {
-      if (this.currSongs[i].id == this.selSongId) { currSongIndex = i; }
-    }
-    let randomInt = currSongIndex;  //Initialize this way to enter while loop.
-    while (randomInt == currSongIndex) {
-      randomInt = this.songService.getRandomInt(0, this.currSongs.length - 1);
-    }
-    return this.currSongs[randomInt].id;
   }
 
   setActiveTab(boolIndex) {

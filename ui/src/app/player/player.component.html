@@ -1,0 +1,85 @@
+<div class="container show-playback-info">
+  <div class="row">
+    <div class="col-md-5">
+      <img id="album-art" class="img-responsive img-rounded img-border" [src]="songArtworkSrc">
+    </div>
+    <div class="col-md-7">
+      <div class="row">
+        <div class="col-md-12">
+          <div id="song-info-name">
+            <p [ngClass]="{'song-info-slide' : currSongInfo.song.name.length > 33}">{{currSongInfo.song.name}}</p>
+          </div>
+        </div>
+      </div>
+      <div id="song-info">
+        <div class="row">
+          <div class="col-md-12">
+            <div>{{currSongInfo.artist.name}}</div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12">
+            <div>{{currSongInfo.album.name}}</div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12">
+            <div>{{currSongInfo.song.year}}</div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-8">
+          <hr>
+        </div>
+      </div>
+      <div id="play-progress-text" class="row">
+        <div class="col-md-12">
+          {{currPlayPosFormatted}} / {{maxPlayPosFormatted}}
+        </div>
+      </div>
+      <div id="play-progress-bar" class="row">
+        <div class="col-md-12">
+          <input (change)="changeSongPos($event.target.value)" type="range" step="0.001" min="0" value="{{currPlayPos}}" max="{{maxPlayPos}}">
+        </div>
+      </div>
+      <div id="playback-controls" class="row">
+        <div class="col-md-10">
+          <button class="btn btn-info btn-circle" [ngClass]="{'btn-playing glyphicon-spin' : isPlayingSong, 'btn-play' : !isPlayingSong}"
+          (click)="playSong()" [disabled]="isPlayingSong">
+          <i class="glyphicon" [ngClass]="{'glyphicon-refresh' : isPlayingSong, 'glyphicon-play' : !isPlayingSong}"></i>
+        </button>
+        <button type="button" class="btn btn-primary btn-circle btn-pause" (click)="pauseSong()" [disabled]="!isPlayingSong">
+          <i class="glyphicon glyphicon-pause"></i>
+        </button>
+        <button type="button" class="btn btn-danger btn-circle btn-stop" (click)="stopSong()">
+          <i class="glyphicon glyphicon-stop"></i>
+        </button>
+        <button type="button" class="btn btn-default btn-circle btn-circle btn-previous" (click)="previousSong()">
+          <i class="glyphicon glyphicon-fast-backward"></i>
+        </button>
+        <button type="button" class="btn btn-default btn-circle btn-circle btn-next" (click)="nextSong()">
+          <i class="glyphicon glyphicon-fast-forward"></i>
+        </button>
+        <button type="button" class="btn btn-circle btn-settings" [ngClass]="{'btn-success glyphicon-spin-slow' : doRepeat || doShuffle, 'btn-basic' : !doRepeat && !doShuffle}"
+        (click)="doShowSettings = !doShowSettings">
+        <i class="glyphicon glyphicon-cog"></i>
+      </button>
+    </div>
+  </div>
+  <div id="playback-settings" class="row" *ngIf="doShowSettings">
+    <div class="col-md-8">
+      <button type="button" class="btn btn-success btn-circle btn-repeat" [ngClass]="{'btn-success glyphicon-spin-slow' : doRepeat, 'btn-basic' : !doRepeat}"
+      (click)="doRepeat = !doRepeat" [disabled]="doShuffle">
+      <i class="glyphicon glyphicon-repeat"></i>
+    </button>
+    <button type="button" class="btn btn-success btn-circle btn-shuffle" [ngClass]="{'btn-success' : doShuffle, 'btn-basic' : !doShuffle}"
+    (click)="doShuffle = !doShuffle" [disabled]="doRepeat">
+    <i class="glyphicon glyphicon-random" [ngClass]="{'glyphicon-shake' : doShuffle}"></i>
+  </button>
+  <input class="volume-slider" (change)="changeVolume($event.target.value)" type="range" step="0.001" min="0" value="1" max="1">
+</div>
+</div>
+</div>
+</div>
+</div>
