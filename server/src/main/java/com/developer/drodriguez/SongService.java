@@ -25,31 +25,42 @@ import java.util.*;
 @Service
 public class SongService {
 
+    //Stores the artist, album, and song file metadata.
     private Map<Integer, Artist> artistMap = new TreeMap<>();
     private Map<Integer, Album> albumMap = new TreeMap<>();
     private Map<Integer, Song> songMap = new TreeMap<>();
+
+    //Keeps track of the last available index for new map keys.
     private int artistIndex = 0;
     private int albumIndex = 0;
     private int songIndex = 0;
+
+    //Delimiters for reading from and writing to the library file.
     private String escDelimiter = "\\|";
     private String delimiter = "|";
+
+    //Contains the path to the library directory, which stores the imported songs and library file.
     private String libraryPath;
 
+    //Initialize the class by loading the library file data into the indices and map objects.
     SongService(@Value("${library.path}") String initLibraryPath) throws IOException {
         libraryPath = initLibraryPath;
         readLibraryFile();
     }
 
+    //Return all artist objects from the artist map to the requester.
     public List<Artist> getArtists() {
         List<Artist> newList = new ArrayList<>(artistMap.values());
         Collections.sort(newList);
         return newList;
     }
 
+    //Return the artist object with the specified ID from the artist map to the requester.
     public Artist getArtist(int artistId) {
         return artistMap.get(artistId);
     }
 
+    //Return all album objects from the album map to the requester.
     public List<Album> getAlbums(int artistId) {
         List<Album> newList = new ArrayList<>();
         for (Album album : albumMap.values())
@@ -59,10 +70,12 @@ public class SongService {
         return newList;
     }
 
+    //Return the album object with the specified ID from the album map to the requester.
     public Album getAlbum(int artistId, int albumId) {
         return albumMap.get(albumId);
     }
 
+    //Return all song objects from the song map to the requester.
     public List<Song> getSongs(int artistId, int albumId) {
         List<Song> newList = new ArrayList<>();
         for (Song song : songMap.values())
@@ -72,17 +85,18 @@ public class SongService {
         return newList;
     }
 
+    //Return the song object with the specified ID from the song map to the requester.
     public Song getSong(int artistId, int albumId, int songId) {
         return songMap.get(songId);
     }
 
+    //Return an object containing the ID-associated artist, album, and song objects to the requester.
     public SongInfo getSongInfo(int artistId, int albumId, int songId) {
         return new SongInfo(artistMap.get(artistId), albumMap.get(albumId), songMap.get(songId));
     }
 
-
+    //Returns an mp3 file to the requester for the given IDs.
     public ResponseEntity<InputStreamResource> getSongFile(int artistId, int albumId, int songId) throws IOException {
-        System.out.println(getSong(artistId, albumId, songId));
         String filePath = getSong(artistId, albumId, songId).getFilePath();
         PathResource file = new PathResource(filePath);
         return ResponseEntity
@@ -92,6 +106,7 @@ public class SongService {
                 .body(new InputStreamResource(file.getInputStream()));
     }
 
+    //Returns the album artwork as a byte array to the requester for the given IDs.
     public ResponseEntity<InputStreamResource> getSongArtwork(int artistId, int albumId, int songId) throws IOException, UnsupportedTagException, InvalidDataException {
         Song song = getSong(artistId, albumId, songId);
         String filePath = song.getFilePath();
@@ -129,52 +144,54 @@ public class SongService {
     }
 
 
+    /*
+     *  Adds a song file to the library path,
+     *  and writes the data from the song tags to the artist, album, and song objects then into their maps..
+     *  Checks for already-existing artist and album objects to update to, otherwise create new ones.
+     */
+
     public synchronized void addSongFile(MultipartFile file)
             throws IOException, UnsupportedTagException, InvalidDataException, NoSuchTagException {
 
+        //Read in multipart file data as a file object, then into a mp3agic library file.
         File tempFile = convertMultipartToFile(file);
         Mp3File mp3 = new Mp3File(tempFile);
 
+        //Checks if mp3 has an ID3v2 tag to read data from.
         if (mp3.hasId3v2Tag()) {
 
+            //Create ID3v2 tag object.
             ID3v2 tag = mp3.getId3v2Tag();
 
+            //Declare the fields to be stored in an artist, album, and song object.
             String tArtistName = null;
             String tAlbumName = null;
             String tSongName = null;
-            int tSongTrack = 0;
             String tSongYear = null;
+            int tSongTrack = 0;
 
-            if (tag.getArtist() != null)
-                tArtistName = tag.getArtist();
-            else
-                tArtistName = "";
-
-            if (tag.getAlbum() != null)
-                tAlbumName = tag.getAlbum();
-            else
-                tAlbumName = "";
-
-            if (tag.getTitle() != null)
-                tSongName = tag.getTitle();
-            else
-                tSongName = "";
-
-            if (tag.getTrack() != null)
-                if (tag.getTrack().contains("/"))
-                    tSongTrack = Integer.parseInt(tag.getTrack().substring(0, tag.getTrack().lastIndexOf("/"))); //Substring removes "out of total tracks" (x"/xx") extension.
-                else
-                    tSongTrack = Integer.parseInt(tag.getTrack());
-
-            if (tag.getYear() != null)
-                tSongYear = tag.getYear();
-            else
-                tSongYear = "";
+            //Conditions to make sure the fields are never null. Avoids NullPointerException bug in program.
+            if (tag.getArtist() != null) { tArtistName = tag.getArtist(); }
+            else {tArtistName = ""; }
+            if (tag.getAlbum() != null) { tAlbumName = tag.getAlbum(); }
+            else { tAlbumName = ""; }
+            if (tag.getTitle() != null) { tSongName = tag.getTitle(); }
+            else { tSongName = ""; }
+            if (tag.getYear() != null) { tSongYear = tag.getYear(); }
+            else { tSongYear = ""; }
 
             //Crop year out of possible date tags.
             if (tSongYear.length() > 4)
                 tSongYear = tSongYear.substring(0, 4);
 
+            //Parse string-casted track number to int type. Substring removes "out of total tracks" (x"/xx") extension.
+            if (tag.getTrack() != null)
+                if (tag.getTrack().contains("/"))
+                    tSongTrack = Integer.parseInt(tag.getTrack().substring(0, tag.getTrack().lastIndexOf("/")));
+                else
+                    tSongTrack = Integer.parseInt(tag.getTrack());
+
+            //Parse out the new file path used to write the file to the library path and the data to the song object.
             String originalFilename = file.getOriginalFilename();
             String fileType = originalFilename.substring(originalFilename.lastIndexOf(".") + 1, originalFilename.length());
             String filePath = libraryPath + File.separator
@@ -182,8 +199,10 @@ public class SongService {
             String fileName = removeInvalidPathChars(tSongName) + "." + fileType;
             String fullPath = filePath + File.separator + fileName;
 
+            //No longer need the file object, since it is currently stored as an Mp3File object.
             tempFile.delete();
 
+            //Used to write keys to artist, album, and song objects, either with existing matched ones or new indices.
             int newArtistId = 0;
             int newAlbumId = 0;
             int newSongId = 0;
@@ -249,6 +268,7 @@ public class SongService {
             bout.flush();
             bout.close();
 
+            //Update the library file.
             writeLibraryFile();
 
         }
@@ -259,8 +279,16 @@ public class SongService {
 
     }
 
+    /*
+     *  Updates the song data. This is a more complicated algorithm than expected since the song data has many dependencies.
+     *  First, the method checks for the which name changes were made and records their IDs.
+     *  Next, it checks to see if there are any other IDs that match the name changes, if one exists, set it as the new ID.
+     *  Finally, modify the object maps, apply changes to the file, remove any now-empty directories, and recreate the file tag.
+     */
+
     public synchronized SongInfo updateSong(SongInfo songInfo, int artistId, int albumId, int songId) throws IOException, UnsupportedTagException, InvalidDataException, NotSupportedException {
 
+        //Stores the old file path and parses out the new one to be used.
         String oldPath = songMap.get(songInfo.getSong().getId()).getFilePath();
         String fileType = oldPath.substring(oldPath.lastIndexOf(".") + 1, oldPath.length());
         String artistPath = libraryPath + File.separator + removeInvalidPathChars(songInfo.getArtist().getName());
@@ -268,15 +296,6 @@ public class SongService {
         String fileName = removeInvalidPathChars(songInfo.getSong().getName()) + "." + fileType;
         String newPath = albumPath + File.separator + fileName;
         songInfo.getSong().setFilePath(newPath);    //JSON song objects have null filepaths, so add here.
-
-        File file = new File(oldPath);
-        Mp3File mp3 = new Mp3File(file);
-
-        /*
-         *
-         *  UPDATE THE ARTIST, ALBUM, AND SONG MAPS + DIRECTORIES
-         *
-         */
 
         /*
          *  Check if names exist at the specified IDs.
@@ -453,8 +472,12 @@ public class SongService {
         System.out.println();
 
         /*
-         *  Remove directories with the unused artist or album names (i.e. empty directories).
+         *  Create a new tag for the song file, and
+         *  remove directories with the unused artist or album names (i.e. empty directories).
          */
+
+        File file = new File(oldPath);
+        Mp3File mp3 = new Mp3File(file);
 
         //Updates file tied to the SongInfo object with new name (if applicable) and tag info.
         if (mp3.hasId3v2Tag()) {
@@ -468,32 +491,37 @@ public class SongService {
             tag.setYear(songInfo.getSong().getYear());
             tag.setAlbumImage(albumImageBytes, albumImageMime);
             mp3.setId3v2Tag(tag);
-            //If names changes caused path change, then save new file and delete old one.
-            if (!oldPath.equals(newPath)) {
-                File artist = new File(artistPath);
-                File album = new File(albumPath);
-                if (!artist.exists())
-                    artist.mkdir();
-                if (!album.exists())
-                    album.mkdir();
-                mp3.save(newPath);
-                file.delete();
-            }
         } else {
             throw new UnsupportedTagException("The associated file does not have a valid ID3v2 tag.");
         }
 
-        //Remove empty directories at the given old path.
-        removeEmptyDirectories(oldPath);
+        //If names changes caused path change, then save new file and delete old one.
+        if (!oldPath.equals(newPath)) {
+            File artist = new File(artistPath);
+            File album = new File(albumPath);
+            if (!artist.exists())
+                artist.mkdir();
+            if (!album.exists())
+                album.mkdir();
+            mp3.save(newPath);
+            deleteFileAndEmptyDirs(oldPath);
+        }
 
+        //Updates the library file.
         writeLibraryFile();
 
         return songInfo;
 
     }
 
+    /*
+     *  Deletes the song object from the given maps.
+     *  Deletes the album and/or artist objects from their maps if now empty.
+     *  Deletes the file and any now-empty containing album or artist directories.
+     */
     public void deleteSong(int artistId, int albumId, int songId) {
 
+        //Removes the song object from its map and stores its file path.
         String filePath = songMap.remove(songId).getFilePath();
 
         boolean hasArtistId = false;
@@ -513,14 +541,13 @@ public class SongService {
         if (!hasArtistId)
             artistMap.remove(artistId);
 
-        removeFileAndEmptyDirectories(filePath);
-
-        System.out.println("REMOVED SONG ID: " + songId);
+        //Deletes the file and any now-empty album or artist directories.
+        deleteFileAndEmptyDirs(filePath);
 
     }
 
     //Delete song (if exists), as well as the album folder and the artist folder (if empty).
-    public void removeFileAndEmptyDirectories(String filePath) {
+    public void deleteFileAndEmptyDirs(String filePath) {
         File songFile = new File(filePath);
         File albumFolder = songFile.getParentFile();
         File artistFolder = albumFolder.getParentFile();
@@ -535,23 +562,7 @@ public class SongService {
                 artistFolder.delete();
     }
 
-
-    /*
-     *  Feed in a file (that does NOT get deleted), and the function checks
-     *  parent directories two levels deep and deletes them as long as they are empty.
-     */
-    public void removeEmptyDirectories(String filePath) {
-        File songFile = new File(filePath);
-        File albumFolder = songFile.getParentFile();
-        File artistFolder = albumFolder.getParentFile();
-        if (albumFolder.isDirectory())
-            if (albumFolder.list().length == 0)
-                albumFolder.delete();
-        if (artistFolder.isDirectory())
-            if (artistFolder.list().length == 0)
-                artistFolder.delete();
-    }
-
+    //Converts a MultipartFile object to a File object through a FileOutputStream object.
     public File convertMultipartToFile(MultipartFile file) throws IOException
     {
         File convFile = new File(file.getOriginalFilename());
@@ -573,6 +584,7 @@ public class SongService {
         return new String(originalChars);
     }
 
+    //Reads the library file to initialize the artist, album, and song maps + indices.
     public void readLibraryFile() throws IOException, FileNotFoundException {
 
         System.out.println("READING LIBRARY FILE...");
@@ -627,6 +639,7 @@ public class SongService {
 
     }
 
+    //Writes the current artist, album, and song maps + indices to the library file.
     public void writeLibraryFile () throws IOException, FileNotFoundException {
 
         //Backup current library
@@ -679,6 +692,7 @@ public class SongService {
         bw.close();
         fos.close();
 
+        //Deletes backed-up library.
         libraryBackup.delete();
 
     }
