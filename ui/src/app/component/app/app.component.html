@@ -2,7 +2,7 @@
   <div id="nav-bar" class="row">
     <div class="col-md-6 col-md-offset-1">
       <ul class="nav nav-pills">
-        <li role="presentation" data-toggle="collapse" data-target="#song-select"
+        <li role="presentation" data-toggle="collapse" data-target="#library"
         (click)="setActiveTab(0)" [ngClass]="{'active' : isActiveTab[0]}">
         <a href="#"><i class="glyphicon glyphicon-music"></i>&nbsp;Library</a></li>
         <li role="presentation" class="border" data-toggle="collapse" data-target="#edit-song"
@@ -14,63 +14,12 @@
       </ul>
     </div>
   </div>
-  <div id="song-select" class="collapse" *ngIf="isActiveSection[0]">
+  <div id="library" class="collapse" *ngIf="isActiveSection[0]">
     <br />
-    <div *ngIf="artists.length == 0">
-      <div class="row text-list">
-        <div class="col-md-3 col-md-offset-1">
-          <p>Your library is currently empty.</p>
-        </div>
-      </div>
-    </div>
-    <div *ngIf="artists.length != 0">
-      <div class="row text-list">
-        <div class="col-md-2 col-md-offset-1 show-list library-text">
-          <div class="text-list-title">Artists</div>
-          <ul class="hide-bullets">
-            <div class="library-list-artist" *ngFor="let artist of artists">
-              <li [ngClass]="{'library-text-slide' : artist.name.length > 30, 'show-list-item' : artist.name.length <= 30}">
-                <a href="#" [ngClass]="artist.id == selArtistId ? 'text-selected' : ''"
-                (click)="getAlbums(artist.id)">
-                <span *ngIf="artist.name != ''">{{artist.name}}</span>
-                <span *ngIf="artist.name == ''">[Unnamed Artist]</span>
-              </a>
-            </li>
-          </div>
-        </ul>
-      </div>
-      <div class="col-md-4 show-list" *ngIf="selArtistId != null">
-        <div class="text-list-title">Albums</div>
-        <ul class="hide-bullets">
-          <div class="library-list-album" *ngFor="let album of albums">
-            <li [ngClass]="{'library-text-slide' : album.name.length > 37, 'show-list-item' : album.name.length <= 37}">
-              <a href="#" [ngClass]="album.id == selAlbumId ? 'text-selected' : ''"
-              (click)="getSongs(selArtistId, album.id)">
-              <span *ngIf="album.name != ''">{{album.name}}</span>
-              <span *ngIf="album.name == ''">[Unnamed Album]</span>
-            </a>
-          </li>
-        </div>
-      </ul>
-    </div>
-    <div class="col-md-4 show-list library-text" *ngIf="selAlbumId != null" >
-      <div class="text-list-title">Songs</div>
-      <ul class="hide-bullets">
-        <div class="library-list-songs" *ngFor="let song of songs">
-          <li [ngClass]="{'library-text-slide' : song.name.length > 45, 'show-list-item' : song.name.length <= 45}">
-            <a href="#" [ngClass]="song.id == selSongId ? 'text-selected' : ''"
-            (click)="getSong(song.id)" data-toggle="collapse" data-target="#song-select">
-            <span *ngIf="song.track != 0">{{song.track}}. </span>
-            <span *ngIf="song.name != ''">{{song.name}}</span>
-            <span *ngIf="song.name == ''">[Unnamed Song]</span>
-          </a>
-        </li>
-      </div>
-    </ul>
-  </div>
-</div>
-</div>
-<br />
+    <app-library [currSongInfo]="currSongInfo" [hasSelSong]="hasSelSong"
+    (setCurrSongs)="setCurrSongs($event)" (getSongInfo)="getSongInfo($event)">
+    </app-library>
+    <br />
 </div>
 <div id="edit-song" class="collapse" *ngIf="isActiveSection[1]">
     <div class="row text-list" *ngIf="!hasSelSong">
@@ -176,7 +125,8 @@
 </div>
 <div *ngIf="hasSelSong">
   <app-player
-  [currSongs]="currSongs" [currSongInfo]="currSongInfo" [hasSelSong]="hasSelSong" [selSongId]="selSongId"
-  (exitMenu)="exitMenu()" (getSong)="getSong($event)" (getSongInfo)="getSongInfo"></app-player>
+    [currSongs]="currSongs" [currSongInfo]="currSongInfo" [hasSelSong]="hasSelSong" [selSongId]="selSongId"
+    (exitMenu)="exitMenu()" (getSongInfo)="getSongInfo($event)">
+  </app-player>
 </div>
 <br />

@@ -1,0 +1,31 @@
+.well {
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+#nav-bar .nav-pills > li.active > a:enabled {
+  border-bottom: 2px solid Crimson;
+  color: Gray;
+  background-color: transparent;
+}
+
+.input-textbox-xs {
+  width: 50px;
+}
+
+input[type="file"] {
+  font-size: 11pt;
+  line-height: 0ex;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.jumbotron {
+  padding-top: 5px;
+}
+
+.progress {
+  background: #B5B5B5;
+}

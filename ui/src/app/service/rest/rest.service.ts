@@ -1,14 +1,11 @@
 import { Injectable } from '@angular/core';
 import { Http, Response, Headers, RequestOptions } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
-import { Artist } from './model/Artist';
-import { Album } from './model/Album';
-import { Song } from './model/Song';
-import { SongInfo } from './model/SongInfo';
+import { SongInfo } from '../../model/SongInfo';
 import 'rxjs/add/operator/map';
 
 @Injectable()
-export class SongService {
+export class RestService {
 
   constructor(private http: Http) { }
 

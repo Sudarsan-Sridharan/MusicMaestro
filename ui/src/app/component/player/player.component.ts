@@ -1,8 +1,8 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
-import { Artist } from '../model/Artist';
-import { Album } from '../model/Album';
-import { Song } from '../model/Song';
-import { SongInfo } from '../model/SongInfo';
+import { Artist } from '../../model/Artist';
+import { Album } from '../../model/Album';
+import { Song } from '../../model/Song';
+import { SongInfo } from '../../model/SongInfo';
 
 @Component({
   selector: 'app-player',
@@ -11,14 +11,11 @@ import { SongInfo } from '../model/SongInfo';
 })
 export class PlayerComponent {
 
-  constructor() { }
-
   @Input() hasSelSong: boolean;
   @Input() selSongId: number;
   @Input() currSongInfo: SongInfo;
   @Input() currSongs: Array<Song>;
   @Output() exitMenu = new EventEmitter();
-  @Output() getSong = new EventEmitter();
   @Output() getSongInfo = new EventEmitter();
 
   songPlayback;
@@ -31,6 +28,8 @@ export class PlayerComponent {
   songArtworkSrc: string;
   currPlayPosFormatted: string = "00:00";
   maxPlayPosFormatted: string = "00:00";
+
+  constructor() {}
 
   loadSong() {
     console.log("In loadSong().");
@@ -85,7 +84,10 @@ export class PlayerComponent {
   previousSong() {
     for (let i = 0; i < this.currSongs.length; i++) {
       if (this.currSongs[i].id == this.currSongInfo.song.id && i > 0) {
-        this.getSong.emit(this.currSongs[i-1].id);
+        let artistId = this.currSongInfo.artist.id;
+        let albumId = this.currSongInfo.album.id;
+        let songId = this.currSongs[i-1].id
+        this.getSongInfo.emit({artistId, albumId, songId});
         break;
       }
     }
@@ -93,12 +95,23 @@ export class PlayerComponent {
 
   nextSong() {
     console.log("NEXT SONG.");
-    if (this.doRepeat) { this.getSong.emit(this.currSongInfo.song.id); }
-    else if (this.doShuffle) { this.getSong.emit(this.getShuffledSongId()); }
+    console.log("currSongs = " + this.currSongs);
+    let artistId = this.currSongInfo.artist.id;
+    let albumId = this.currSongInfo.album.id;
+    let songId = 0;
+    if (this.doRepeat) {
+      songId = this.currSongInfo.song.id
+      this.getSongInfo.emit({artistId, albumId, songId});
+    }
+    else if (this.doShuffle) {
+      songId = this.getShuffledSongId();
+      this.getSongInfo.emit({artistId, albumId, songId});
+    }
     else {
       for (let i = 0; i < this.currSongs.length; i++) {
         if (this.currSongs[i].id == this.currSongInfo.song.id && i < this.currSongs.length - 1) {
-          this.getSong.emit(this.currSongs[i+1].id);
+          songId = this.currSongs[i+1].id;
+          this.getSongInfo.emit({artistId, albumId, songId});
           break;
         }
       }

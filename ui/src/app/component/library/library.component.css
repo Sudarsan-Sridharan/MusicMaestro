@@ -1,14 +1,3 @@
-.well {
-  padding-top: 0;
-  padding-bottom: 0;
-}
-
-#nav-bar .nav-pills > li.active > a:enabled {
-  border-bottom: 2px solid Crimson;
-  color: Gray;
-  background-color: transparent;
-}
-
 .library-text-slide {
   animation: text-slide-short 7s infinite linear;
 }
@@ -39,23 +28,6 @@
   width: 350px;
 }
 
-.input-textbox-xs {
-  width: 50px;
-}
-
-input[type="file"] {
-  font-size: 11pt;
-  line-height: 0ex;
-}
-
-li a {
-  display: block;
-}
-
-.text-center {
-  text-align: center;
-}
-
 .text-list {
   font-size: 14pt;
   font-weight: lighter;
@@ -79,8 +51,13 @@ li a {
   margin-bottom: 10px;
 }
 
-a {
-  color: Gray;
+li a {
+  display: block;
+}
+
+.hide-bullets {
+  list-style: none;
+  padding-left: 0;
 }
 
 .text-selected {
@@ -90,19 +67,6 @@ a {
 
 a:link, a:visited, a:hover, a:active {
   text-decoration:  none;
-}
-
-.hide-bullets {
-  list-style: none;
-  padding-left: 0;
-}
-
-.jumbotron {
-  padding-top: 5px;
-}
-
-.progress {
-  background: #B5B5B5;
 }
 
 @media(min-width: 992px) {
@@ -129,9 +93,4 @@ a:link, a:visited, a:hover, a:active {
   30% { transform: translateX(0); }
   85% { opacity: 1; }
   100% { opacity: 0; transform: translateX(-150%); }
-}
-
-@keyframes fade-in {
-  0% { opacity: 0; }
-  100% { opacity: 1; }
 }
