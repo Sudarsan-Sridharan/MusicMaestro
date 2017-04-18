@@ -1,0 +1,33 @@
+<br />
+<div class="extra-padding text-list text-center-vertical">
+  <div class="row" *ngIf="!isUploading">
+    <div class="col-md-1 col-md-offset-1">
+      Upload:
+    </div>
+    <div class="col-md-4">
+      <input type="file" (change)="addSongs($event.target.files)" placeholder="Upload Songs" accept=".mp3" multiple>
+    </div>
+  </div>
+</div>
+<div class="row" *ngIf="isUploading">
+  <div class="col-md-3 col-md-offset-1">
+    <div class="progress">
+      <div class="progress-bar progress-bar-success" role="progressbar" [attr.aria-valuenow]="currProgress"
+      aria-valuemin="0" [attr.aria-valuemax]="maxProgress" [ngStyle]="{width: currProgress / maxProgress | percent: '1.0-1'}">
+      {{currProgress}} / {{maxProgress}} Files
+    </div>
+  </div>
+</div>
+</div>
+<div class="row">
+<div class="col-md-3 col-md-offset-1 text-center" *ngIf="isUploading && currProgress == 0">
+  Connecting...
+</div>
+<div class="col-md-3 col-md-offset-1 text-center" *ngIf="isUploading && currProgress > 0 && currProgress < maxProgress">
+  Uploading...
+</div>
+<div class="col-md-3 col-md-offset-1 text-center" *ngIf="isUploading && currProgress == maxProgress">
+  Upload complete!
+</div>
+</div>
+<br />

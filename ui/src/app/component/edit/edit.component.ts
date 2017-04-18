@@ -19,7 +19,7 @@ export class EditComponent {
   @Output() refreshLibraryMessenger = new EventEmitter();
   @Output() setLibrarySelectionsMessenger = new EventEmitter();
   @Output() resetLibraryMessenger = new EventEmitter();
-  @Output() stopSongMessenger = new EventEmitter();
+  @Output() stopPlayer = new EventEmitter();
   @Output() exitMenu = new EventEmitter();
 
   constructor(private restService: RestService) { }
@@ -36,7 +36,7 @@ export class EditComponent {
   removeSong() {
     this.hasSelSong = false;
     this.exitMenu.emit();
-    this.stopSongMessenger.emit();
+    this.stopPlayer.emit();
     this.restService.removeSong(this.currSongInfo.artist.id, this.currSongInfo.album.id, this.currSongInfo.song.id).subscribe( () => {
       this.resetLibraryMessenger.emit();
       this.currSongInfo = null;

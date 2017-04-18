@@ -43,7 +43,7 @@ export class LibraryComponent implements OnInit {
     this.restService.getArtists().subscribe(artists => {
       this.hasLoadedArtists = false;
       this.artists = artists;
-      //Brief, fake sense of loading avoids awkward collapse animation in view.
+      //Brief, loading facade avoids awkward collapse animation in view.
       setTimeout( () => this.hasLoadedArtists = true, 500);
     });
   }
@@ -66,21 +66,13 @@ export class LibraryComponent implements OnInit {
   }
 
   getSong(songId: number) {
-    //If getSong() is for a song in a different album, then trigger animation.
-    if (this.currSongInfo == null || this.currSongInfo.album.id != this.selAlbumId) {
-      this.hasSelSong = false;  //Triggers animation for changing from previous song.
-    }
     this.selSongId = songId;
-    console.log("this.songs = " + this.songs);
     this.setCurrSongs.emit(this.songs);  //For playback through album in player.
-    console.log("INSIDE GETSONG(). selSongId = " + this.selSongId);
     this.restService.getSong(this.selArtistId, this.selAlbumId, songId)
     .subscribe( () => {
-      console.log("SUBSCRIBING TO restService.getSong()");
       let artistId = this.selArtistId;
       let albumId = this.selAlbumId;
       let songId = this.selSongId;
-      console.log("artistId: " + artistId + ", albumId: " + albumId + ", songId: " + songId);
       this.getSongInfo.emit({artistId, albumId, songId});
     });
   }

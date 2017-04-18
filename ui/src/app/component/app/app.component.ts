@@ -25,46 +25,20 @@ export class AppComponent {
   //["Music Library", "Edit Song", "Add Song"]
   isActiveSection: Array<boolean> = [false, false, false];
   isActiveTab: Array<boolean> = [false, false, false];
-  isUploading: boolean = false;
   hasSelSong: boolean = false;
-  currProgress: number = 0;
-  maxProgress: number = 1;
   currSongInfo: SongInfo;
   currSongs: Array<Song>;
 
   constructor(private restService: RestService) {}
 
   getSongInfo(event) {
+    if (this.player == undefined) { this.hasSelSong = false; } //Triggers loading animation.
     this.restService.getSongInfo(event.artistId, event.albumId, event.songId)
     .subscribe(songInfo => {
       this.currSongInfo = songInfo;
       this.hasSelSong = true;
-      console.log("currSongInfo.song.name = " + this.currSongInfo.song.name);
       this.loadPlayer();
     });
-  }
-
-  addSongs(fileList: FileList) {
-    this.isUploading = true;   //Used in view to show progress bar.
-    this.maxProgress = fileList.length; //Sets the new max value for progress bar.
-    for (let i = 0; i < fileList.length; i++) { //Loop through list of files.
-      this.restService.addSong(fileList[i]).subscribe( () => {  //Send song to server.
-        this.currProgress++; //Increment the current value for progress bar.
-        if (i == fileList.length - 1) { //During last loop,
-          this.library.setLibrarySelections(null, null, null); //Refresh library
-          setTimeout( () => { //Delay 0.8 seconds.
-            this.exitMenu();  //Clears out of current menu.
-            this.resetProgressBar(); //Resets the current and max values for the progress bar.
-            this.isUploading = false; //Used in view to hide progress bar.
-          }, 800);
-        }
-      });
-    }
-  }
-
-  resetProgressBar() {
-    this.currProgress = 0;
-    this.maxProgress = 1;
   }
 
   setActiveTab(boolIndex) {
@@ -107,8 +81,13 @@ export class AppComponent {
     if (this.library != undefined) { this.library.resetLibrary(); }
   }
 
-  stopSongMessenger() {
-    if (this.player != undefined) { this.player.stopSong(); }
+  stopPlayer() {
+    if (this.player != undefined) {
+      this.player.isPlayingSong = false;
+      this.player.songPlayback.pause();
+      this.hasSelSong = false;
+      this.currSongInfo = null;
+    }
   }
 
   loadPlayer() {

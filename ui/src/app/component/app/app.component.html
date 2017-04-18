@@ -5,12 +5,12 @@
         <li role="presentation" data-toggle="collapse" data-target="#library"
         (click)="setActiveTab(0)" [ngClass]="{'active' : isActiveTab[0]}">
         <a href="#"><i class="glyphicon glyphicon-music"></i>&nbsp;Library</a></li>
-        <li role="presentation" class="border" data-toggle="collapse" data-target="#edit-song"
+        <li role="presentation" class="border" data-toggle="collapse" data-target="#edit"
         (click)="setActiveTab(1)" [ngClass]="{'active' : isActiveTab[1]}">
-        <a href="#"><i class="glyphicon glyphicon-pencil"></i>&nbsp;Edit Info</a></li>
-        <li role="presentation" data-toggle="collapse" data-target="#add-song"
+        <a href="#"><i class="glyphicon glyphicon-pencil"></i>&nbsp;Edit Song</a></li>
+        <li role="presentation" data-toggle="collapse" data-target="#upload"
         (click)="setActiveTab(2)" [ngClass]="{'active' : isActiveTab[2]}">
-        <a href="#"><i class="glyphicon glyphicon-cloud-upload"></i>&nbsp;Add Songs</a></li>
+        <a href="#"><i class="glyphicon glyphicon-cloud-upload"></i>&nbsp;Upload</a></li>
       </ul>
     </div>
   </div>
@@ -20,50 +20,18 @@
       Loading Library...
     </app-library>
   </div>
-  <div id="edit-song" class="collapse" *ngIf="isActiveSection[1]">
+  <div id="edit" class="collapse" *ngIf="isActiveSection[1]">
     <app-edit [hasSelSong]="hasSelSong" [currSongInfo]="currSongInfo"
-      (loadPlayer) ="loadPlayer()" (exitMenu)="exitMenu()"
-      (stopSongMessenger)="stopSongMessenger()"
+      (loadPlayer) ="loadPlayer()" (exitMenu)="exitMenu()" (stopPlayer)="stopPlayer()"
       (resetLibraryMessenger)="resetLibraryMessenger()"
       (refreshLibraryMessenger)="refreshLibraryMessenger()"
       (setLibrarySelectionsMessenger)="setLibrarySelectionsMessenger()">
       Loading Edit Screen...
     </app-edit>
 </div>
-<div id="add-song" class="collapse" *ngIf="isActiveSection[2]">
-  <br />
-  <div class="extra-padding text-list text-center-vertical">
-    <div class="row" *ngIf="!isUploading">
-      <div class="col-md-1 col-md-offset-1">
-        Upload:
-      </div>
-      <div class="col-md-4">
-        <input type="file" (change)="addSongs($event.target.files)" placeholder="Upload Songs" accept=".mp3" multiple>
-      </div>
-    </div>
-  </div>
-  <div class="row" *ngIf="isUploading">
-    <div class="col-md-3 col-md-offset-1">
-      <div class="progress">
-        <div class="progress-bar progress-bar-success" role="progressbar" [attr.aria-valuenow]="currProgress"
-        aria-valuemin="0" [attr.aria-valuemax]="maxProgress" [ngStyle]="{width: currProgress / maxProgress | percent: '1.0-1'}">
-        {{currProgress}} / {{maxProgress}} Files
-      </div>
-    </div>
-  </div>
-</div>
-<div class="row">
-  <div class="col-md-3 col-md-offset-1 text-center" *ngIf="isUploading && currProgress == 0">
-    Connecting...
-  </div>
-  <div class="col-md-3 col-md-offset-1 text-center" *ngIf="isUploading && currProgress > 0 && currProgress < maxProgress">
-    Uploading...
-  </div>
-  <div class="col-md-3 col-md-offset-1 text-center" *ngIf="isUploading && currProgress == maxProgress">
-    Upload complete!
-  </div>
-</div>
-<br />
+<div id="upload" class="collapse" *ngIf="isActiveSection[2]">
+  <app-upload (exitMenu)="exitMenu()">
+  </app-upload>
 </div>
 </div>
 <div *ngIf="hasSelSong">

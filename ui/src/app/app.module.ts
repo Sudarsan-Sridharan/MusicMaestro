@@ -8,13 +8,15 @@ import { AppComponent } from './component/app/app.component';
 import { PlayerComponent } from './component/player/player.component';
 import { LibraryComponent } from './component/library/library.component';
 import { EditComponent } from './component/edit/edit.component';
+import { UploadComponent } from './component/upload/upload.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     PlayerComponent,
     LibraryComponent,
-    EditComponent
+    EditComponent,
+    UploadComponent
   ],
   imports: [
     BrowserModule,
