@@ -1,0 +1,67 @@
+<br />
+<div *ngIf="!hasSelSong">
+  <div class="text-list">
+    <div class="row">
+      <div class="col-md-4 col-md-offset-1">
+        <p>Select a song from the library first.</p>
+      </div>
+    </div>
+  </div>
+</div>
+<div *ngIf="hasSelSong">
+  <div class="extra-padding text-list text-center-vertical">
+    <div class="row">
+      <div class="col-md-1 col-md-offset-1">
+        Track:
+      </div>
+      <div class="col-md-1">
+        <input type="text" class="form-control input-md input-textbox-xs" [(ngModel)]="currSongInfo.song.track">
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-1 col-md-offset-1">
+        Name:
+      </div>
+      <div class="col-md-4">
+        <input type="text" class="form-control input-lg" [(ngModel)]="currSongInfo.song.name">
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-1 col-md-offset-1">
+        Artist:
+      </div>
+      <div class="col-md-4">
+        <input type="text" class="form-control input-lg" [(ngModel)]="currSongInfo.artist.name">
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-1 col-md-offset-1">
+        Album:
+      </div>
+      <div class="col-md-4">
+        <input type="text" class="form-control input-lg" [(ngModel)]="currSongInfo.album.name">
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-1 col-md-offset-1">
+        Year:
+      </div>
+      <div class="col-md-4">
+        <input type="text" class="form-control input-lg" [(ngModel)]="currSongInfo.song.year">
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-2 col-md-offset-1">
+      <div class="btn-group">
+        <button class="btn btn-default btn-sm" [disabled]="currSongInfo.song.name == null
+        || currSongInfo.song.name == '' || currSongInfo.album.name == null || currSongInfo.album.name == ''
+        || currSongInfo.artist.name == null || currSongInfo.artist.name == ''"
+        (click)="updateSong()" data-toggle="collapse" data-target="#edit-song">Save</button>
+        <button class="btn btn-default btn-danger btn-sm" (click)="removeSong()"
+        data-toggle="collapse" data-target="#edit-song">Delete</button>
+      </div>
+    </div>
+  </div>
+</div>
+<br />

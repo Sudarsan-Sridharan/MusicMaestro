@@ -3,16 +3,18 @@ import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 
+import { RestService } from './service/rest/rest.service';
 import { AppComponent } from './component/app/app.component';
 import { PlayerComponent } from './component/player/player.component';
 import { LibraryComponent } from './component/library/library.component';
-import { RestService } from './service/rest/rest.service';
+import { EditComponent } from './component/edit/edit.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     PlayerComponent,
-    LibraryComponent
+    LibraryComponent,
+    EditComponent
   ],
   imports: [
     BrowserModule,

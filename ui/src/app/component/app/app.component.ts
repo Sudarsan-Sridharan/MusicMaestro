@@ -40,11 +40,7 @@ export class AppComponent {
       this.currSongInfo = songInfo;
       this.hasSelSong = true;
       console.log("currSongInfo.song.name = " + this.currSongInfo.song.name);
-
-      //Need to grant time for player component to load.
-      //Otherwise, "ViewChild" will return undefined due to ngIf conditional.
-      setTimeout( () => this.player.loadSong(), 150);
-      setTimeout( () => this.player.playSong(), 500);
+      this.loadPlayer();
     });
   }
 
@@ -64,27 +60,6 @@ export class AppComponent {
         }
       });
     }
-  }
-
-  updateSong() {
-    this.hasSelSong = false;  //Set to false before update to execute loading animation.
-    this.restService.updateSong(this.currSongInfo, this.currSongInfo.artist.id, this.currSongInfo.album.id, this.currSongInfo.song.id).subscribe( songInfo => {
-      this.currSongInfo = songInfo;
-      this.library.refreshLibrary(this.currSongInfo.artist.id, this.currSongInfo.album.id);
-      this.library.setLibrarySelections(this.currSongInfo.artist.id, this.currSongInfo.album.id, this.currSongInfo.song.id);
-      this.hasSelSong = true;
-    });
-  }
-
-  removeSong() {
-    this.hasSelSong = false;
-    this.exitMenu();
-    this.player.songPlayback.pause();
-    this.player.songPlayback = null;
-    this.restService.removeSong(this.currSongInfo.artist.id, this.currSongInfo.album.id, this.currSongInfo.song.id).subscribe( () => {
-      this.library.resetLibrary();
-      this.currSongInfo = null;
-    });
   }
 
   resetProgressBar() {
@@ -115,5 +90,33 @@ export class AppComponent {
   setCurrSongs(songs: Array<Song>) {
     this.currSongs = songs;
   }
+
+  refreshLibraryMessenger() {
+    if (this.library != undefined) {
+      this.library.refreshLibrary(this.currSongInfo.album.id, this.currSongInfo.album.id);
+    }
+  }
+
+  setLibrarySelectionsMessenger() {
+    if (this.library != undefined) {
+      this.library.setLibrarySelections(this.currSongInfo.artist.id, this.currSongInfo.album.id, this.currSongInfo.song.id);
+    }
+  }
+
+  resetLibraryMessenger() {
+    if (this.library != undefined) { this.library.resetLibrary(); }
+  }
+
+  stopSongMessenger() {
+    if (this.player != undefined) { this.player.stopSong(); }
+  }
+
+  loadPlayer() {
+    //Need to grant time for player component to load.
+    //Otherwise, "ViewChild" will return undefined due to ngIf conditional.
+    setTimeout( () => this.player.loadSong(), 150);
+    setTimeout( () => this.player.playSong(), 500);
+  }
+
 
 }

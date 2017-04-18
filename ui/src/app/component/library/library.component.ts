@@ -28,7 +28,14 @@ export class LibraryComponent implements OnInit {
   constructor(private restService: RestService) { }
 
   ngOnInit() {
-    this.getArtists();
+    if (this.currSongInfo != null) {
+      this.setLibrarySelections(this.currSongInfo.artist.id, this.currSongInfo.album.id, this.currSongInfo.song.id);
+      //setLibrarySelections() executes getArtists() already.
+      this.getAlbums(this.currSongInfo.artist.id);
+      this.getSongs(this.currSongInfo.artist.id, this.currSongInfo.album.id);
+    } else {
+      this.getArtists();
+    }
   }
 
   getArtists() {

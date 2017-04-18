@@ -77,8 +77,9 @@ export class PlayerComponent {
   }
 
   stopSong() {
-    this.loadSong();
     this.isPlayingSong = false;
+    this.songPlayback.pause();
+    this.loadSong(); //Need to reload to in case of replaying song.
   }
 
   previousSong() {

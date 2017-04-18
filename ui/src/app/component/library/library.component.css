@@ -28,27 +28,8 @@
   width: 350px;
 }
 
-.text-list {
-  font-size: 14pt;
-  font-weight: lighter;
-}
-
-.text-list-title {
-  font-size: 16pt;
-  font-weight: normal;
-}
-
-.text-list p {
-  font-size: 14pt;
-  font-weight: lighter;
-}
-
 .img-border {
   border: 1px solid #DDD;
-}
-
-.extra-padding .row {
-  margin-bottom: 10px;
 }
 
 li a {
@@ -67,14 +48,6 @@ li a {
 
 a:link, a:visited, a:hover, a:active {
   text-decoration:  none;
-}
-
-@media(min-width: 992px) {
-  .vcenter .row div {
-    display: inline-block;
-    vertical-align: middle;
-    float: none;
-  }
 }
 
 @keyframes show-list {
