@@ -21,7 +21,7 @@
     </app-library>
     <br />
 </div>
-<div id="edit-song" class="collapse" *ngIf="isActiveSection[1]">
+<div id="edit-song" class="collapse" *ngIf="isActiveSection[1] && player.hasLoadedArtists">
     <div class="row text-list" *ngIf="!hasSelSong">
       <br />
       <div class="col-md-4 col-md-offset-1">

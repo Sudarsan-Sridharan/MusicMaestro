@@ -17,6 +17,7 @@ export class LibraryComponent implements OnInit {
   @Output() setCurrSongs = new EventEmitter();
   @Output() getSongInfo = new EventEmitter();
 
+  hasLoadedArtists: boolean;
   selArtistId: number;
   selAlbumId: number;
   selSongId: number;
@@ -32,7 +33,12 @@ export class LibraryComponent implements OnInit {
 
   getArtists() {
     console.log("Getting artists.");
-    this.restService.getArtists().subscribe(artists => this.artists = artists);
+    this.restService.getArtists().subscribe(artists => {
+      this.hasLoadedArtists = false;
+      this.artists = artists;
+      //Brief, fake sense of loading avoids awkward collapse animation in view.
+      setTimeout( () => this.hasLoadedArtists = true, 500);
+    });
   }
 
   getAlbums(artistId: number) {
