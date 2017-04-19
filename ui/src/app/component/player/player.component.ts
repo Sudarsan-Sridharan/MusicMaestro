@@ -1,4 +1,5 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { UtilityService } from '../../service/utility/utility.service';
 import { Artist } from '../../model/Artist';
 import { Album } from '../../model/Album';
 import { Song } from '../../model/Song';
@@ -19,7 +20,7 @@ export class PlayerComponent {
   @Output() getSongInfo = new EventEmitter();
 
   songPlayback;
-  isPlayingSong: boolean = false;
+  isPlaying: boolean = false;
   doShowSettings: boolean = false;
   doRepeat: boolean = false;
   doShuffle: boolean = false;
@@ -29,10 +30,9 @@ export class PlayerComponent {
   currPlayPosFormatted: string = "00:00";
   maxPlayPosFormatted: string = "00:00";
 
-  constructor() {}
+  constructor(private utilityService: UtilityService) {}
 
-  loadSong() {
-    console.log("In loadSong().");
+  load() {
     if (this.songPlayback == null) { this.songPlayback = new Audio(); }
     this.songArtworkSrc = "http://localhost:8080/artists/" + this.currSongInfo.artist.id + "/albums/" + this.currSongInfo.album.id + "/songs/" + this.currSongInfo.song.id + "/artwork";
     let self = this;
@@ -41,7 +41,6 @@ export class PlayerComponent {
       if (e.lengthComputable) { let percentComplete = e.loaded / e.total; }
     });
     xhr.addEventListener('load', function(blob) {
-      console.log("LOADED SONG.");
       if (xhr.status == 200) { self.songPlayback.src = window.URL.createObjectURL(xhr.response); }
     });
     let src = "http://localhost:8080/artists/" + this.currSongInfo.artist.id + "/albums/" + this.currSongInfo.album.id + "/songs/" + this.currSongInfo.song.id + "/file";
@@ -50,17 +49,16 @@ export class PlayerComponent {
     xhr.send(null);
   }
 
-  playSong() {
+  play() {
     this.exitMenu.emit();
     this.songPlayback.play();
-    this.isPlayingSong = true;
+    this.isPlaying = true;
     this.maxPlayPos = this.songPlayback.duration;
     this.maxPlayPosFormatted = this.convertPlayTimeFormat(this.maxPlayPos);
     let self = this;
     self.songPlayback.addEventListener('ended', function() {
-      console.log("STOPPED SONG.");
       self.songPlayback = null;
-      self.nextSong();
+      self.next();
     }, false);
     self.songPlayback.addEventListener('timeupdate', function() {
       if (self.hasSelSong) {
@@ -68,21 +66,20 @@ export class PlayerComponent {
         self.currPlayPosFormatted = self.convertPlayTimeFormat(self.currPlayPos);
       }
     });
-    console.log("STARTED SONG.");
   }
 
-  pauseSong() {
+  pause() {
     this.songPlayback.pause();
-    this.isPlayingSong = false;
+    this.isPlaying = false;
   }
 
-  stopSong() {
-    this.isPlayingSong = false;
+  stop() {
+    this.isPlaying = false;
     this.songPlayback.pause();
-    this.loadSong(); //Need to reload to in case of replaying song.
+    this.load(); //Need to reload to in case of replaying song.
   }
 
-  previousSong() {
+  previous() {
     for (let i = 0; i < this.currSongs.length; i++) {
       if (this.currSongs[i].id == this.currSongInfo.song.id && i > 0) {
         let artistId = this.currSongInfo.artist.id;
@@ -94,9 +91,7 @@ export class PlayerComponent {
     }
   }
 
-  nextSong() {
-    console.log("NEXT SONG.");
-    console.log("currSongs = " + this.currSongs);
+  next() {
     let artistId = this.currSongInfo.artist.id;
     let albumId = this.currSongInfo.album.id;
     let songId = 0;
@@ -105,7 +100,7 @@ export class PlayerComponent {
       this.getSongInfo.emit({artistId, albumId, songId});
     }
     else if (this.doShuffle) {
-      songId = this.getShuffledSongId();
+      songId = this.utilityService.getShuffledSongId(this.currSongs, this.selSongId);
       this.getSongInfo.emit({artistId, albumId, songId});
     }
     else {
@@ -119,7 +114,7 @@ export class PlayerComponent {
     }
   }
 
-  changeSongPos(value: number) {
+  changePos(value: number) {
     this.songPlayback.currentTime = value;
   }
 
@@ -133,22 +128,6 @@ export class PlayerComponent {
     if (minutes < 10) { minutes = '0' + minutes; }
     if (secs < 10) { secs = '0' + secs; }
     return minutes +  ':' + secs;
-  }
-
-  getShuffledSongId(): number {
-    let currSongIndex = 0;
-    for (let i = 0; i < this.currSongs.length; i++) {
-      if (this.currSongs[i].id == this.selSongId) { currSongIndex = i; }
-    }
-    let randomInt = currSongIndex;  //Initialize this way to enter while loop.
-    while (randomInt == currSongIndex) {
-      randomInt = this.getRandomInt(0, this.currSongs.length - 1);
-    }
-    return this.currSongs[randomInt].id;
-  }
-
-  getRandomInt(min, max) {
-    return Math.round(Math.random() * (max - min) + min);
   }
 
 }

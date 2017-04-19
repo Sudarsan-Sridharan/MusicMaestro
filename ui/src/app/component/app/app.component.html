@@ -2,32 +2,40 @@
   <div id="nav-bar" class="row">
     <div class="col-md-6 col-md-offset-1">
       <ul class="nav nav-pills">
-        <li role="presentation" data-toggle="collapse" data-target="#library"
+        <li data-toggle="collapse" data-target="#library"
         (click)="setActiveTab(0)" [ngClass]="{'active' : isActiveTab[0]}">
         <a href="#"><i class="glyphicon glyphicon-music"></i>&nbsp;Library</a></li>
-        <li role="presentation" class="border" data-toggle="collapse" data-target="#edit"
+        <li class="border" data-toggle="collapse" data-target="#edit"
         (click)="setActiveTab(1)" [ngClass]="{'active' : isActiveTab[1]}">
-        <a href="#"><i class="glyphicon glyphicon-pencil"></i>&nbsp;Edit Song</a></li>
-        <li role="presentation" data-toggle="collapse" data-target="#upload"
+        <a href="#"><i class="glyphicon glyphicon-pencil"></i>&nbsp;Edit</a></li>
+        <li data-toggle="collapse" data-target="#upload"
         (click)="setActiveTab(2)" [ngClass]="{'active' : isActiveTab[2]}">
-        <a href="#"><i class="glyphicon glyphicon-cloud-upload"></i>&nbsp;Upload</a></li>
-      </ul>
-    </div>
+        <a href="#"><i class="glyphicon glyphicon-cloud-upload"></i>&nbsp;Add</a></li>
+        <li (click)="startShuffle()">
+          <a href="#"><i class="glyphicon glyphicon-random"></i>&nbsp;&nbsp;Shuffle</a>
+          <div *ngIf="isShuffling">
+            <app-shuffle (setDoShuffle)="setDoShuffle()"
+            (getSongInfo)="getSongInfo($event)" (setCurrSongs)="setCurrSongs($event)">
+          </app-shuffle>
+        </div>
+      </li>
+    </ul>
   </div>
-  <div id="library" class="collapse" *ngIf="isActiveSection[0]">
-    <app-library [currSongInfo]="currSongInfo" [hasSelSong]="hasSelSong"
-      (setCurrSongs)="setCurrSongs($event)" (getSongInfo)="getSongInfo($event)">
-      Loading Library...
-    </app-library>
-  </div>
-  <div id="edit" class="collapse" *ngIf="isActiveSection[1]">
-    <app-edit [hasSelSong]="hasSelSong" [currSongInfo]="currSongInfo"
-      (loadPlayer) ="loadPlayer()" (exitMenu)="exitMenu()" (stopPlayer)="stopPlayer()"
-      (resetLibraryMessenger)="resetLibraryMessenger()"
-      (refreshLibraryMessenger)="refreshLibraryMessenger()"
-      (setLibrarySelectionsMessenger)="setLibrarySelectionsMessenger()">
-      Loading Edit Screen...
-    </app-edit>
+</div>
+<div id="library" class="collapse" *ngIf="isActiveSection[0]">
+  <app-library [currSongInfo]="currSongInfo" [hasSelSong]="hasSelSong"
+  (setCurrSongs)="setCurrSongs($event)" (getSongInfo)="getSongInfo($event)">
+  Loading Library...
+</app-library>
+</div>
+<div id="edit" class="collapse" *ngIf="isActiveSection[1]">
+  <app-edit [hasSelSong]="hasSelSong" [currSongInfo]="currSongInfo"
+  (loadPlayer) ="loadPlayer()" (exitMenu)="exitMenu()" (stopPlayer)="stopPlayer()"
+  (resetLibraryMessenger)="resetLibraryMessenger()"
+  (refreshLibraryMessenger)="refreshLibraryMessenger()"
+  (setLibrarySelectionsMessenger)="setLibrarySelectionsMessenger()">
+  Loading Edit Screen...
+</app-edit>
 </div>
 <div id="upload" class="collapse" *ngIf="isActiveSection[2]">
   <app-upload (exitMenu)="exitMenu()">
@@ -36,10 +44,10 @@
 </div>
 <div *ngIf="hasSelSong">
   <app-player
-    [currSongs]="currSongs" [currSongInfo]="currSongInfo" [hasSelSong]="hasSelSong" [selSongId]="selSongId"
-    (exitMenu)="exitMenu()" (getSongInfo)="getSongInfo($event)">
-    Loading Player...
-  </app-player>
+  [currSongs]="currSongs" [currSongInfo]="currSongInfo" [hasSelSong]="hasSelSong" [selSongId]="selSongId"
+  (exitMenu)="exitMenu()" (getSongInfo)="getSongInfo($event)">
+  Loading Player...
+</app-player>
 </div>
 <div *ngIf="!hasSelSong">
   <div class="text-list-title text-center">

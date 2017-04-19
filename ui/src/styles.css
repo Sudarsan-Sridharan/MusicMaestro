@@ -4,8 +4,9 @@ a {
   color: Gray;
 }
 
-a:link, a:visited, a:hover, a:active {
-  text-decoration:  none;
+a:link, a:visited, a:hover, a:active, a:focus {
+  color: Gray;
+  text-decoration: none;
 }
 
 body {

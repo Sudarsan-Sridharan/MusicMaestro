@@ -26,6 +26,7 @@ export class AppComponent {
   isActiveSection: Array<boolean> = [false, false, false];
   isActiveTab: Array<boolean> = [false, false, false];
   hasSelSong: boolean = false;
+  isShuffling: boolean = false;
   currSongInfo: SongInfo;
   currSongs: Array<Song>;
 
@@ -37,7 +38,7 @@ export class AppComponent {
     .subscribe(songInfo => {
       this.currSongInfo = songInfo;
       this.hasSelSong = true;
-      this.loadPlayer();
+      this.loadPlayer(event.doShuffle);
     });
   }
 
@@ -65,6 +66,12 @@ export class AppComponent {
     this.currSongs = songs;
   }
 
+  setDoShuffle() {
+    if (this.player != undefined) {
+      this.player.doShuffle = true;
+    }
+  }
+
   refreshLibraryMessenger() {
     if (this.library != undefined) {
       this.library.refreshLibrary(this.currSongInfo.album.id, this.currSongInfo.album.id);
@@ -83,18 +90,28 @@ export class AppComponent {
 
   stopPlayer() {
     if (this.player != undefined) {
-      this.player.isPlayingSong = false;
+      this.player.isPlaying = false;
       this.player.songPlayback.pause();
       this.hasSelSong = false;
       this.currSongInfo = null;
     }
   }
 
-  loadPlayer() {
+  loadPlayer(doShuffle: boolean) {
     //Need to grant time for player component to load.
     //Otherwise, "ViewChild" will return undefined due to ngIf conditional.
-    setTimeout( () => this.player.loadSong(), 150);
-    setTimeout( () => this.player.playSong(), 500);
+    if (doShuffle != null) {
+      setTimeout( () => {
+        this.player.doShuffle = doShuffle;
+        this.isShuffling = false;
+      }, 300);
+    }
+    setTimeout( () => this.player.load(), 150);
+    setTimeout( () => this.player.play(), 500);
+  }
+
+  startShuffle() {
+    this.isShuffling = true;
   }
 
 

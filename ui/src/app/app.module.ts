@@ -4,11 +4,13 @@ import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 
 import { RestService } from './service/rest/rest.service';
+import { UtilityService } from './service/utility/utility.service';
 import { AppComponent } from './component/app/app.component';
 import { PlayerComponent } from './component/player/player.component';
 import { LibraryComponent } from './component/library/library.component';
 import { EditComponent } from './component/edit/edit.component';
 import { UploadComponent } from './component/upload/upload.component';
+import { ShuffleComponent } from './component/shuffle/shuffle.component';
 
 @NgModule({
   declarations: [
@@ -16,14 +18,15 @@ import { UploadComponent } from './component/upload/upload.component';
     PlayerComponent,
     LibraryComponent,
     EditComponent,
-    UploadComponent
+    UploadComponent,
+    ShuffleComponent
   ],
   imports: [
     BrowserModule,
     FormsModule,
     HttpModule
   ],
-  providers: [RestService],
+  providers: [RestService, UtilityService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

@@ -39,7 +39,6 @@ export class LibraryComponent implements OnInit {
   }
 
   getArtists() {
-    console.log("Getting artists.");
     this.restService.getArtists().subscribe(artists => {
       this.hasLoadedArtists = false;
       this.artists = artists;

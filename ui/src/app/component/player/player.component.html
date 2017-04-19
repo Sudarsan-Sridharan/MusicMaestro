@@ -1,9 +1,9 @@
 <div class="container show-playback-info">
   <div class="row">
     <div class="col-md-5">
-      <img id="album-art" class="img-responsive img-rounded img-border" [src]="songArtworkSrc">
+      <img id="album-art" class="img-responsive img-rounded img-border" src="{{songArtworkSrc}}">
     </div>
-    <div class="col-md-5">
+    <div class="col-md-7">
       <div class="row">
         <div class="col-md-12">
           <div id="song-info-name">
@@ -40,25 +40,25 @@
       </div>
       <div id="play-progress-bar" class="row">
         <div class="col-md-12">
-          <input (change)="changeSongPos($event.target.value)" type="range" step="0.001" min="0" value="{{currPlayPos}}" max="{{maxPlayPos}}">
+          <input (change)="changePos($event.target.value)" type="range" step="0.001" min="0" value="{{currPlayPos}}" max="{{maxPlayPos}}">
         </div>
       </div>
       <div id="playback-controls" class="row">
         <div class="col-md-10">
-          <button class="btn btn-info btn-circle" [ngClass]="{'btn-playing glyphicon-spin' : isPlayingSong, 'btn-play' : !isPlayingSong}"
-          (click)="playSong()" [disabled]="isPlayingSong">
-          <i class="glyphicon" [ngClass]="{'glyphicon-refresh' : isPlayingSong, 'glyphicon-play' : !isPlayingSong}"></i>
+          <button class="btn btn-info btn-circle" [ngClass]="{'btn-playing glyphicon-spin' : isPlaying, 'btn-play' : !isPlaying}"
+          (click)="play()" [disabled]="isPlaying">
+          <i class="glyphicon" [ngClass]="{'glyphicon-refresh' : isPlaying, 'glyphicon-play' : !isPlaying}"></i>
         </button>
-        <button type="button" class="btn btn-primary btn-circle btn-pause" (click)="pauseSong()" [disabled]="!isPlayingSong">
+        <button type="button" class="btn btn-primary btn-circle btn-pause" (click)="pause()" [disabled]="!isPlaying">
           <i class="glyphicon glyphicon-pause"></i>
         </button>
-        <button type="button" class="btn btn-danger btn-circle btn-stop" (click)="stopSong()">
+        <button type="button" class="btn btn-danger btn-circle btn-stop" (click)="stop()">
           <i class="glyphicon glyphicon-stop"></i>
         </button>
-        <button type="button" class="btn btn-default btn-circle btn-circle btn-previous" (click)="previousSong()">
+        <button type="button" class="btn btn-default btn-circle btn-circle btn-previous" (click)="previous()">
           <i class="glyphicon glyphicon-fast-backward"></i>
         </button>
-        <button type="button" class="btn btn-default btn-circle btn-circle btn-next" (click)="nextSong()">
+        <button type="button" class="btn btn-default btn-circle btn-circle btn-next" (click)="next()">
           <i class="glyphicon glyphicon-fast-forward"></i>
         </button>
         <button type="button" class="btn btn-circle btn-settings" [ngClass]="{'btn-success glyphicon-spin-slow' : doRepeat || doShuffle, 'btn-basic' : !doRepeat && !doShuffle}"
