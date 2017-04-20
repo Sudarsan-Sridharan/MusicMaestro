@@ -29,7 +29,7 @@ export class AppComponent {
   //["Music Library", "Edit Song", "Add Song"]
   isActiveSection: Array<boolean> = [false, false, false];
   isActiveTab: Array<boolean> = [false, false, false];
-  hasSelSong: boolean = false;
+  isPlayerLoaded: boolean = false;
   isExploring: boolean = false;
   currSongInfo: SongInfo;
   currSongs: Array<Song>;
@@ -39,9 +39,12 @@ export class AppComponent {
   getSongInfo(event) {
     if (event.hasRouletted) { this.isExploring = false; }
     this.stopPlayer();
+    if (this.currSongInfo != null && this.currSongInfo.album.id != event.albumId) {
+      this.reloadPlayer();
+    }
     this.restService.getSongInfo(event.artistId, event.albumId, event.songId)
     .subscribe(songInfo => {
-      this.hasSelSong = true;
+      this.isPlayerLoaded = true;
       this.currSongInfo = songInfo;
       this.loadPlayer();
     });
@@ -89,10 +92,8 @@ export class AppComponent {
 
   stopPlayer() {
     if (this.player != undefined) {
+      if (this.player.songPlayback != null ) { this.player.songPlayback.pause(); }
       this.player.isPlaying = false;
-      this.player.songPlayback.pause();
-      this.hasSelSong = false;
-      this.currSongInfo = null;
     }
   }
 
@@ -102,6 +103,11 @@ export class AppComponent {
     setTimeout( () => this.player.load(), 150);
     setTimeout( () => this.player.play(), 500);
     this.exitMenu();
+  }
+
+  reloadPlayer() {
+    this.isPlayerLoaded = false;
+    setTimeout( () => this.isPlayerLoaded = true, 200);
   }
 
   loadRoulette() {

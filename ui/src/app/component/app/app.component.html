@@ -11,7 +11,7 @@
         <li data-toggle="collapse" data-target="#upload"
         (click)="setActiveTab(2)" [ngClass]="{'active' : isActiveTab[2]}">
         <a href="#"><i class="glyphicon glyphicon-cloud-upload"></i>&nbsp;Add</a></li>
-        <li id="roulette" (click)="loadRoulette()">
+        <li (click)="loadRoulette()">
           <a href="#"><i class="glyphicon glyphicon-random"></i>&nbsp;&nbsp;Roulette</a>
           <div *ngIf="isExploring">
             <app-roulette (getSongInfo)="getSongInfo($event)"
@@ -23,13 +23,13 @@
   </div>
 </div>
 <div id="library" class="collapse" *ngIf="isActiveSection[0]">
-  <app-library [currSongInfo]="currSongInfo" [hasSelSong]="hasSelSong"
+  <app-library [currSongInfo]="currSongInfo"
   (setCurrSongs)="setCurrSongs($event)" (getSongInfo)="getSongInfo($event)">
   Loading Library...
 </app-library>
 </div>
 <div id="edit" class="collapse" *ngIf="isActiveSection[1]">
-  <app-edit [hasSelSong]="hasSelSong" [currSongInfo]="currSongInfo"
+  <app-edit [isPlayerLoaded]="isPlayerLoaded" [currSongInfo]="currSongInfo"
   (loadPlayer) ="loadPlayer()" (exitMenu)="exitMenu()" (stopPlayer)="stopPlayer()"
   (resetLibraryMessenger)="resetLibraryMessenger()"
   (refreshLibraryMessenger)="refreshLibraryMessenger()"
@@ -42,7 +42,7 @@
   </app-upload>
 </div>
 </div>
-<div *ngIf="hasSelSong">
+<div *ngIf="isPlayerLoaded">
   <app-player
   [currSongs]="currSongs" [currSongInfo]="currSongInfo" [selSongId]="selSongId"
   (getSongInfo)="getSongInfo($event)">

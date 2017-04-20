@@ -13,7 +13,7 @@ import { SongInfo } from '../../model/SongInfo';
 
 export class EditComponent {
 
-  @Input() hasSelSong: boolean;
+  @Input() isPlayerLoaded: boolean;
   @Input() currSongInfo: SongInfo;
   @Output() loadPlayer = new EventEmitter();
   @Output() refreshLibraryMessenger = new EventEmitter();
@@ -34,7 +34,7 @@ export class EditComponent {
   }
 
   removeSong() {
-    this.hasSelSong = false;
+    this.isPlayerLoaded = false;
     this.exitMenu.emit();
     this.stopPlayer.emit();
     this.restService.removeSong(this.currSongInfo.artist.id, this.currSongInfo.album.id, this.currSongInfo.song.id).subscribe( () => {

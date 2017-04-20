@@ -13,7 +13,6 @@ import { SongInfo } from '../../model/SongInfo';
 export class LibraryComponent implements OnInit {
 
   @Input() currSongInfo: SongInfo;
-  @Input() hasSelSong: boolean;
   @Output() setCurrSongs = new EventEmitter();
   @Output() getSongInfo = new EventEmitter();
 

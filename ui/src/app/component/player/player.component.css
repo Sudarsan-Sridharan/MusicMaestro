@@ -32,8 +32,17 @@
   }
 }
 
+#song-info-name,
+#song-info,
+#play-progress-text,
+#play-progress-bar,
+#playback-controls {
+  animation: fade-in 0.7s ease-in;
+}
+
 #album-art {
   width: 100%;
+  animation: fade-in 1.1s ease-in;
 }
 
 #song-info-name {
@@ -138,10 +147,6 @@
   animation: text-slide 14s infinite linear;
 }
 
-.show-playback-info {
-  animation: show-playback-info 0.8s ease-out;
-}
-
 @keyframes glyphicon-spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(359deg); }
@@ -156,14 +161,9 @@
   100% { transform: translate(0px, 0px); }
 }
 
-@keyframes show-playback-info {
-  0% { opacity: 0; }
-  100% { opacity: 1; }
-}
-
 @keyframes text-slide {
   0% { opacity: 0; transform: translateX(0); }
-  10% { opacity: 1; }
+  8% { opacity: 1; }
   25% { transform: translateX(0); }
   85% { opacity: 1; }
   100% { opacity: 0; transform: translateX(-220%); }

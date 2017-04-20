@@ -111,6 +111,7 @@ export class PlayerComponent {
       for (let i = 0; i < this.currSongs.length; i++) {
         if (this.currSongs[i].id == this.currSongInfo.song.id && i < this.currSongs.length - 1) {
           songId = this.currSongs[i+1].id;
+          this.stop();
           this.getSongInfo.emit({artistId, albumId, songId});
           break;
         }
