@@ -4,6 +4,11 @@
   background-color: transparent;
 }
 
+#nav-bar .nav-pills > li > a:hover,
+#nav-bar .nav-pills > li > a:focus {
+  background-color: transparent;
+}
+
 .well {
   padding-top: 0;
   padding-bottom: 0;

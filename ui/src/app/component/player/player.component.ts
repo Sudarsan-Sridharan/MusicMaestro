@@ -61,7 +61,7 @@ export class PlayerComponent {
       self.next();
     }, false);
     self.songPlayback.addEventListener('timeupdate', function() {
-      if (self.hasSelSong) {
+      if (self.hasSelSong && self.isPlaying) {
         self.currPlayPos = self.songPlayback.currentTime;
         self.currPlayPosFormatted = self.convertPlayTimeFormat(self.currPlayPos);
       }
@@ -69,24 +69,31 @@ export class PlayerComponent {
   }
 
   pause() {
-    this.songPlayback.pause();
     this.isPlaying = false;
+    this.songPlayback.pause();
   }
 
   stop() {
+    if (this.songPlayback != null) {
+      this.songPlayback.pause();
+      this.songPlayback.currentTime = 0;
+    }
     this.isPlaying = false;
-    this.songPlayback.pause();
-    this.load(); //Need to reload to in case of replaying song.
+    this.currPlayPos = 0;
+    this.currPlayPosFormatted = "00:00";
+    this.load(); //Need to reload in case of replaying song.
   }
 
   previous() {
-    for (let i = 0; i < this.currSongs.length; i++) {
-      if (this.currSongs[i].id == this.currSongInfo.song.id && i > 0) {
-        let artistId = this.currSongInfo.artist.id;
-        let albumId = this.currSongInfo.album.id;
-        let songId = this.currSongs[i-1].id
-        this.getSongInfo.emit({artistId, albumId, songId});
-        break;
+    if (this.currSongs.length > 1) {
+      for (let i = 0; i < this.currSongs.length; i++) {
+        if (this.currSongs[i].id == this.currSongInfo.song.id && i > 0) {
+          let artistId = this.currSongInfo.artist.id;
+          let albumId = this.currSongInfo.album.id;
+          let songId = this.currSongs[i-1].id
+          this.getSongInfo.emit({artistId, albumId, songId});
+          break;
+        }
       }
     }
   }
@@ -103,7 +110,7 @@ export class PlayerComponent {
       songId = this.utilityService.getShuffledSongId(this.currSongs, this.selSongId);
       this.getSongInfo.emit({artistId, albumId, songId});
     }
-    else {
+    else if (this.currSongs.length > 1) {
       for (let i = 0; i < this.currSongs.length; i++) {
         if (this.currSongs[i].id == this.currSongInfo.song.id && i < this.currSongs.length - 1) {
           songId = this.currSongs[i+1].id;
@@ -111,6 +118,9 @@ export class PlayerComponent {
           break;
         }
       }
+    }
+    else {
+      this.stop();
     }
   }
 
