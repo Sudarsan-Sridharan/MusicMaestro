@@ -30,7 +30,7 @@ export class LibraryComponent implements OnInit {
   ngOnInit() {
     if (this.currSongInfo != null) {
       this.setLibrarySelections(this.currSongInfo.artist.id, this.currSongInfo.album.id, this.currSongInfo.song.id);
-      //setLibrarySelections() executes getArtists() already.
+      this.getArtists();
       this.getAlbums(this.currSongInfo.artist.id);
       this.getSongs(this.currSongInfo.artist.id, this.currSongInfo.album.id);
     } else {
@@ -82,6 +82,7 @@ export class LibraryComponent implements OnInit {
     this.songs = null;
     this.currSongInfo = null;
     this.setLibrarySelections(null, null, null);
+    this.getArtists();
   }
 
   refreshLibrary(artistId: number, albumId: number) {
@@ -94,7 +95,6 @@ export class LibraryComponent implements OnInit {
     this.selArtistId = artistId;
     this.selAlbumId = albumId;
     this.selSongId = titleId;
-    this.getArtists();
   }
 
 }

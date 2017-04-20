@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ShuffleComponent } from './shuffle.component';
+import { RouletteComponent } from './roulette.component';
 
-describe('ShuffleComponent', () => {
-  let component: ShuffleComponent;
-  let fixture: ComponentFixture<ShuffleComponent>;
+describe('RouletteComponent', () => {
+  let component: RouletteComponent;
+  let fixture: ComponentFixture<RouletteComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ ShuffleComponent ]
+      declarations: [ RouletteComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(ShuffleComponent);
+    fixture = TestBed.createComponent(RouletteComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

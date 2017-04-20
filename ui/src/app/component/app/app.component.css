@@ -9,6 +9,16 @@
   background-color: transparent;
 }
 
+#nav-bar .nav > li > a {
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+#roulette a {
+  color: Crimson;
+  opacity: 0.9;
+}
+
 .well {
   padding-top: 0;
   padding-bottom: 0;

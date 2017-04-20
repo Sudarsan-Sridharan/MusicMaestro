@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { RestService } from '../../service/rest/rest.service';
 import { UtilityService } from '../../service/utility/utility.service';
 import { Artist } from '../../model/Artist';
@@ -7,15 +7,14 @@ import { Song } from '../../model/Song';
 import { SongInfo } from '../../model/SongInfo';
 
 @Component({
-  selector: 'app-shuffle',
+  selector: 'app-roulette',
   template: ''
 })
 
-export class ShuffleComponent implements OnInit {
+export class RouletteComponent implements OnInit {
 
   @Output() setCurrSongs = new EventEmitter();
   @Output() getSongInfo = new EventEmitter();
-  @Output() setDoShuffle = new EventEmitter();
 
   constructor(private utilityService: UtilityService, private restService: RestService) { }
 
@@ -30,7 +29,7 @@ export class ShuffleComponent implements OnInit {
     let artistId: number;
     let albumId: number;
     let songId: number;
-    let doShuffle: boolean = true;
+    let hasRouletted: boolean;
 
     this.restService.getArtists().subscribe(artistList => {
       artists = artistList;
@@ -41,11 +40,12 @@ export class ShuffleComponent implements OnInit {
         albumIndex = this.utilityService.getRandomInt(0, albums.length - 1);
         albumId = albums[albumIndex].id;
         this.restService.getSongs(artistId, albumId).subscribe(songList => {
+          hasRouletted = true;
           songs = songList;
           songIndex = this.utilityService.getRandomInt(0, songs.length - 1);
           songId = songs[songIndex].id;
           this.setCurrSongs.emit(songs);
-          this.getSongInfo.emit({artistId, albumId, songId, doShuffle});
+          this.getSongInfo.emit({artistId, albumId, songId, hasRouletted});
         });
       });
     });

@@ -1,6 +1,7 @@
 import { Component, ViewChild } from '@angular/core';
 import { PlayerComponent } from '../../component/player/player.component';
 import { LibraryComponent } from '../../component/library/library.component';
+import { UploadComponent } from '../../component/upload/upload.component';
 import { RestService } from '../../service/rest/rest.service';
 import { Observable } from 'rxjs/Observable';
 import { Artist } from '../../model/Artist';
@@ -21,24 +22,28 @@ export class AppComponent {
   @ViewChild(PlayerComponent)
   private player: PlayerComponent;
 
+  @ViewChild(UploadComponent)
+  private upload: UploadComponent;
+
   //isActiveSection --> Keeps one menu section active at a time:
   //["Music Library", "Edit Song", "Add Song"]
   isActiveSection: Array<boolean> = [false, false, false];
   isActiveTab: Array<boolean> = [false, false, false];
   hasSelSong: boolean = false;
-  isShuffling: boolean = false;
+  isExploring: boolean = false;
   currSongInfo: SongInfo;
   currSongs: Array<Song>;
 
   constructor(private restService: RestService) {}
 
   getSongInfo(event) {
-    if (this.player == undefined) { this.hasSelSong = false; } //Triggers loading animation.
+    if (event.hasRouletted) { this.isExploring = false; }
+    this.stopPlayer();
     this.restService.getSongInfo(event.artistId, event.albumId, event.songId)
     .subscribe(songInfo => {
-      this.currSongInfo = songInfo;
       this.hasSelSong = true;
-      this.loadPlayer(event.doShuffle);
+      this.currSongInfo = songInfo;
+      this.loadPlayer();
     });
   }
 
@@ -66,12 +71,6 @@ export class AppComponent {
     this.currSongs = songs;
   }
 
-  setDoShuffle() {
-    if (this.player != undefined) {
-      this.player.doShuffle = true;
-    }
-  }
-
   refreshLibraryMessenger() {
     if (this.library != undefined) {
       this.library.refreshLibrary(this.currSongInfo.album.id, this.currSongInfo.album.id);
@@ -97,21 +96,16 @@ export class AppComponent {
     }
   }
 
-  loadPlayer(doShuffle: boolean) {
+  loadPlayer() {
     //Need to grant time for player component to load.
     //Otherwise, "ViewChild" will return undefined due to ngIf conditional.
-    if (doShuffle != null) {
-      setTimeout( () => {
-        this.player.doShuffle = doShuffle;
-        this.isShuffling = false;
-      }, 300);
-    }
     setTimeout( () => this.player.load(), 150);
     setTimeout( () => this.player.play(), 500);
+    this.exitMenu();
   }
 
-  startShuffle() {
-    this.isShuffling = true;
+  loadRoulette() {
+    this.isExploring = true;
   }
 
 

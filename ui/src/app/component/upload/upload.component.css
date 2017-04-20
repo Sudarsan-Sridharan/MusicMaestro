@@ -3,6 +3,12 @@ input[type="file"] {
   line-height: 0ex;
 }
 
-.progress {
+@media(max-width: 991px) {
+  #progress-bar p {
+    text-align: center;
+  }
+}
+
+#progress-bar .progress {
   background: #B5B5B5;
 }

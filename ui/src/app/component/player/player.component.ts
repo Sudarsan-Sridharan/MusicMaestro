@@ -12,11 +12,9 @@ import { SongInfo } from '../../model/SongInfo';
 })
 export class PlayerComponent {
 
-  @Input() hasSelSong: boolean;
   @Input() selSongId: number;
   @Input() currSongInfo: SongInfo;
   @Input() currSongs: Array<Song>;
-  @Output() exitMenu = new EventEmitter();
   @Output() getSongInfo = new EventEmitter();
 
   songPlayback;
@@ -50,7 +48,6 @@ export class PlayerComponent {
   }
 
   play() {
-    this.exitMenu.emit();
     this.songPlayback.play();
     this.isPlaying = true;
     this.maxPlayPos = this.songPlayback.duration;
@@ -61,7 +58,7 @@ export class PlayerComponent {
       self.next();
     }, false);
     self.songPlayback.addEventListener('timeupdate', function() {
-      if (self.hasSelSong && self.isPlaying) {
+      if (self.isPlaying) {
         self.currPlayPos = self.songPlayback.currentTime;
         self.currPlayPosFormatted = self.convertPlayTimeFormat(self.currPlayPos);
       }

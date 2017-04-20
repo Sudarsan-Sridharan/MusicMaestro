@@ -10,7 +10,7 @@ import { PlayerComponent } from './component/player/player.component';
 import { LibraryComponent } from './component/library/library.component';
 import { EditComponent } from './component/edit/edit.component';
 import { UploadComponent } from './component/upload/upload.component';
-import { ShuffleComponent } from './component/shuffle/shuffle.component';
+import { RouletteComponent } from './component/roulette/roulette.component';
 
 @NgModule({
   declarations: [
@@ -19,7 +19,7 @@ import { ShuffleComponent } from './component/shuffle/shuffle.component';
     LibraryComponent,
     EditComponent,
     UploadComponent,
-    ShuffleComponent
+    RouletteComponent
   ],
   imports: [
     BrowserModule,
