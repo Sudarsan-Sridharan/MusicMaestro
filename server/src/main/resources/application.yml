@@ -7,3 +7,4 @@ spring:
       max-request-size: 50MB
 server:
   address: 10.0.0.4
+  port: 8080

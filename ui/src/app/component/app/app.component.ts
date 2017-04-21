@@ -96,8 +96,7 @@ export class AppComponent {
   loadPlayer() {
     //Need to grant time for player component to load.
     //Otherwise, "ViewChild" will return undefined due to ngIf conditional.
-    setTimeout( () => this.player.load(), 150);
-    setTimeout( () => this.player.play(), 500);
+    setTimeout( () => this.player.load(), 200);
     this.exitMenu();
   }
 

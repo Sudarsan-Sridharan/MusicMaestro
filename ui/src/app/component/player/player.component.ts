@@ -36,19 +36,23 @@ export class PlayerComponent {
     this.songArtworkSrc = "http://" + config.serverName + ":" + config.serverPort
       + "/artists/" + this.currSongInfo.artist.id
       + "/albums/" + this.currSongInfo.album.id
-      + "/songs/" + this.currSongInfo.song.id + "/artwork";
+      + "/songs/" + this.currSongInfo.song.id
+      + "/artwork";
     let self = this;
     let xhr = new XMLHttpRequest();
-    xhr.addEventListener('progress', function(e) {
-      if (e.lengthComputable) { let percentComplete = e.loaded / e.total; }
-    });
     xhr.addEventListener('load', function(blob) {
       if (xhr.status == 200) { self.songPlayback.src = window.URL.createObjectURL(xhr.response); }
+      setTimeout( () => {
+        self.maxPlayPos = self.songPlayback.duration;
+        self.maxPlayPosFormatted = self.convertPlayTimeFormat(self.maxPlayPos);
+        self.play();
+      }, 200);
     });
     let src = "http://" + config.serverName + ":" + config.serverPort
       + "/artists/" + this.currSongInfo.artist.id
       + "/albums/" + this.currSongInfo.album.id
-      + "/songs/" + this.currSongInfo.song.id + "/file";
+      + "/songs/" + this.currSongInfo.song.id
+      + "/file";
     xhr.open('GET', src);
     xhr.responseType = 'blob';
     xhr.send(null);
@@ -57,8 +61,6 @@ export class PlayerComponent {
   play() {
     this.songPlayback.play();
     this.isPlaying = true;
-    this.maxPlayPos = this.songPlayback.duration;
-    this.maxPlayPosFormatted = this.convertPlayTimeFormat(this.maxPlayPos);
     let self = this;
     self.songPlayback.addEventListener('ended', function() {
       self.songPlayback = null;
@@ -85,7 +87,6 @@ export class PlayerComponent {
     this.isPlaying = false;
     this.currPlayPos = 0;
     this.currPlayPosFormatted = "00:00";
-    this.load(); //Need to reload in case of replaying song.
   }
 
   previous() {
