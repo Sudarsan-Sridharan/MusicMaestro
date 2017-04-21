@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { Artist } from './Artist';
-import { Album } from './Album';
-import { Song } from './Song';
+import { Artist } from './artist';
+import { Album } from './album';
+import { Song } from './song';
 
 @Injectable()
 export class SongInfo {

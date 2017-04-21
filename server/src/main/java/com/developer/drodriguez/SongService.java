@@ -157,7 +157,7 @@ public class SongService {
         File tempFile = convertMultipartToFile(file);
         Mp3File mp3 = new Mp3File(tempFile);
 
-        //Checks if mp3 has an ID3v2 tag to read data from.
+        //Checks if mp3 has an ID3v2 tag to read data from. ID3v1 is deprecated.
         if (mp3.hasId3v2Tag()) {
 
             //Create ID3v2 tag object.

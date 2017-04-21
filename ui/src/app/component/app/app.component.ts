@@ -1,13 +1,13 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, ViewChild, OnInit } from '@angular/core';
 import { PlayerComponent } from '../../component/player/player.component';
 import { LibraryComponent } from '../../component/library/library.component';
 import { UploadComponent } from '../../component/upload/upload.component';
 import { RestService } from '../../service/rest/rest.service';
 import { Observable } from 'rxjs/Observable';
-import { Artist } from '../../model/Artist';
-import { Album } from '../../model/Album';
-import { Song } from '../../model/Song';
-import { SongInfo } from '../../model/SongInfo';
+import { Artist } from '../../model/artist';
+import { Album } from '../../model/album';
+import { Song } from '../../model/song';
+import { SongInfo } from '../../model/songInfo';
 
 @Component({
   selector: 'app-root',
@@ -27,17 +27,16 @@ export class AppComponent {
 
   //isActiveSection --> Keeps one menu section active at a time:
   //["Music Library", "Edit Song", "Add Song"]
-  isActiveSection: Array<boolean> = [false, false, false];
   isActiveTab: Array<boolean> = [false, false, false];
   isPlayerLoaded: boolean = false;
-  isExploring: boolean = false;
+  hasRoulette: boolean = false;
   currSongInfo: SongInfo;
   currSongs: Array<Song>;
 
   constructor(private restService: RestService) {}
 
   getSongInfo(event) {
-    if (event.hasRouletted) { this.isExploring = false; }
+    if (event.hasRouletted) { this.hasRoulette = false; }
     this.stopPlayer();
     if (this.currSongInfo != null && this.currSongInfo.album.id != event.albumId) {
       this.reloadPlayer();
@@ -51,21 +50,18 @@ export class AppComponent {
   }
 
   setActiveTab(boolIndex) {
-    for (let i = 0; i < this.isActiveSection.length; i++) {
+    for (let i = 0; i < this.isActiveTab.length; i++) {
       if (i == boolIndex) {
-        this.isActiveSection[boolIndex] = true;
         this.isActiveTab[boolIndex] = !this.isActiveTab[boolIndex];
       }
       else {
-        this.isActiveSection[i] = false;
         this.isActiveTab[i] = false;
       }
     }
   }
 
   exitMenu() {
-    for (let i = 0; i < this.isActiveSection.length; i++) {
-      this.isActiveSection[i] = false;
+    for (let i = 0; i < this.isActiveTab.length; i++) {
       this.isActiveTab[i] = false;
     }
   }
@@ -111,7 +107,7 @@ export class AppComponent {
   }
 
   loadRoulette() {
-    this.isExploring = true;
+    this.hasRoulette = true;
   }
 
 

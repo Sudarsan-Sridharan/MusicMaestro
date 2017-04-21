@@ -55,13 +55,13 @@
         <button type="button" class="btn btn-danger btn-circle btn-stop" (click)="stop()">
           <i class="glyphicon glyphicon-stop"></i>
         </button>
-        <button type="button" class="btn btn-default btn-circle btn-circle btn-previous" (click)="previous()">
+        <button type="button" class="btn btn-success btn-circle btn-circle btn-previous" (click)="previous()">
           <i class="glyphicon glyphicon-fast-backward"></i>
         </button>
-        <button type="button" class="btn btn-default btn-circle btn-circle btn-next" (click)="next()">
+        <button type="button" class="btn btn-success btn-circle btn-circle btn-next" (click)="next()">
           <i class="glyphicon glyphicon-fast-forward"></i>
         </button>
-        <button type="button" class="btn btn-circle btn-settings" [ngClass]="{'btn-success glyphicon-spin-slow' : doRepeat || doShuffle, 'btn-basic' : !doRepeat && !doShuffle}"
+        <button type="button" class="btn btn-circle btn-settings" [ngClass]="{'btn-warning glyphicon-spin-slow' : doRepeat || doShuffle, 'btn-default' : !doRepeat && !doShuffle}"
         (click)="doShowSettings = !doShowSettings">
         <i class="glyphicon glyphicon-cog"></i>
       </button>
@@ -69,11 +69,11 @@
   </div>
   <div id="playback-settings" class="row" *ngIf="doShowSettings">
     <div class="col-md-8">
-      <button type="button" class="btn btn-success btn-circle btn-repeat" [ngClass]="{'btn-success glyphicon-spin-slow' : doRepeat, 'btn-basic' : !doRepeat}"
+      <button type="button" class="btn btn-circle btn-repeat" [ngClass]="{'btn-warning glyphicon-spin-slow' : doRepeat, 'btn-default' : !doRepeat}"
       (click)="doRepeat = !doRepeat" [disabled]="doShuffle">
       <i class="glyphicon glyphicon-repeat"></i>
     </button>
-    <button type="button" class="btn btn-success btn-circle btn-shuffle" [ngClass]="{'btn-success' : doShuffle, 'btn-basic' : !doShuffle}"
+    <button type="button" class="btn btn-circle btn-shuffle" [ngClass]="{'btn-warning' : doShuffle, 'btn-default' : !doShuffle}"
     (click)="doShuffle = !doShuffle" [disabled]="doRepeat">
     <i class="glyphicon glyphicon-random" [ngClass]="{'glyphicon-shake' : doShuffle}"></i>
   </button>

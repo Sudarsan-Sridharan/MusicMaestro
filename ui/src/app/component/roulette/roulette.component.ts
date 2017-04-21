@@ -1,10 +1,10 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { RestService } from '../../service/rest/rest.service';
 import { UtilityService } from '../../service/utility/utility.service';
-import { Artist } from '../../model/Artist';
-import { Album } from '../../model/Album';
-import { Song } from '../../model/Song';
-import { SongInfo } from '../../model/SongInfo';
+import { Artist } from '../../model/artist';
+import { Album } from '../../model/album';
+import { Song } from '../../model/song';
+import { SongInfo } from '../../model/songInfo';
 
 @Component({
   selector: 'app-roulette',

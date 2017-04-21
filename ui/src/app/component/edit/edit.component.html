@@ -57,9 +57,8 @@
         <button class="btn btn-default btn-sm" [disabled]="currSongInfo.song.name == null
         || currSongInfo.song.name == '' || currSongInfo.album.name == null || currSongInfo.album.name == ''
         || currSongInfo.artist.name == null || currSongInfo.artist.name == ''"
-        (click)="updateSong()" data-toggle="collapse" data-target="#edit-song">Save</button>
-        <button class="btn btn-default btn-danger btn-sm" (click)="removeSong()"
-        data-toggle="collapse" data-target="#edit-song">Delete</button>
+        (click)="updateSong()">Save</button>
+        <button class="btn btn-default btn-danger btn-sm" (click)="removeSong()">Delete</button>
       </div>
     </div>
   </div>

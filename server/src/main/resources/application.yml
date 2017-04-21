@@ -5,3 +5,5 @@ spring:
     multipart:
       max-file-size: 50MB
       max-request-size: 50MB
+server:
+  address: 10.0.0.4

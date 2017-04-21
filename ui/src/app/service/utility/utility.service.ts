@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { Artist } from '../../model/Artist';
-import { Album } from '../../model/Album';
-import { Song } from '../../model/Song';
-import { SongInfo } from '../../model/SongInfo';
+import { Artist } from '../../model/artist';
+import { Album } from '../../model/album';
+import { Song } from '../../model/song';
+import { SongInfo } from '../../model/songInfo';
 
 @Injectable()
 export class UtilityService {

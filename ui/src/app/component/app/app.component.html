@@ -13,7 +13,7 @@
         <a href="#"><i class="glyphicon glyphicon-cloud-upload"></i>&nbsp;Add</a></li>
         <li (click)="loadRoulette()">
           <a href="#"><i class="glyphicon glyphicon-random"></i>&nbsp;&nbsp;Roulette</a>
-          <div *ngIf="isExploring">
+          <div *ngIf="hasRoulette">
             <app-roulette (getSongInfo)="getSongInfo($event)"
             (setCurrSongs)="setCurrSongs($event)">
           </app-roulette>
@@ -22,13 +22,13 @@
     </ul>
   </div>
 </div>
-<div id="library" class="collapse" *ngIf="isActiveSection[0]">
+<div id="library" class="collapse" *ngIf="isActiveTab[0]">
   <app-library [currSongInfo]="currSongInfo"
   (setCurrSongs)="setCurrSongs($event)" (getSongInfo)="getSongInfo($event)">
   Loading Library...
 </app-library>
 </div>
-<div id="edit" class="collapse" *ngIf="isActiveSection[1]">
+<div id="edit" class="collapse" *ngIf="isActiveTab[1]">
   <app-edit [isPlayerLoaded]="isPlayerLoaded" [currSongInfo]="currSongInfo"
   (loadPlayer) ="loadPlayer()" (exitMenu)="exitMenu()" (stopPlayer)="stopPlayer()"
   (resetLibraryMessenger)="resetLibraryMessenger()"
@@ -37,7 +37,7 @@
   Loading Edit Screen...
 </app-edit>
 </div>
-<div id="upload" class="collapse" *ngIf="isActiveSection[2]">
+<div id="upload" class="collapse" *ngIf="isActiveTab[2]">
   <app-upload (exitMenu)="exitMenu()">
   </app-upload>
 </div>

@@ -1,9 +1,10 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { UtilityService } from '../../service/utility/utility.service';
-import { Artist } from '../../model/Artist';
-import { Album } from '../../model/Album';
-import { Song } from '../../model/Song';
-import { SongInfo } from '../../model/SongInfo';
+import { Artist } from '../../model/artist';
+import { Album } from '../../model/album';
+import { Song } from '../../model/song';
+import { SongInfo } from '../../model/songInfo';
+import { config } from '../../config/config';
 
 @Component({
   selector: 'app-player',
@@ -32,7 +33,10 @@ export class PlayerComponent {
 
   load() {
     if (this.songPlayback == null) { this.songPlayback = new Audio(); }
-    this.songArtworkSrc = "http://localhost:8080/artists/" + this.currSongInfo.artist.id + "/albums/" + this.currSongInfo.album.id + "/songs/" + this.currSongInfo.song.id + "/artwork";
+    this.songArtworkSrc = "http://" + config.serverName + ":" + config.serverPort
+      + "/artists/" + this.currSongInfo.artist.id
+      + "/albums/" + this.currSongInfo.album.id
+      + "/songs/" + this.currSongInfo.song.id + "/artwork";
     let self = this;
     let xhr = new XMLHttpRequest();
     xhr.addEventListener('progress', function(e) {
@@ -41,7 +45,10 @@ export class PlayerComponent {
     xhr.addEventListener('load', function(blob) {
       if (xhr.status == 200) { self.songPlayback.src = window.URL.createObjectURL(xhr.response); }
     });
-    let src = "http://localhost:8080/artists/" + this.currSongInfo.artist.id + "/albums/" + this.currSongInfo.album.id + "/songs/" + this.currSongInfo.song.id + "/file";
+    let src = "http://" + config.serverName + ":" + config.serverPort
+      + "/artists/" + this.currSongInfo.artist.id
+      + "/albums/" + this.currSongInfo.album.id
+      + "/songs/" + this.currSongInfo.song.id + "/file";
     xhr.open('GET', src);
     xhr.responseType = 'blob';
     xhr.send(null);
