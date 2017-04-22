@@ -1,4 +1,4 @@
-@media(max-width: 991px) {
+@media(max-width: 767px) {
   hr {
     margin-top: 10px;
     margin-bottom: 0;
@@ -15,7 +15,7 @@
   }
 }
 
-@media(min-width: 992px) {
+@media(min-width: 768px) {
   hr {
     margin-top: 10px;
     margin-bottom: 0;
@@ -116,7 +116,7 @@
   display: table-cell;
   vertical-align: middle;
   height: 50px;
-  width: 220px;
+  width: 170px;
 }
 
 .img-border {

@@ -1,19 +1,19 @@
 <br />
-<div *ngIf="!hasLoadedArtists">
+<div *ngIf="artists == undefined">
   <div class="row text-list">
     <div class="col-md-3 col-md-offset-1">
       <p>Loading...</p>
     </div>
   </div>
 </div>
-<div *ngIf="artists != undefined && hasLoadedArtists && artists.length == 0">
+<div *ngIf="artists != undefined && artists.length == 0">
   <div class="row text-list">
     <div class="col-md-3 col-md-offset-1">
       <p>Your library is currently empty.</p>
     </div>
   </div>
 </div>
-<div *ngIf="artists != undefined && hasLoadedArtists && artists.length > 0">
+<div *ngIf="artists != undefined && artists.length > 0">
   <div class="row text-list">
     <div class="col-md-3 col-md-offset-1 show-list library-text">
       <div class="text-list-title">Artists</div>

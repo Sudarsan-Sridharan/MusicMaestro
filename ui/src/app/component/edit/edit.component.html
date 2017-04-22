@@ -15,7 +15,7 @@
         Track:
       </div>
       <div class="col-md-1">
-        <input type="number" min="0" class="form-control input-md input-textbox-xs" [(ngModel)]="currSongInfo.song.track">
+        <input type="number" min="0" class="form-control input-xs input-textbox-xs" [(ngModel)]="currSongInfo.song.track">
       </div>
     </div>
     <div class="row">
@@ -54,11 +54,11 @@
   <div class="row">
     <div class="col-md-2 col-md-offset-1">
       <div class="btn-group">
-        <button class="btn btn-default btn-sm" [disabled]="currSongInfo.song.name == null
+        <button class="btn btn-default btn-xs" [disabled]="currSongInfo.song.name == null
         || currSongInfo.song.name == '' || currSongInfo.album.name == null || currSongInfo.album.name == ''
         || currSongInfo.artist.name == null || currSongInfo.artist.name == ''"
         (click)="updateSong()">Save</button>
-        <button class="btn btn-default btn-danger btn-sm" (click)="removeSong()">Delete</button>
+        <button class="btn btn-danger btn-xs" (click)="removeSong()">Delete</button>
       </div>
     </div>
   </div>

@@ -3,13 +3,13 @@
     <div class="col-md-6 col-md-offset-1">
       <ul class="nav nav-pills">
         <li data-toggle="collapse" data-target="#library"
-        (click)="setActiveTab(0)" [ngClass]="{'active' : isActiveTab[0]}">
+        (click)="setActiveTab(0)" [ngClass]="{'active' : isActiveMenuSection[0]}">
         <a href="#"><i class="glyphicon glyphicon-music"></i>&nbsp;Library</a></li>
         <li class="border" data-toggle="collapse" data-target="#edit"
-        (click)="setActiveTab(1)" [ngClass]="{'active' : isActiveTab[1]}">
+        (click)="setActiveTab(1)" [ngClass]="{'active' : isActiveMenuSection[1]}">
         <a href="#"><i class="glyphicon glyphicon-pencil"></i>&nbsp;Edit</a></li>
         <li data-toggle="collapse" data-target="#upload"
-        (click)="setActiveTab(2)" [ngClass]="{'active' : isActiveTab[2]}">
+        (click)="setActiveTab(2)" [ngClass]="{'active' : isActiveMenuSection[2]}">
         <a href="#"><i class="glyphicon glyphicon-cloud-upload"></i>&nbsp;Add</a></li>
         <li (click)="loadRoulette()">
           <a href="#"><i class="glyphicon glyphicon-random"></i>&nbsp;&nbsp;Roulette</a>
@@ -22,13 +22,13 @@
     </ul>
   </div>
 </div>
-<div id="library" class="collapse" *ngIf="isActiveTab[0]">
+<div id="library" class="collapse" *ngIf="isActiveMenuSection[0]">
   <app-library [currSongInfo]="currSongInfo"
   (setCurrSongs)="setCurrSongs($event)" (getSongInfo)="getSongInfo($event)">
   Loading Library...
 </app-library>
 </div>
-<div id="edit" class="collapse" *ngIf="isActiveTab[1]">
+<div id="edit" class="collapse" *ngIf="isActiveMenuSection[1]">
   <app-edit [isPlayerLoaded]="isPlayerLoaded" [currSongInfo]="currSongInfo"
   (loadPlayer) ="loadPlayer()" (exitMenu)="exitMenu()" (stopPlayer)="stopPlayer()"
   (resetLibraryMessenger)="resetLibraryMessenger()"
@@ -37,7 +37,7 @@
   Loading Edit Screen...
 </app-edit>
 </div>
-<div id="upload" class="collapse" *ngIf="isActiveTab[2]">
+<div id="upload" class="collapse" *ngIf="isActiveMenuSection[2]">
   <app-upload (exitMenu)="exitMenu()">
   </app-upload>
 </div>

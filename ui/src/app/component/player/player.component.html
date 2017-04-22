@@ -1,11 +1,11 @@
 <div class="container">
   <div class="row">
-    <div class="col-md-5">
+    <div class="col-sm-4">
       <img id="album-art" class="img-responsive img-rounded img-border" src="{{songArtworkSrc}}">
     </div>
-    <div class="col-md-7">
+    <div class="col-sm-8">
       <div class="row">
-        <div class="col-md-12">
+        <div class="col-sm-12">
           <div id="song-info-name">
             <p [ngClass]="{'song-info-slide' : currSongInfo.song.name.length > 33}">{{currSongInfo.song.name}}</p>
           </div>
@@ -13,38 +13,38 @@
       </div>
       <div id="song-info">
         <div class="row">
-          <div class="col-md-12">
+          <div class="col-sm-12">
             <div>{{currSongInfo.artist.name}}</div>
           </div>
         </div>
         <div class="row">
-          <div class="col-md-12">
+          <div class="col-sm-12">
             <div>{{currSongInfo.album.name}}</div>
           </div>
         </div>
         <div class="row">
-          <div class="col-md-12">
+          <div class="col-sm-12">
             <div>{{currSongInfo.song.year}}</div>
           </div>
         </div>
       </div>
       <div class="row">
-        <div class="col-md-8">
+        <div class="col-sm-8">
           <hr>
         </div>
       </div>
       <div id="play-progress-text" class="row">
-        <div class="col-md-12">
+        <div class="col-sm-12">
           {{currPlayPosFormatted}} / {{maxPlayPosFormatted}}
         </div>
       </div>
       <div id="play-progress-bar" class="row">
-        <div class="col-md-12">
+        <div class="col-sm-12">
           <input (change)="changePos($event.target.value)" type="range" step="0.001" min="0" value="{{currPlayPos}}" max="{{maxPlayPos}}">
         </div>
       </div>
       <div id="playback-controls" class="row">
-        <div class="col-md-10">
+        <div class="col-sm-10">
           <button class="btn btn-info btn-circle" [ngClass]="{'btn-playing glyphicon-spin' : isPlaying, 'btn-play' : !isPlaying}"
           (click)="play()" [disabled]="isPlaying">
           <i class="glyphicon" [ngClass]="{'glyphicon-refresh' : isPlaying, 'glyphicon-play' : !isPlaying}"></i>
@@ -68,7 +68,7 @@
     </div>
   </div>
   <div id="playback-settings" class="row" *ngIf="doShowSettings">
-    <div class="col-md-8">
+    <div class="col-sm-8">
       <button type="button" class="btn btn-circle btn-repeat" [ngClass]="{'btn-warning glyphicon-spin-slow' : doRepeat, 'btn-default' : !doRepeat}"
       (click)="doRepeat = !doRepeat" [disabled]="doShuffle">
       <i class="glyphicon glyphicon-repeat"></i>
