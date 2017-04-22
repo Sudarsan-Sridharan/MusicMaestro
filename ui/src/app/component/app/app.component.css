@@ -1,20 +1,20 @@
-#nav-bar .nav-pills > li.active > a:enabled {
+#menu {
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+#nav-bar li > a {
+    padding-left: 12px;
+    padding-right: 12px;
+}
+
+#nav-bar li.active > a:enabled {
   border-bottom: 2px solid Crimson;
   color: Gray;
   background-color: transparent;
 }
 
-#nav-bar .nav-pills > li > a:hover,
-#nav-bar .nav-pills > li > a:focus {
+#nav-bar li > a:hover,
+#nav-bar li > a:focus {
   background-color: transparent;
-}
-
-#nav-bar .nav > li > a {
-    padding-left: 12px;
-    padding-right: 12px;
-}
-
-.well {
-  padding-top: 0;
-  padding-bottom: 0;
 }

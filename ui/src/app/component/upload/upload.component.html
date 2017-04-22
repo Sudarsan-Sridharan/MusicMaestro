@@ -15,18 +15,18 @@
       <div class="progress">
         <div class="progress-bar progress-bar-success" role="progressbar" [attr.aria-valuenow]="currProgress"
         aria-valuemin="0" [attr.aria-valuemax]="maxProgress" [ngStyle]="{width: currProgress / maxProgress | percent: '1.0-1'}">
-        {{currProgress}} / {{maxProgress}} Files
+          {{currProgress}} / {{maxProgress}} Files
+        </div>
       </div>
     </div>
+    <div class="col-md-2" *ngIf="isUploading && currProgress == 0">
+      <p>Connecting...</p>
+    </div>
+    <div class="col-md-2" *ngIf="isUploading && currProgress > 0 && currProgress < maxProgress">
+      <p>Uploading...</p>
+    </div>
+    <div class="col-md-2" *ngIf="isUploading && currProgress == maxProgress">
+      <p>Upload complete!</p>
+    </div>
   </div>
-  <div class="col-md-2" *ngIf="isUploading && currProgress == 0">
-    <p>Connecting...</p>
-  </div>
-  <div class="col-md-2" *ngIf="isUploading && currProgress > 0 && currProgress < maxProgress">
-    <p>Uploading...</p>
-  </div>
-  <div class="col-md-2" *ngIf="isUploading && currProgress == maxProgress">
-    <p>Upload complete!</p>
-  </div>
-</div>
 </div>

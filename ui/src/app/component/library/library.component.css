@@ -1,36 +1,17 @@
-.library-text-slide {
-  animation: text-slide-short 7s infinite linear;
-}
-
-.show-list {
-  animation: show-list 0.4s ease-out;
-}
-
-.show-list-item {
-  animation: show-list-item 0.4s linear;
-}
-
-.library-list-item-artist {
-  white-space: nowrap;
-  overflow: hidden;
-  width: 220px;
-}
-
-.library-list-item-album {
-  white-space: nowrap;
-  overflow: hidden;
-  width: 230px;
-}
-
-.library-list-item-song {
-  vertical-align: bottom;
-  white-space: nowrap;
-  overflow: hidden;
-  width: 350px;
-}
-
 li a {
   display: block;
+}
+
+.animate-slide-left {
+  animation: fade-move-left 7s infinite linear;
+}
+
+.animate-list {
+  animation: move-right 0.4s ease-out;
+}
+
+.animate-list-item {
+  animation: fade-in 0.4s linear;
 }
 
 .hide-bullets {
@@ -42,22 +23,41 @@ li a {
   display: inline-flex;
 }
 
+.item-box-artist {
+  white-space: nowrap;
+  overflow: hidden;
+  width: 220px;
+}
+
+.item-box-album {
+  white-space: nowrap;
+  overflow: hidden;
+  width: 230px;
+}
+
+.item-box-song {
+  vertical-align: bottom;
+  white-space: nowrap;
+  overflow: hidden;
+  width: 350px;
+}
+
 .text-selected {
   pointer-events: none;
   color: Crimson;
 }
 
-@keyframes show-list {
+@keyframes move-right {
   0% { transform: translateX(-30px); }
   100% { transform: translateX(0); }
 }
 
-@keyframes show-list-item {
+@keyframes fade-in {
   0% { opacity: 0.1; }
   100% { opacity: 1; }
 }
 
-@keyframes text-slide-short {
+@keyframes fade-move-left {
   0% { opacity: 0.1; transform: translateX(0); }
   5% { opacity: 1; }
   30% { transform: translateX(0); }
