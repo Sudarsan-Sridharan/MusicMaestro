@@ -79,12 +79,11 @@ export class PlayerComponent {
         self.play();
       }, 200);
     });
-    let src = "http://" + config.serverName + ":" + config.serverPort
+    xhr.open('GET', "http://" + config.serverName + ":" + config.serverPort
       + "/artists/" + this.currSongInfo.artist.id
       + "/albums/" + this.currSongInfo.album.id
       + "/songs/" + this.currSongInfo.song.id
-      + "/file";
-    xhr.open('GET', src);
+      + "/file");
     xhr.responseType = 'blob';
     xhr.send(null);
   }
@@ -95,8 +94,7 @@ export class PlayerComponent {
    *  and to set current audio object to null then look for the next song.
    */
   play() {
-    this.audio.play();
-    this.isPlaying = true;
+    console.log("PLAY");
     let self = this;
     self.audio.addEventListener('ended', function() {
       self.audio = null;
@@ -108,6 +106,8 @@ export class PlayerComponent {
         self.currPlayPosFormatted = self.convertPlayTimeFormat(self.currPlayPos);
       }
     });
+    this.audio.play();
+    this.isPlaying = true;
   }
 
   /*

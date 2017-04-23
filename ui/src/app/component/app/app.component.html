@@ -6,27 +6,27 @@
         (click)="setActiveTab(0)" [ngClass]="{'active' : isActiveMenuSection[0]}">
           <a href="#">
             <i class="glyphicon glyphicon-music"></i>
-            &nbsp;Library
+            Library
           </a>
         </li>
         <li class="border" data-toggle="collapse" data-target="#edit"
         (click)="setActiveTab(1)" [ngClass]="{'active' : isActiveMenuSection[1]}">
           <a href="#">
             <i class="glyphicon glyphicon-pencil"></i>
-            &nbsp;Edit
+            Edit
           </a>
         </li>
         <li data-toggle="collapse" data-target="#upload"
         (click)="setActiveTab(2)" [ngClass]="{'active' : isActiveMenuSection[2]}">
           <a href="#">
             <i class="glyphicon glyphicon-cloud-upload"></i>
-            &nbsp;Add
+            Add
           </a>
         </li>
         <li (click)="loadRoulette()">
           <a href="#">
             <i class="glyphicon glyphicon-random"></i>
-            &nbsp;&nbsp;Roulette
+            &nbsp;Roulette
           </a>
           <div *ngIf="hasRoulette">
             <app-roulette
