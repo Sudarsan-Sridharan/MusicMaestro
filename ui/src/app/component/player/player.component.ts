@@ -64,7 +64,7 @@ export class PlayerComponent {
    */
   load() {
     if (this.audio == null) { this.audio = new Audio(); }
-    this.songArtworkSrc = "http://" + config.serverName + ":" + config.serverPort
+    this.songArtworkSrc = "http://" + config.serverName + ":" + config.serverPort + config.appName
       + "/artists/" + this.currSongInfo.artist.id
       + "/albums/" + this.currSongInfo.album.id
       + "/songs/" + this.currSongInfo.song.id
@@ -79,7 +79,7 @@ export class PlayerComponent {
         self.play();
       }, 200);
     });
-    xhr.open('GET', "http://" + config.serverName + ":" + config.serverPort
+    xhr.open('GET', "http://" + config.serverName + ":" + config.serverPort + config.appName
       + "/artists/" + this.currSongInfo.artist.id
       + "/albums/" + this.currSongInfo.album.id
       + "/songs/" + this.currSongInfo.song.id

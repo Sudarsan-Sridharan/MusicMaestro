@@ -15,7 +15,7 @@ export class RestService {
    */
   getArtists() {
     return this.http.get("http://" + config.serverName + ":" + config.serverPort
-      + "/artists")
+      + config.appName + "/artists")
     .map((response: Response) => response.json());
   }
 
@@ -24,7 +24,7 @@ export class RestService {
    */
   getAlbums(artistId: number) {
     return this.http.get("http://" + config.serverName + ":" + config.serverPort
-      + "/artists/" + artistId + "/albums")
+      + config.appName + "/artists/" + artistId + "/albums")
     .map((response: Response) => response.json());
   }
 
@@ -33,7 +33,7 @@ export class RestService {
    */
   getSongs(artistId: number, albumId: number) {
     return this.http.get("http://" + config.serverName + ":" + config.serverPort
-      + "/artists/" + artistId + "/albums/" + albumId + "/songs")
+      + config.appName + "/artists/" + artistId + "/albums/" + albumId + "/songs")
     .map((response: Response) => response.json());
   }
 
@@ -43,7 +43,7 @@ export class RestService {
    */
   getSongInfo(artistId: number, albumId: number, songId: number) {
     return this.http.get("http://" + config.serverName + ":" + config.serverPort
-      + "/artists/" + artistId + "/albums/" + albumId + "/songs/" + songId + "/info")
+      + config.appName + "/artists/" + artistId + "/albums/" + albumId + "/songs/" + songId + "/info")
     .map((response: Response) => response.json());
   }
 
@@ -54,7 +54,7 @@ export class RestService {
     let formData:FormData = new FormData();
     formData.append('file', file, file.name);
     return this.http.post("http://" + config.serverName + ":" + config.serverPort
-      + "/file", formData);
+      + config.appName + "/file", formData);
   }
 
   /*
@@ -63,7 +63,7 @@ export class RestService {
    */
   updateSong(songInfo: SongInfo, artistId: number, albumId: number, songId: number) {
     return this.http.put("http://" + config.serverName + ":" + config.serverPort
-      + "/artists/" + artistId + "/albums/" + albumId + "/songs/" + songId, songInfo)
+      + config.appName + "/artists/" + artistId + "/albums/" + albumId + "/songs/" + songId, songInfo)
     .map((response: Response) => response.json());
   }
 
@@ -73,7 +73,7 @@ export class RestService {
    */
   removeSong(artistId: number, albumId: number, songId: number) {
     return this.http.delete("http://" + config.serverName + ":" + config.serverPort
-      + "/artists/" + artistId + "/albums/" + albumId + "/songs/" + songId);
+      + config.appName + "/artists/" + artistId + "/albums/" + albumId + "/songs/" + songId);
   }
 
 }
