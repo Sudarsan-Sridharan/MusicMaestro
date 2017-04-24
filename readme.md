@@ -5,11 +5,11 @@ Music Maestro cannot be hosted on GitHub, so please reference the animated GIFs 
 
 [Adding Songs]
 
+[Browsing Your Library]
+
 [Playing a Song]
 
 [Editing a Song]
-
-[Browsing Your Library]
 
 [Using Song Roulette]
 
