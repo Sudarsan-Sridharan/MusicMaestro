@@ -20,3 +20,4 @@ Music Maestro cannot be hosted on GitHub, so please reference the animated GIFs 
 [Editing a Song]: https://github.com/drodriguln/MusicMaestro/blob/gh-pages/edit.gif?raw=true "Editing a Song"
 [Browsing Your Library]: https://github.com/drodriguln/MusicMaestro/blob/gh-pages/library.gif?raw=true "Browsing Your Library"
 [Using Song Roulette]: https://github.com/drodriguln/MusicMaestro/blob/gh-pages/roulette.gif?raw=true "Using Song Roulette"
+
