@@ -13,7 +13,7 @@ Music Maestro cannot be hosted on GitHub, so please reference the animated GIFs 
 
 [Using Song Roulette]
 
-[Selecting a Song]: https://github.com/drodriguln/MusicMaestro/blob/gh-pages/select-song.gif "Selecting a Song"
+[Selecting a Song]: https://github.com/drodriguln/MusicMaestro/blob/gh-pages/select-song.gif?raw=true "Selecting a Song"
 [First Access]: https://github.com/drodriguln/MusicMaestro/blob/gh-pages/first-load.gif "First Access"
 [Adding Songs]: https://github.com/drodriguln/MusicMaestro/blob/gh-pages/add.gif "Adding Songs"
 [Playing a Song]: https://github.com/drodriguln/MusicMaestro/blob/gh-pages/player.gif "Playing a Song"
