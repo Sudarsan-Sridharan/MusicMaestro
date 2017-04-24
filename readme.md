@@ -1,5 +1,5 @@
 ![alt text][Selecting a Song]
-Music Maestro cannot be hosted on GitHub, so please reference the animated GIFs below to learn how the application works.
+Music Maestro cannot be hosted on GitHub, so please reference the animated GIFs below to learn how the application works (NOTE: they are very large GIFs).
 
 [First Access]
 
