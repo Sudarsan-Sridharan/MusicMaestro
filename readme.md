@@ -1,5 +1,5 @@
 ![alt text][Selecting a Song]
-View the animated GIFs below to learn how the application works. The application's intuitiveness precedes the need for understanding through words.
+Music Maestro cannot be hosted on GitHub, so please reference the animated GIFs below to learn how the application works.
 
 [First Access]
 
