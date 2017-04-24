@@ -2,18 +2,13 @@
 View the animated GIFs below to learn how the application works. The application's intuitiveness precedes any need for explanations through words.
 
 <p>
-  <a href="https://github.com/drodriguln/MusicMaestro/blob/gh-pages/select-song.gif" target="_blank">
+  <a href="https://github.com/drodriguln/MusicMaestro/blob/gh-pages/first-load.gif?raw=true" target="_blank">
     First Access
   </a>
 </p>
 <p>
-  <a href="https://github.com/drodriguln/MusicMaestro/blob/gh-pages/first-load.gif?raw=true" target="_blank">
-    Selecting a Song
-  </a>
-</p>
-<p>
   <a href="https://github.com/drodriguln/MusicMaestro/blob/gh-pages/add.gif?raw=true" target="_blank">
-    Adding a Song
+    Adding Songs
   </a>
 </p>
 <p>
