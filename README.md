@@ -1,5 +1,5 @@
 # Music Player
-The front end project was generated with [Angular CLI](https://github.com/angular/angular-cli) v1.0.0-rc.2. The back end was generated using Spring Boot v1.5.3.
+The front end project was generated with [Angular CLI](https://github.com/angular/angular-cli) v1.0.0-rc.2. The back end was generated using Spring Boot v1.5.3. Designed for Google Chrome. UI bugs may be present in other browsers.
 
 ### Configuration
 Modify the “config.ts” and “application.yml” files to contain the correct server information. Also make sure “application.yml” uses the correct library root directory. This directory is where the library file will be accessed and the songs will be stored. Change the base URL in index.html to what the deployment name will be for the server in Tomcat (match with the “appName” parameter in the config.ts).
